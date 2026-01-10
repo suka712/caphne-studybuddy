@@ -1,0 +1,14 @@
+{
+  "name": "@repo/client",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@repo/shared": "workspace:*",
+    "nuxt": "^3.14.0"
+  }
+}

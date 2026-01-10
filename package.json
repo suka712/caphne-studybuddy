@@ -2,8 +2,10 @@
   "name": "caphne-monorepo",
   "private": true,
   "scripts": {
-    "build": "turbo build",
     "dev": "turbo dev",
+    "dev:client": "pnpm --filter @repo/client dev",
+    "dev:server": "pnpm --filter @repo/server dev",
+    "build": "turbo build",
     "lint": "turbo lint",
     "clean": "turbo clean",
     "typecheck": "turbo typecheck"

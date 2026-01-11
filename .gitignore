@@ -4,6 +4,7 @@ dist
 .output
 .turbo
 *.log
+.vscode
 .env
 .env.*
 !.env.example

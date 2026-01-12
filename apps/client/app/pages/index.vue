@@ -45,4 +45,21 @@
     <img class="h-96 rounded-2xl" src="/placeholder-1.png">
   </div>
   <!--------------------------------Hero Card--------------------------------->
+  <div class="grid grid-cols-2 gap-5 mt-60">
+    <div>
+      <Card class="min-w">
+        <CardContent>
+          <h1>Find your partner builder!</h1>
+          
+        </CardContent>
+      </Card>
+    </div>
+    <div>
+      <Card class="size-2xl">
+        <CardContent>
+          Find your friend 
+        </CardContent>
+      </Card>
+    </div>
+  </div>
 </template>

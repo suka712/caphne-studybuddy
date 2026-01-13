@@ -6,7 +6,7 @@ const { showNavbar } = useScrollNavbar()
 
 <template>
   <header class="sticky top-0">
-    <nav class="flex items-center mx-auto max-w-7xl px-4 py-4 transition-opacity duration-1000"
+    <nav class="flex items-center mx-auto max-w-7xl px-4 py-4 transition-opacity duration-500"
       :class="showNavbar ? 'opacity-100' : 'opacity-0 pointer-events-none'">
       <div class="flex flex-1 justify-start">
         <NuxtLink to="/" class="text-xl font-bold">

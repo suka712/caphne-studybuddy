@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-  modules: ['shadcn-nuxt'],
+  modules: ['shadcn-nuxt', '@nuxt/icon'],
   shadcn: {
     prefix: '',
     componentDir: './app/components/ui'

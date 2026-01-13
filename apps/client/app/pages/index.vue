@@ -45,19 +45,30 @@
     <img class="h-96 rounded-2xl" src="/placeholder-1.png">
   </div>
   <!--------------------------------Hero Card--------------------------------->
-  <div class="grid grid-cols-2 gap-5 mt-60">
+  <div class="grid grid-cols-2 gap-5 mt-80">
     <div>
       <Card class="min-w">
         <CardContent>
-          <h1>Find your partner builder!</h1>
-          
+          <img src="/placeholder-3.png" class="w-full h-72 object-cover rounded-xl"/>
+          <h1 class="text-3xl pt-6">Find your Studydate</h1>
+          <p class="pt-6">
+            Whether you need help with homework or you're ready to help somebody with their homework,
+            Caphne helps you connect with friends as motivated as you are over work and study.
+          </p>
         </CardContent>
       </Card>
     </div>
     <div>
       <Card class="size-2xl">
         <CardContent>
-          Find your friend 
+          <img src="/placeholder-2.png" class="w-full h-72 object-cover rounded-xl"/>
+          <h1 class="text-3xl pt-6">
+            Find your BFF <span class="text-sm">(Builder Friend Forever)</span>
+          </h1>
+          <p class="pt-6">
+            You just moved to HCM City and is looking to connect with friends or expand your circle?
+            Caphne BFF helps you find driven and like-minded builders to make stuff happen.
+          </p>
         </CardContent>
       </Card>
     </div>

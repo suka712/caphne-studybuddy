@@ -11,11 +11,11 @@
           <p>Find your perfect</p>
           <p>study buddy today.</p>
         </div>
-        <Button class="mt-8 h-8" variant="default">
+        <Button class="mt-8 h-8" variant="default" @click="scrollToSignup">
           <Icon name="ci:google" size="20" />
           Continue with Google
         </Button>
-        <Button class="mt-2 h-8" variant="default">
+        <Button class="mt-2 h-8" variant="default" @click="scrollToSignup">
           <Icon name="ci:github" size="20" />
           Continue with Github
         </Button>
@@ -32,7 +32,7 @@
         We want the friends you meet to feel intentional.
         We want to connect like-minded people to grow together.
       </p>
-      <Button class="mt-4">Connect today</Button>
+      <Button class="mt-4" @click="scrollToSignup">Connect today</Button>
     </div>
     <img class="h-96 rounded-2xl" src="/placeholder-1.png">
   </div>
@@ -48,11 +48,11 @@
             Caphne helps you connect with friends as motivated as you are over work and study.
           </p>
           <div class="flex gap-2 mt-6">
-            <Button class="mt-2 h-10 hover:px-6" variant="default">
+            <Button class="mt-2 h-10 hover:px-6" variant="default" @click="scrollToSignup">
               <Icon name="ci:google" size="20" />
               Chat work & studies
             </Button>
-            <Button class="mt-2 h-10 hover:px-6" variant="default">
+            <Button class="mt-2 h-10 hover:px-6" variant="default" @click="scrollToSignup">
               <Icon name="ri:graduation-cap-fill" size="20" />
               Chill over Matcha
             </Button>
@@ -72,11 +72,11 @@
             Caphne BFF helps you find driven and like-minded builders to make stuff happen.
           </p>
           <div class="flex gap-2 mt-6">
-            <Button class="mt-2 h-10 hover:px-6" variant="default">
+            <Button class="mt-2 h-10 hover:px-6" variant="default" @click="scrollToSignup">
               <Icon name="ci:github" size="20" />
               Geek over Code
             </Button>
-            <Button class="mt-2 h-10 hover:px-6" variant="default">
+            <Button class="mt-2 h-10 hover:px-6" variant="default" @click="scrollToSignup">
               <Icon name="famicons:football-sharp" size="20" />
               Football Friday
             </Button>
@@ -95,27 +95,27 @@
         Continue in person.
       </h1>
       <div class="flex gap-2">
-        <Button class="mt-2 h-10 hover:px-6" variant="default">
+        <Button class="mt-2 h-10 hover:px-6" variant="default" @click="scrollToSignup">
           <Icon name="ri:graduation-cap-fill" size="20" />
           Dominating Econ Statistics
         </Button>
-        <Button class="mt-2 h-10 hover:px-6" variant="default">
+        <Button class="mt-2 h-10 hover:px-6" variant="default" @click="scrollToSignup">
           <Icon name="bx:bxs-coffee-alt" size="20" />
           Highlands Matcha sucks
         </Button>
       </div>
       <div class="flex gap-2">
-        <Button class="mt-2 h-10 hover:px-6" variant="default">
+        <Button class="mt-2 h-10 hover:px-6" variant="default" @click="scrollToSignup">
           <Icon name="material-symbols:format-list-bulleted-rounded" size="20" />
           Death by IELTS
         </Button>
-        <Button class="mt-2 h-10 hover:px-6" variant="default">
+        <Button class="mt-2 h-10 hover:px-6" variant="default" @click="scrollToSignup">
           <Icon name="famicons:football-sharp" size="20" />
           Football on Friday
         </Button>
       </div>
       <div class="flex gap-2">
-        <Button class="mt-2 h-10 hover:px-6" variant="default">
+        <Button class="mt-2 h-10 hover:px-6" variant="default" @click="scrollToSignup">
           <Icon name="mdi:github" size="20" />
           Needs debugging
         </Button>
@@ -123,7 +123,7 @@
     </div>
   </div>
   <!--------------------------------Coming Soon--------------------------------->
-  <div class="flex items-center justify-center pt-80 pb-40">
+  <div id="signup" class="flex items-center justify-center pt-80 pb-40">
     <Card class="w-lg text-center">
       <CardContent class="pt-8">
         <h1 class="text-3xl font-bold">Coming super soon</h1>
@@ -150,6 +150,10 @@
 
 <script setup lang="ts">
 const { public: { apiBase } } = useRuntimeConfig()
+
+function scrollToSignup() {
+  document.getElementById('signup')?.scrollIntoView({ behavior: 'smooth' })
+}
 
 const email = ref('')
 const isSubmitting = ref(false)

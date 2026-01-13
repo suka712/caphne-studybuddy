@@ -12,11 +12,11 @@
           <p>study buddy today.</p>
         </div>
         <Button class="mt-8 h-8" variant="default">
-          <Icon name="ci:google" size="20"/>
+          <Icon name="ci:google" size="20" />
           Continue with Google
         </Button>
         <Button class="mt-2 h-8" variant="default">
-          <Icon name="ci:github" size="20"/>
+          <Icon name="ci:github" size="20" />
           Continue with Github
         </Button>
       </CardContent>
@@ -47,6 +47,16 @@
             Whether you need help with homework or you're ready to help somebody with their homework,
             Caphne helps you connect with friends as motivated as you are over work and study.
           </p>
+          <div class="flex gap-2 mt-6">
+            <Button class="mt-2 h-10 hover:px-6" variant="default">
+              <Icon name="ci:google" size="20" />
+              Chat work & studies
+            </Button>
+            <Button class="mt-2 h-10 hover:px-6" variant="default">
+              <Icon name="ri:graduation-cap-fill" size="20" />
+              Chill over Matcha
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>
@@ -61,6 +71,16 @@
             You just moved to HCM City and is looking to connect with friends or expand your circle?
             Caphne BFF helps you find driven and like-minded builders to make stuff happen.
           </p>
+          <div class="flex gap-2 mt-6">
+            <Button class="mt-2 h-10 hover:px-6" variant="default">
+              <Icon name="ci:github" size="20" />
+              Geek over Code
+            </Button>
+            <Button class="mt-2 h-10 hover:px-6" variant="default">
+              <Icon name="famicons:football-sharp" size="20" />
+              Football Friday
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>
@@ -76,7 +96,7 @@
       </h1>
       <div class="flex gap-2">
         <Button class="mt-2 h-10 hover:px-6" variant="default">
-          <Icon name="ri:graduation-cap-fill" size="16" />
+          <Icon name="ri:graduation-cap-fill" size="20" />
           Dominating Econ Statistics
         </Button>
         <Button class="mt-2 h-10 hover:px-6" variant="default">

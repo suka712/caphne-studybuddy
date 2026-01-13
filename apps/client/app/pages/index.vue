@@ -122,4 +122,53 @@
       </div>
     </div>
   </div>
+  <!--------------------------------Coming Soon--------------------------------->
+  <div class="flex items-center justify-center pt-80 pb-40">
+    <Card class="w-lg text-center">
+      <CardContent class="pt-8">
+        <h1 class="text-3xl font-bold">Coming super soon</h1>
+        <p class="text-muted-foreground mt-4 text-md">
+          Be the firsts to mingle when we launch.
+        </p>
+        <form @submit.prevent="submitEmail" class="mt-8 flex gap-2">
+          <input v-model="email" type="email" placeholder="Enter your email" required
+            class="flex-1 px-4 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
+          <Button type="submit" :disabled="isSubmitting" class="hover:px-6">
+            <Icon v-if="isSubmitting" name="mdi:loading" size="20" class="animate-spin" />
+            <span v-else>Notify me</span>
+          </Button>
+        </form>
+        <p v-if="message" :class="isError ? 'text-destructive' : 'text-green-600'" class="mt-4 text-sm">
+          {{ message }}
+        </p>
+      </CardContent>
+    </Card>
+  </div>
 </template>
+
+<script setup lang="ts">
+const email = ref('')
+const isSubmitting = ref(false)
+const message = ref('')
+const isError = ref(false)
+
+async function submitEmail() {
+  isSubmitting.value = true
+  message.value = ''
+  isError.value = false
+
+  try {
+    await $fetch('/api/email-collection', {
+      method: 'POST',
+      body: { email: email.value }
+    })
+    message.value = "Thanks! We'll notify you when we launch."
+    email.value = ''
+  } catch (e) {
+    isError.value = true
+    message.value = 'Something went wrong. Please try again.'
+  } finally {
+    isSubmitting.value = false
+  }
+}
+</script>

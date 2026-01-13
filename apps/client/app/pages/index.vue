@@ -133,12 +133,14 @@
         <form @submit.prevent="submitEmail" class="mt-8 flex gap-2">
           <input v-model="email" type="email" placeholder="Enter your email" required
             class="flex-1 px-4 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
-          <Button type="submit" :disabled="isSubmitting" class="hover:px-6">
+          <Button type="submit" :disabled="isSubmitting" class="hover:px-6 size-9">
             <Icon v-if="isSubmitting" name="mdi:loading" size="20" class="animate-spin" />
-            <span v-else>Notify me</span>
+            <span v-else>
+              <Icon name="material-symbols:notifications" size="20"/>
+            </span>
           </Button>
         </form>
-        <p v-if="message" :class="isError ? 'text-destructive' : 'text-green-600'" class="mt-4 text-sm">
+        <p class="mt-4 text-sm text-primary">
           {{ message }}
         </p>
       </CardContent>

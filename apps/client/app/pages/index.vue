@@ -97,17 +97,7 @@
       <div class="flex gap-2">
         <Button class="mt-2 h-10 hover:px-6" variant="default" @click="scrollToSignup">
           <Icon name="ri:graduation-cap-fill" size="20" />
-          Dominating Econ Statistics
-        </Button>
-        <Button class="mt-2 h-10 hover:px-6" variant="default" @click="scrollToSignup">
-          <Icon name="bx:bxs-coffee-alt" size="20" />
-          Highlands Matcha sucks
-        </Button>
-      </div>
-      <div class="flex gap-2">
-        <Button class="mt-2 h-10 hover:px-6" variant="default" @click="scrollToSignup">
-          <Icon name="material-symbols:format-list-bulleted-rounded" size="20" />
-          Death by IELTS
+          Killing Econ Statistics
         </Button>
         <Button class="mt-2 h-10 hover:px-6" variant="default" @click="scrollToSignup">
           <Icon name="famicons:football-sharp" size="20" />
@@ -116,8 +106,18 @@
       </div>
       <div class="flex gap-2">
         <Button class="mt-2 h-10 hover:px-6" variant="default" @click="scrollToSignup">
+          <Icon name="material-symbols:format-list-bulleted-rounded" size="20" />
+          Death by IELTS
+        </Button>
+        <Button class="mt-2 h-10 hover:px-6" variant="default" @click="scrollToSignup">
+          <Icon name="bx:bxs-coffee-alt" size="20" />
+          Matcha sucks
+        </Button>
+      </div>
+      <div class="flex gap-2">
+        <Button class="mt-2 h-10 hover:px-6" variant="default" @click="scrollToSignup">
           <Icon name="mdi:github" size="20" />
-          Needs debugging
+          Need debugging
         </Button>
       </div>
     </div>

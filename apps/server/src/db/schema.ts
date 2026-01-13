@@ -13,5 +13,5 @@ export const users = pgTable('users', {
 export const emailCollection = pgTable('email_collection', {
   id: serial('id').primaryKey(),
   email: text('email').notNull().unique(),
-  createdAt: timestamp('created_at').defaultNow(),
+  collectedAt: timestamp('collected_at').defaultNow(),
 });

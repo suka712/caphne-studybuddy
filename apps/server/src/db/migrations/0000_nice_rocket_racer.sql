@@ -1,7 +1,7 @@
 CREATE TABLE "email_collection" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"email" text NOT NULL,
-	"created_at" timestamp DEFAULT now(),
+	"collected_at" timestamp DEFAULT now(),
 	CONSTRAINT "email_collection_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint

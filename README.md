@@ -1,34 +1,29 @@
 # Caphne StudyBuddy
-Caphne is buddy finder app. **Basically Tinder for friends who love to study, build and grow together**. See Caphne live: [caphne.co](https://caphne.co) - Pronounced Caff-nee
+✨ Caphne is buddy finder app. **Basically Tinder for friends who love to study, build and grow together**. 
+Our application is in development stage and is open to contribution.
 
-Our application is in development stage and is open to contribution. Contact khiem@sukaseven.com or make a pull request to be added as contributor.
+🔗 See Caphne live: [caphne.co](https://caphne.co) - (Pronounced `Caff-nee`)
 
 ## Development - Open to contribution
-Our backend is in `NodeJS` (Express), frontend in `Nuxt`.
+Our backend is `NodeJS` (Express), frontend `Nuxt` (Vue), database `PostgreSQL`
 ### Requirements
 - NodeJS 24
-- pnpm 9.0 (or npm is fine)
-### Option 1: Using Turbo script
-- From the app's root directory, run 
+- pnpm 9.0+ (npm 11.0+ is fine too)
+### To run the app:
+Clone and install dependencies:
 ```bash
+git clone https://github.com/suka712/caphne-studybuddy.git
+cd caphne-studybuddy
 pnpm install
 pnpm dev # to run both client and server
 ```
 or, to run separate services
 ```bash
-pnpm dev:client
+pnpm dev:client 
 pnpm dev:server
 ```
-### Option 2: pnpm (or npm) script
-To start the `client`
-```bash
-cd apps/client
-pnpm run dev
-```
-To start the `server`
-```bash
-cd apps/server
-pnpm run dev
-```
-## Features
-For a complete list of features, contact khiem@sukaseven.com to contribute.
+### To contribute
+- Fork this repository, create a feature branch `f/super-feature` starting in `f/`
+- Then submit a pull request and you'll be added as contributor. 
+---
+📧 All feature request or questions to khiem@sukaseven.com

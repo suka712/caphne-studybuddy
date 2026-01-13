@@ -1,44 +1,17 @@
-import {
-  pgTable,
-  serial,
-  text,
-  timestamp,
-  integer,
-} from 'drizzle-orm/pg-core';
-import { relations } from 'drizzle-orm';
+import { pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
 
-/* ---------- PROFILES ---------- */
-export const profiles = pgTable('profiles', {
+/* ---------- USERS ---------- */
+export const users = pgTable('users', {
   id: serial('id').primaryKey(),
-  name: text('name').notNull(),
+  username: text('username').notNull(),
   email: text('email').notNull().unique(),
-  bio: text('bio'),
-  major: text('major'),
+  password: text('password').notNull(),
   createdAt: timestamp('created_at').defaultNow(),
 });
 
-/* ---------- INTERESTS ---------- */
-export const interests = pgTable('interests', {
+/* ---------- EMAIL COLLECTION ---------- */
+export const emailCollection = pgTable('email_collection', {
   id: serial('id').primaryKey(),
-  name: text('name').notNull(),
+  email: text('email').notNull().unique(),
+  createdAt: timestamp('created_at').defaultNow(),
 });
-
-/* ---------- PROFILE_INTERESTS ---------- */
-export const profileInterests = pgTable('profile_interests', {
-  id: serial('id').primaryKey(),
-  profileId: integer('profile_id')
-    .references(() => profiles.id)
-    .notNull(),
-  interestId: integer('interest_id')
-    .references(() => interests.id)
-    .notNull(),
-});
-
-/* ---------- RELATIONS ---------- */
-export const profilesRelations = relations(profiles, ({ many }) => ({
-  interests: many(profileInterests),
-}));
-
-export const interestsRelations = relations(interests, ({ many }) => ({
-  profiles: many(profileInterests),
-}));

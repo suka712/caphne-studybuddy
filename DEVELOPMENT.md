@@ -10,13 +10,8 @@
 - [ ] Chat
 ## Database
 - [ ] Design Postgres, migration - Rich
-  - [ ] Profile - Ten, tuoi, list anh, gioi thieu, vi tri, gioi tinh cua ban, gioi tinh dang tim, chieu cao - can nang, que quan, list so thich, list nhu cau tim kiem
-  - [ ] So thich
-  - [ ] Gioi tinh
-  - [ ] nhu cau tim kiem
-
-  Tao du lieu
-  ``npm run db:seed``
+  - [ ] Users (username, email, password)
+  - [ ] Email collection (early signups)
 
 ## Frontend
 - [ ] Connect button - user state - Khiem

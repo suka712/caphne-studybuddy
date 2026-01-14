@@ -86,15 +86,15 @@
     </div>
   </div>
   <!--------------------------------Success stories--------------------------------->
-  <div class="flex pt-80 justify-center gap-10">
-    <img src="/placeholder-4.png" class="h-80 w-80 object-cover rounded-2xl">
+  <div class="flex flex-col md:flex-row pt-40 md:pt-80 justify-center items-center gap-6 md:gap-10 px-4 md:px-0">
+    <img src="/placeholder-4.png" class="h-64 w-64 md:h-80 md:w-80 object-cover rounded-2xl">
     <div>
-      <h1 class="text-4xl font-medium leading-snug">
+      <h1 class="text-2xl md:text-4xl font-medium leading-snug">
         Start the chat over interests. <br>
         Bond over inspirations. <br>
         Continue in person.
       </h1>
-      <div class="flex gap-2">
+      <div class="flex flex-wrap gap-2">
         <Button class="mt-2 h-10 hover:px-6" variant="default" @click="scrollToSignup">
           <Icon name="ri:graduation-cap-fill" size="20" />
           Killing Econ Statistics
@@ -104,7 +104,7 @@
           Football on Friday
         </Button>
       </div>
-      <div class="flex gap-2">
+      <div class="flex flex-wrap gap-2">
         <Button class="mt-2 h-10 hover:px-6" variant="default" @click="scrollToSignup">
           <Icon name="material-symbols:format-list-bulleted-rounded" size="20" />
           Death by IELTS
@@ -114,7 +114,7 @@
           Matcha sucks
         </Button>
       </div>
-      <div class="flex gap-2">
+      <div class="flex flex-wrap gap-2">
         <Button class="mt-2 h-10 hover:px-6" variant="default" @click="scrollToSignup">
           <Icon name="mdi:github" size="20" />
           Need debugging

@@ -1,7 +1,7 @@
 <template>
   <!--------------------------------Hero Card--------------------------------->
-  <div class="flex justify-center items-center h-svh pb-50">
-    <Card class="w-xs">
+  <div class="flex justify-center items-center h-svh pb-20 md:pb-50 px-4">
+    <Card class="w-full max-w-xs">
       <CardContent>
         <h1 class="text-md font-bold">Caphne</h1>
         <p class="text-md font-extralight">Find your perfect studymate</p>

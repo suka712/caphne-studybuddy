@@ -23,18 +23,18 @@
     </Card>
   </div>
   <!--------------------------------Hero Card--------------------------------->
-  <div class="flex justify-center items-center gap-10">
-    <div class="w-md">
-      <h1 class="text-4xl font-medium leading-snug">
+  <div class="flex flex-col md:flex-row justify-center items-center gap-6 md:gap-10 px-4">
+    <div class="w-full md:w-md">
+      <h1 class="text-2xl md:text-4xl font-medium leading-snug">
         We connect friends with similar goals, motion and drive.
       </h1>
-      <p class="text-md pt-6">
+      <p class="text-md pt-4 md:pt-6">
         We want the friends you meet to feel intentional.
         We want to connect like-minded people to grow together.
       </p>
       <Button class="mt-4" @click="scrollToSignup">Connect today</Button>
     </div>
-    <img class="h-96 rounded-2xl" src="/placeholder-1.png">
+    <img class="h-64 md:h-96 rounded-2xl" src="/placeholder-1.png">
   </div>
   <!--------------------------------Date & BFF--------------------------------->
   <div class="grid grid-cols-2 gap-5 mt-80">

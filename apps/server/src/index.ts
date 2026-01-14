@@ -1,8 +1,9 @@
 import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
-import { db } from './db/index.js'
+import { db } from './db/db.js'
 import { emailCollection } from './db/schema.js'
+import authRoute from "./auth/auth.route.js";
 
 const app = express()
 const PORT = process.env.PORT
@@ -11,6 +12,9 @@ app.use(cors({
   origin: process.env.CORS_ORIGIN || 'http://localhost:3000'
 }))
 app.use(express.json())
+app.use("/api/auth/google", authRoute);
+
+
 
 app.get('/', (req, res) => {
   res.json({ message: 'Hello from Express!' })

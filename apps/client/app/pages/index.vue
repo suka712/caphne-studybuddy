@@ -34,7 +34,7 @@
       </p>
       <Button class="mt-4" @click="scrollToSignup">Connect today</Button>
     </div>
-    <img class="h-64 md:h-96 rounded-2xl" src="/placeholder-1.png">
+    <img class="w-64 h-64 md:w-auto md:h-96 object-cover rounded-2xl" src="/placeholder-1.png">
   </div>
   <!--------------------------------Date & BFF--------------------------------->
   <div class="grid grid-cols-2 gap-5 mt-80">

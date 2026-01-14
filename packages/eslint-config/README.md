@@ -1,3 +1,3 @@
-# `@turbo/eslint-config`
+# @caphne/eslint-config
 
-Collection of internal eslint configurations.
+Eslint config for caphne monorepo.

@@ -1,5 +1,5 @@
 {
-  "name": "server",
+  "name": "@caphne-studymate-finder/server",
   "version": "1.0.0",
   "type": "module",
   "scripts": {
@@ -7,7 +7,8 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "lint": "eslint"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -17,6 +18,7 @@
     "pg": "^8.16.3"
   },
   "devDependencies": {
+    "@caphne-studymate-finder/eslint-config": "workspace:^",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^22.0.0",

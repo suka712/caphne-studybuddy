@@ -1,6 +1,7 @@
 {
   "name": "caphne-studymate-finder",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",

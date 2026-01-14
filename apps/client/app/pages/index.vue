@@ -37,17 +37,17 @@
     <img class="w-64 h-64 md:w-auto md:h-96 object-cover rounded-2xl" src="/placeholder-1.png">
   </div>
   <!--------------------------------Date & BFF--------------------------------->
-  <div class="grid grid-cols-2 gap-5 mt-80">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-40 md:mt-80 px-4 md:px-0">
     <div>
-      <Card class="min-w">
+      <Card>
         <CardContent>
-          <img src="/placeholder-3.png" class="w-full h-72 object-cover rounded-xl" />
-          <h1 class="text-3xl pt-6">Find your Studydate</h1>
-          <p class="pt-6">
+          <img src="/placeholder-3.png" class="w-full h-48 md:h-72 object-cover rounded-xl" />
+          <h1 class="text-2xl md:text-3xl pt-4 md:pt-6">Find your Studydate</h1>
+          <p class="pt-4 md:pt-6">
             Whether you need help with homework or you're ready to help somebody with their homework,
             Caphne helps you connect with friends as motivated as you are over work and study.
           </p>
-          <div class="flex gap-2 mt-6">
+          <div class="flex flex-wrap gap-2 mt-4 md:mt-6">
             <Button class="mt-2 h-10 hover:px-6" variant="default" @click="scrollToSignup">
               <Icon name="ci:google" size="20" />
               Chat work & studies
@@ -61,17 +61,17 @@
       </Card>
     </div>
     <div>
-      <Card class="size-2xl">
+      <Card>
         <CardContent>
-          <img src="/placeholder-2.png" class="w-full h-72 object-cover rounded-xl" />
-          <h1 class="text-3xl pt-6">
+          <img src="/placeholder-2.png" class="w-full h-48 md:h-72 object-cover rounded-xl" />
+          <h1 class="text-2xl md:text-3xl pt-4 md:pt-6">
             Find your BFF <span class="text-sm">(Builder Friend Forever)</span>
           </h1>
-          <p class="pt-6">
+          <p class="pt-4 md:pt-6">
             You just moved to HCM City and is looking to connect with friends or expand your circle?
             Caphne BFF helps you find driven and like-minded builders to make stuff happen.
           </p>
-          <div class="flex gap-2 mt-6">
+          <div class="flex flex-wrap gap-2 mt-4 md:mt-6">
             <Button class="mt-2 h-10 hover:px-6" variant="default" @click="scrollToSignup">
               <Icon name="ci:github" size="20" />
               Geek over Code

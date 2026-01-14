@@ -11,11 +11,11 @@
           <p>Find your perfect</p>
           <p>study buddy today.</p>
         </div>
-        <Button class="mt-8 h-8" variant="default" @click="scrollToSignup">
+        <Button class="mt-8 h-8 hover:px-6" variant="default" @click="scrollToSignup">
           <Icon name="ci:google" size="20" />
           Continue with Google
         </Button>
-        <Button class="mt-2 h-8" variant="default" @click="scrollToSignup">
+        <Button class="mt-2 h-8 hover:px-6" variant="default" @click="scrollToSignup">
           <Icon name="ci:github" size="20" />
           Continue with Github
         </Button>
@@ -32,12 +32,12 @@
         We want the friends you meet to feel intentional.
         We want to connect like-minded people to grow together.
       </p>
-      <Button class="mt-4" @click="scrollToSignup">Connect today</Button>
+      <Button class="mt-4 hover:px-6" @click="scrollToSignup">Connect today</Button>
     </div>
     <img class="w-64 h-64 md:w-auto md:h-96 object-cover rounded-2xl" src="/placeholder-1.png">
   </div>
   <!--------------------------------Date & BFF--------------------------------->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-40 md:mt-80 px-4 md:px-0">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-40 md:mt-90 px-4 md:px-0">
     <div>
       <Card>
         <CardContent>

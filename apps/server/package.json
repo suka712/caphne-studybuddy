@@ -11,17 +11,27 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.45.1",
     "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "passport": "^0.7.0",
+    "passport-github2": "^0.1.12",
+    "passport-google-oauth20": "^2.0.0",
     "pg": "^8.16.3"
   },
   "devDependencies": {
     "@caphne-studymate-finder/eslint-config": "workspace:^",
+    "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^22.0.0",
+    "@types/passport": "^1.0.17",
+    "@types/passport-github2": "^1.2.9",
+    "@types/passport-google-oauth20": "^2.0.17",
     "@types/pg": "^8.16.0",
     "drizzle-kit": "^0.31.8",
     "tsx": "^4.19.0",

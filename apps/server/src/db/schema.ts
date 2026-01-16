@@ -7,7 +7,14 @@ export const users = pgTable('users', {
   email: text('email').notNull().unique(),
   password: text('password').notNull(),
   createdAt: timestamp('created_at').defaultNow(),
+
+  // Google & GitHub OAuth
+  googleId: text('google_id').unique(),
+  githubId: text('github_id').unique(),
 });
+
+export type User = typeof users.$inferSelect
+export type NewUser = typeof users.$inferSelect
 
 /* ---------- EMAIL COLLECTION ---------- */
 export const emailCollection = pgTable('email_collection', {

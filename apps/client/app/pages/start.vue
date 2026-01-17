@@ -32,9 +32,9 @@ const onPrevious = () => {
       <h1>Your gender is...</h1>
       <div class="flex flex-col gap-2 justify-center">
         <div class="flex justify-center gap-2">
-          <Button class="hover:px-6" @click="selectedGender = 'male'">Male</Button>
-          <Button class="hover:px-6" @click="selectedGender = 'female'">Female</Button>
-          <Button variant="outline" class="hover:px-6" @click="selectedGender = 'other'">Other</Button>
+          <Button :class="`hover:px-6 ${selectedGender === 'male' && 'bg-primary/60'}`" @click="selectedGender = 'male'">Male</Button>
+          <Button :class="`hover:px-6 ${selectedGender === 'female' && 'bg-primary/60'}`" @click="selectedGender = 'female'">Female</Button>
+          <Button variant="outline" :class="`hover:px-6 ${selectedGender === 'other' && ''}`" @click="selectedGender = 'other'">Other</Button>
         </div>
       </div>
     </div>
@@ -42,9 +42,9 @@ const onPrevious = () => {
     <div v-if="currentQuestion === 2" class="flex flex-col gap-6 justify-center items-center">
       <h1>Your vibe is...</h1>
       <div class="flex justify-center gap-2">
-        <Button class="hover:px-6" @click="selectedVibe = 'antara'">Antara</Button>
-        <Button class="hover:px-6" @click="selectedVibe = 'quinx'">Quinx</Button>
-        <Button class="hover:px-6" @click="selectedVibe = 'owl'">Owl</Button>
+        <Button :class="`hover:px-6 ${selectedVibe === 'antara' && 'bg-primary/60'}`" @click="selectedVibe = 'antara'">Antara</Button>
+        <Button :class="`hover:px-6 ${selectedVibe === 'quinx' && 'bg-primary/60'}`" @click="selectedVibe = 'quinx'">Quinx</Button>
+        <Button :class="`hover:px-6 ${selectedVibe === 'owl' && 'bg-primary/60'}`" @click="selectedVibe = 'owl'">Owl</Button>
         <Button variant="outline" class="hover:px-6" @click="selectedGender = 'other'">Other</Button>
       </div>
     </div>

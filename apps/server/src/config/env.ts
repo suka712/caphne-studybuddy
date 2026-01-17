@@ -12,6 +12,7 @@ export const env = {
   port: requireEnv('PORT'),
   corsOrigin: requireEnv('CORS_ORIGIN'),
   clientUrl: requireEnv('CLIENT_URL'),
+  serverUrl: requireEnv('SERVER_URL'),
   jwtSecret: requireEnv('JWT_SECRET'),
   googleClientId: requireEnv('GOOGLE_CLIENT_ID'),
   googleClientSecret: requireEnv('GOOGLE_CLIENT_SECRET'),

@@ -2,7 +2,7 @@ import { Strategy as GitHubStrategy, Profile } from 'passport-github2'
 import { env } from '../../config/env.js'
 import { findOrCreateUser } from './google.strategy.js'
 
-const CALLBACK_URL = '/api/auth/github/callback'
+const CALLBACK_URL = `${env.serverUrl}/api/auth/github/callback`
 
 export const githubStrategy = new GitHubStrategy(
   {

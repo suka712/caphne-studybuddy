@@ -3,16 +3,7 @@
       <Card class="w-full max-w-md">
         <CardContent class="pt-6">
           <div class="flex items-center gap-4 mb-6">
-            <img
-              v-if="user?.avatarUrl"
-              :src="user.avatarUrl"
-              alt="Avatar"
-              class="w-16 h-16 rounded-full object-cover"
-            />
-            <div
-              v-else
-              class="w-16 h-16 rounded-full bg-muted flex items-center justify-center"
-            >
+            <div class="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
               <Icon name="mdi:account" size="32" />
             </div>
             <div>
@@ -23,15 +14,19 @@
   
           <div class="space-y-4">
             <div class="p-4 rounded-lg bg-muted">
-              <h2 class="font-semibold mb-2">Account Details</h2>
               <div class="text-sm space-y-1">
-                <p><span class="text-muted-foreground">User ID:</span> {{ user?.id }}</p>
                 <p><span class="text-muted-foreground">Username:</span> {{ user?.username }}</p>
                 <p><span class="text-muted-foreground">Email:</span> {{ user?.email }}</p>
               </div>
             </div>
   
-            <Button variant="outline" class="w-full" @click="handleLogout">
+            <NuxtLink to="/start">
+                <Button variant="outline" class="w-full mt-2">
+                <Icon name="ri:sparkling-2-fill" size="20" class="mr-2" />
+                Get started
+                </Button>
+            </NuxtLink>
+            <Button variant="outline" class="w-full mt-2" @click="handleLogout">
               <Icon name="mdi:logout" size="20" class="mr-2" />
               Logout
             </Button>

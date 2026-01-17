@@ -2,7 +2,6 @@ interface AuthUser {
     id: number
     username: string
     email: string
-    avatarUrl: string | null
   }
   
   const user = ref<AuthUser | null>(null)

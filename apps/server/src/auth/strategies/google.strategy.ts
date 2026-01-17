@@ -26,7 +26,6 @@ async function findOrCreateUser(profile: Profile, provider: 'google' | 'github')
   const providerId = profile.id
   const email = profile.emails?.[0]?.value
   const username = profile.displayName || email?.split('@')[0] || 'user'
-  const avatarUrl = profile.photos?.[0]?.value
 
   if (!email) {
     throw new Error('Email not provided by OAuth provider')
@@ -55,10 +54,7 @@ async function findOrCreateUser(profile: Profile, provider: 'google' | 'github')
   if (existingByEmail) {
     const [updated] = await db
       .update(users)
-      .set({
-        ...(provider === 'google' ? { googleId: providerId } : { githubId: providerId }),
-        avatarUrl: avatarUrl || existingByEmail.avatarUrl,
-      })
+      .set(provider === 'google' ? { googleId: providerId } : { githubId: providerId })
       .where(eq(users.id, existingByEmail.id))
       .returning()
     return updated
@@ -70,7 +66,6 @@ async function findOrCreateUser(profile: Profile, provider: 'google' | 'github')
       username,
       email,
       ...(provider === 'google' ? { googleId: providerId } : { githubId: providerId }),
-      avatarUrl,
     })
     .returning()
 

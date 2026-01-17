@@ -2,7 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import { passport } from './auth/passport.js'
-import { authRoutes } from './auth/auth.routes.js'
+import { authRouter } from './auth/auth.routes.js'
 import { env } from './config/env.js'
 import { db } from './db/index.js'
 import { emailCollection } from './db/schema.js'
@@ -17,7 +17,7 @@ app.use(express.json())
 app.use(cookieParser())
 app.use(passport.initialize())
 
-app.use('/api/auth', authRoutes)
+app.use('/api/auth', authRouter)
 
 app.get('/', (req, res) => {
   res.json({ message: 'Hello from Express!' })

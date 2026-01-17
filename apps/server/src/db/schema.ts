@@ -8,8 +8,6 @@ export const users = pgTable('users', {
   password: text('password'),
   avatarUrl: text('avatar_url'),
   createdAt: timestamp('created_at').defaultNow(),
-
-  // Google & GitHub OAuth
   googleId: text('google_id').unique(),
   githubId: text('github_id').unique(),
 });

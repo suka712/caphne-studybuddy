@@ -7,7 +7,7 @@ export default defineNuxtConfig({
   modules: ['shadcn-nuxt', '@nuxt/icon'],
   runtimeConfig: {
     public: {
-      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:7070'
+      apiBase: process.env.NUXT_PUBLIC_API_BASE
     }
   },
   shadcn: {

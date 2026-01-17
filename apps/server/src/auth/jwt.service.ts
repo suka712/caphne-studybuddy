@@ -25,7 +25,7 @@ export function verifyToken(token: string): TokenPayload | null {
 export function setAuthCookie(res: Response, token: string): void {
     res.cookie(COOKIE_NAME, token, {
         httpOnly: true,
-        secure: env.nodeEnv === 'production',
+        secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         maxAge: COOKIE_MAX_AGE,
         path: '/',

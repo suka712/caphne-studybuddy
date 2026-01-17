@@ -4,11 +4,13 @@ import { db } from '../../db/index.js'
 import { users } from '../../db/schema.js'
 import { env } from '../../config/env.js'
 
+const CALLBACK_URL = '/api/auth/google/callback'
+
 export const googleStrategy = new GoogleStrategy(
   {
-    clientID: env.google.clientId,
-    clientSecret: env.google.clientSecret,
-    callbackURL: env.google.callbackUrl,
+    clientID: env.googleClientId,
+    clientSecret: env.googleClientSecret,
+    callbackURL: CALLBACK_URL,
   },
   async (accessToken, refreshToken, profile, done) => {
     try {

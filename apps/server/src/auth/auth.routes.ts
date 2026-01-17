@@ -5,14 +5,14 @@ import { requireAuth } from '../middleware/requireAuth.js'
 import { env } from '../config/env.js'
 import type { User } from '../db/schema.js'
 
-const router = Router()
+const authRouter = Router()
 
-router.get('/google', passport.authenticate('google', {
+authRouter.get('/google', passport.authenticate('google', {
   session: false,
   scope: ['profile', 'email'],
 }))
 
-router.get(
+authRouter.get(
   '/google/callback',
   passport.authenticate('google', { session: false, failureRedirect: env.clientUrl }),
   (req, res) => {
@@ -23,12 +23,12 @@ router.get(
   }
 )
 
-router.get('/github', passport.authenticate('github', {
+authRouter.get('/github', passport.authenticate('github', {
   session: false,
   scope: ['user:email'],
 }))
 
-router.get(
+authRouter.get(
   '/github/callback',
   passport.authenticate('github', { session: false, failureRedirect: env.clientUrl }),
   (req, res) => {
@@ -39,14 +39,14 @@ router.get(
   }
 )
 
-router.get('/me', requireAuth, (req, res) => {
+authRouter.get('/me', requireAuth, (req, res) => {
   const { password, ...safeUser } = req.user as User
   res.json({ user: safeUser })
 })
 
-router.post('/logout', (req, res) => {
+authRouter.post('/logout', (req, res) => {
   clearAuthCookie(res)
   res.json({ message: 'Logged out successfully' })
 })
 
-export { router as authRoutes }
+export { authRouter }

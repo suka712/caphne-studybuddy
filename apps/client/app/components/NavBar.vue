@@ -70,9 +70,11 @@ const mobileMenuOpen = ref(false)
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
-        <Button>
-          Start now
-        </Button>
+        <NuxtLink to="/start">
+          <Button>
+            Start now
+          </Button>
+        </NuxtLink>
       </div>
       <!-- Mobile hamburger button -->
       <div class="flex lg:hidden">

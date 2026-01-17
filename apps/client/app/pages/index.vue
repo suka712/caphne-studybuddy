@@ -11,13 +11,15 @@
           <p>Find your perfect</p>
           <p>study buddy today.</p>
         </div>
-        <Button class="mt-8 h-8 hover:px-6" variant="default" @click="scrollToSignup">
+        <NuxtLink to="/start">
+          <Button class="mt-8 h-8 hover:px-6" variant="default" @click="scrollToSignup">
+            <Icon name="ri:sparkling-2-fill" size="20" />
+            Find your match now
+          </Button>
+        </NuxtLink>
+        <Button class="mt-2 h-8 hover:px-6" variant="secondary" @click="scrollToSignup">
           <Icon name="ci:google" size="20" />
           Continue with Google
-        </Button>
-        <Button class="mt-2 h-8 hover:px-6" variant="default" @click="scrollToSignup">
-          <Icon name="ci:github" size="20" />
-          Continue with Github
         </Button>
       </CardContent>
     </Card>

@@ -17,10 +17,19 @@
             Find your match now
           </Button>
         </NuxtLink>
-        <Button class="mt-2 h-8 hover:px-6" variant="secondary" @click="scrollToSignup">
-          <Icon name="ci:google" size="20" />
-          Continue with Google
-        </Button>
+        <!-- <div class="flex items-center mt-2 gap-2">
+          <div class="text-sm">Or continue with</div>
+        </div> -->
+        <div class="flex gap-3 mt-3">
+          <Button class="h-8 hover:px-6" variant="secondary" @click="scrollToSignup">
+            <Icon name="ci:google" size="20" />
+            Google
+          </Button>
+          <Button class="h-8 hover:px-6" variant="secondary" @click="scrollToSignup">
+            <Icon name="ci:github" size="20" />
+            Github
+          </Button>
+        </div>
       </CardContent>
     </Card>
   </div>
@@ -138,7 +147,7 @@
           <Button type="submit" :disabled="isSubmitting" class="hover:px-6 size-9">
             <Icon v-if="isSubmitting" name="mdi:loading" size="20" class="animate-spin" />
             <span v-else>
-              <Icon name="material-symbols:notifications" size="20"/>
+              <Icon name="material-symbols:notifications" size="20" />
             </span>
           </Button>
         </form>

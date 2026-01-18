@@ -10,7 +10,6 @@ function requireEnv(key: string): string {
 
 export const env = {
   port: requireEnv('PORT'),
-  corsOrigin: requireEnv('CORS_ORIGIN'),
   clientUrl: requireEnv('CLIENT_URL'),
   serverUrl: requireEnv('SERVER_URL'),
   jwtSecret: requireEnv('JWT_SECRET'),

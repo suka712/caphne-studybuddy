@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from "express"
 import { eq } from "drizzle-orm"
 import { verifyToken } from "../features/auth/jwt.service.js"
 import { db } from "../db/index.js"
-import { users, User } from "../db/schema.js"
+import { users } from "../db/schema.js"
 
 declare global {
   namespace Express {

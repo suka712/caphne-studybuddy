@@ -25,13 +25,17 @@ export function verifyToken(token: string): TokenPayload | null {
 export function setAuthCookie(res: Response, token: string): void {
     res.cookie(COOKIE_NAME, token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        secure: true,
+        sameSite: 'none',
         maxAge: COOKIE_MAX_AGE,
         path: '/',
     })
 }
 
 export function clearAuthCookie(res: Response): void {
-    res.clearCookie(COOKIE_NAME, { path: '/' })
+    res.clearCookie(COOKIE_NAME, { 
+        path: '/',
+        secure: true,
+        sameSite: 'none',
+    })
 }

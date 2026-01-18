@@ -9,17 +9,9 @@ import { emailRouter } from './features/email/email.routes.js'
 
 const app = express()
 
-const allowedOrigins = env.corsOrigin.split(',').map(origin => origin.trim())
-
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true)
-    } else {
-      callback(new Error('Not allowed by CORS'))
-    }
-  },
-  credentials: true,
+  origin: env.clientUrl,
+  credentials: true
 }))
 
 app.use(express.json())

@@ -1,8 +1,8 @@
 import { Strategy as GoogleStrategy, Profile } from 'passport-google-oauth20'
 import { eq } from 'drizzle-orm'
-import { db } from '../../db/index.js'
-import { users } from '../../db/schema.js'
-import { env } from '../../config/env.js'
+import { db } from '../../../db/index.js'
+import { users } from '../../../db/schema.js'
+import { env } from '../../../config/env.js'
 
 const CALLBACK_URL = `${env.serverUrl}/api/auth/google/callback`
 

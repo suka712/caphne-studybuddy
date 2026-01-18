@@ -1,9 +1,9 @@
 import { Router } from 'express'
 import { passport } from './passport.js'
 import { signToken, setAuthCookie, clearAuthCookie } from './jwt.service.js'
-import { requireAuth } from '../middleware/requireAuth.js'
-import { env } from '../config/env.js'
-import type { User } from '../db/schema.js'
+import { requireAuth } from '../../middleware/requireAuth.js'
+import { env } from '../../config/env.js'
+import type { User } from '../../db/schema.js'
 
 const authRouter = Router()
 

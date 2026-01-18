@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { Response } from "express";
-import { env } from "../config/env.js";
+import { env } from "../../config/env.js";
 
 export interface TokenPayload {
     userId: number

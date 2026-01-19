@@ -1,20 +1,58 @@
-## Auth
-- [ ] Login Google, Github
-- [ ] Email verification
-## Endpoint
-- [ ] Email + password login - Rich
-- [ ] Donation VNPAY, Momo, VCB, Agribank - Rich
-- [ ] Create profile - Ten, tuoi, list anh, gioi thieu, vi tri, gioi tinh cua ban, gioi tinh dang tim, chieu cao - can nang, que quan, list so thich, list nhu cau tim kiem
-- [ ] Set status - Dang ranh, ban, san san noi chuyen
-- [ ] Quyet profile + filter
-- [ ] Chat
-## Database
-- [ ] Design Postgres, migration - Rich
-  - [ ] Users (username, email, password)
-  - [ ] Email collection (early signups)
+# Caphne.co Development
 
 ## Frontend
-- [ ] Connect button - user state - Khiem
-- [ ] Call to action - 
-- [ ] Navbar, Footer - Khiem
-- [ ] responsite mobile
+
+###  Foundation
+- [x] Nuxt 3 + Tailwind + Supabase setup
+- [x] Auth flow (signup, login, logout, middleware)
+- [x] Base layout
+
+### Onboarding `/start`
+- [ ] Multi-step form with progress indicator
+- [ ] Steps: basics → intents → tags (skills/interests/vibes) → learn-teach-explore → bio & photo → discoverability
+- [ ] Profile creation API + storage
+
+### Discover `/discover`
+- [ ] Profile card component
+- [ ] Swipe mechanics (left/right)
+- [ ] Match popup on mutual swipe
+- [ ] Queue API (exclude swiped, apply filters, basic scoring)
+
+### Matches `/matches`
+- [ ] Match list with last message preview
+- [ ] Unread indicator
+
+### Chat `/chat/:matchId`
+- [ ] Message thread UI
+- [ ] Send/receive messages
+- [ ] Real-time updates
+- [ ] Icebreaker prompt
+
+### Profile
+- [ ] View own profile `/profile`
+- [ ] Edit profile `/profile/edit`
+- [ ] View others `/u/:userId`
+
+### Settings `/settings`
+- [ ] Account management
+- [ ] Language toggle
+- [ ] Delete account
+
+### Browse `/browse` (P2)
+- [ ] Public profile discovery
+- [ ] Search/filter
+
+---
+
+## Backend  
+
+- All services should be implemented as needed by the frontend
+
+---
+
+## Database
+- profiles, user_intents, tags, user_tags, swipes, matches, messages and such as needed by the backend
+
+### Database seed
+- Default tags (skills, interests, vibes)
+- Test users

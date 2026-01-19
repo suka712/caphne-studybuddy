@@ -1,6 +1,6 @@
 import { Strategy as GoogleStrategy, Profile } from 'passport-google-oauth20'
 import { eq } from 'drizzle-orm'
-import { db } from '../../../db/index.js'
+import { db } from '../../../db/db.js'
 import { users } from '../../../db/schema.js'
 import { env } from '../../../config/env.js'
 

@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { db } from "../../db/index.js"
+import { db } from "../../db/db.js"
 import { emailCollection } from "../../db/schema.js"
 
 export const emailRouter = Router()

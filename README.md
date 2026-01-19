@@ -26,4 +26,4 @@ pnpm dev:server
 - Fork this repository, create a feature branch `f/super-feature` starting in `f/`
 - Then submit a pull request and you'll be added as contributor. 
 ---
-📧 All feature request or questions to khiem@sukaseven.com
+📧 All feature request or questions to khiem@sukaseven.com or anh.tranduy1156@gmail.com

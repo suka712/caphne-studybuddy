@@ -28,7 +28,65 @@ const onPrevious = () => {
 <template>
   <div class="flex justify-center items-center h-screen">
     <!-- Question 1 -->
-    <div v-if="currentQuestion === 1" class="flex flex-col gap-6 justify-center items-center">
+    <div v-if="currentQuestion === 1" class="flex flex-col gap-6 justify-start items-start">
+      <h1>Let's get you set up</h1>
+      <div class="flex flex-col gap-2 justify-start items-start">
+        <h1>What should others call you?</h1>
+        <Input placeholder="Pham" />
+      </div>
+      <div class="flex flex-col gap-2 justify-start items-start">
+        <h1>What's your major</h1>
+        <Select>
+          <SelectTrigger>
+            <SelectValue placeholder="Software engineering?" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="software-engineering">
+              Software engineering
+            </SelectItem>
+            <SelectItem value="ai-engineering">
+              AI Engineering
+            </SelectItem>
+            <SelectItem value="cyber-security">
+              Cyber security
+            </SelectItem>
+            <SelectItem value="ic-design">
+              Integrated Circuit Design
+            </SelectItem>
+            <SelectItem value="data-science">
+              Data Science
+            </SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div class="flex flex-col gap-2 justify-start items-start">
+        <h1>What year are you in?</h1>
+        <Select>
+          <SelectTrigger>
+            <SelectValue placeholder="Second year?" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="first-year">
+              First year
+            </SelectItem>
+            <SelectItem value="second-year">
+              Second year
+            </SelectItem>
+            <SelectItem value="third-year">
+              Third year
+            </SelectItem>
+            <SelectItem value="fourth-year">
+              Fourth year
+            </SelectItem>
+            <SelectItem value="alumni">
+              Alumni
+            </SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+    <!-- Question 1 -->
+    <div v-if="currentQuestion === 2" class="flex flex-col gap-6 justify-center items-center">
       <h1>Your gender is...</h1>
       <div class="flex flex-col gap-2 justify-center">
         <div class="flex justify-center gap-2">
@@ -42,7 +100,7 @@ const onPrevious = () => {
       </div>
     </div>
     <!-- Question 2 -->
-    <div v-if="currentQuestion === 2" class="flex flex-col gap-6 justify-center items-center">
+    <div v-if="currentQuestion === 3" class="flex flex-col gap-6 justify-center items-center">
       <h1>Your vibe is...</h1>
       <div class="flex justify-center gap-2">
         <Button :class="`hover:px-6 ${selectedVibe === 'antara' && 'bg-primary/60'}`"
@@ -55,7 +113,7 @@ const onPrevious = () => {
       </div>
     </div>
     <!-- Question 3 -->
-    <div v-if="currentQuestion === 3" class="flex flex-col gap-6 justify-center items-center">
+    <div v-if="currentQuestion === 4" class="flex flex-col gap-6 justify-center items-center">
       <h1>You fuck with...</h1>
       <div class="flex justify-center gap-2">
         <Button class="hover:px-6" @click="selectedPreference = 'Lesseo'">Lesseo</Button>
@@ -66,21 +124,19 @@ const onPrevious = () => {
       </div>
     </div>
     <!-- Question 4 -->
-    <div v-if="currentQuestion === 4" class="flex flex-col gap-6 justify-center items-center">
+    <div v-if="currentQuestion === 5" class="flex flex-col gap-6 justify-center items-center">
       <h1>Anything else you would like your buddies to know?</h1>
       <div class="flex justify-center gap-2">
         <Input type="text" placeholder="I like to video call and work..." class="w-md" />
       </div>
     </div>
     <!-- Question 4 -->
-    <div v>
-    </div>
-    <div v-if="currentQuestion === 5" class="flex flex-col gap-6 justify-center items-center">
+    <div v-if="currentQuestion === 6" class="flex flex-col gap-6 justify-center items-center">
       <h1>Gathering the latest matches</h1>
       <Icon name="svg-spinners:ring-resize" size="25" />
     </div>
   </div>
-  
+
   <ProgressControl :currentQuestion="currentQuestion" :totalQuestions="totalQuestions" :onNext="onNext"
     :onPrevious="onPrevious" />
 </template>

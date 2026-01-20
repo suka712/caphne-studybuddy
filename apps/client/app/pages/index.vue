@@ -36,9 +36,9 @@
             <p class="mt-8">Welcome back,</p>
             <p class="font-semibold">{{ user?.username }}!</p>
           </div>
-          <NuxtLink to="/dashboard">
+          <NuxtLink to="/profile">
             <Button class="mt-8 h-8 hover:px-6" variant="default">
-              Go to Dashboard
+              Go to Profile
             </Button>
           </NuxtLink>
         </template>

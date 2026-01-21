@@ -23,7 +23,7 @@ export const useAuth = () => {
 
   const updateProfile = async (profileData: { username: string }) => {
     try {
-      const data = await $fetch<{ user: AuthUser }>(`${apiBase}/api/profile/update`, {
+      const data = await $fetch<{ user: AuthUser }>(`${apiBase}/api/profile`, {
         method: 'PUT',
         body: profileData,
         credentials: 'include',
@@ -32,7 +32,6 @@ export const useAuth = () => {
       if (data.user) {
         user.value = data.user
       }
-
     } catch (error) {
       console.error('Failed to update profile', error)
       throw error

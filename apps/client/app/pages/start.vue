@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { DateValue } from 'reka-ui';
-import { cn } from '~/lib/utils';
+import type { DateValue } from 'reka-ui'
+import { cn } from '~/lib/utils'
 import { getLocalTimeZone, today } from '@internationalized/date'
 import { CalendarIcon } from 'lucide-vue-next'
 import { ref } from 'vue'
@@ -37,6 +37,8 @@ const onPrevious = () => {
   }
 }
 
+currentQuestion.value = 3 // DEBUGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
+
 const date = ref<DateValue>()
 const defaultPlaceholder = today(getLocalTimeZone())
 </script>
@@ -45,20 +47,30 @@ const defaultPlaceholder = today(getLocalTimeZone())
   <div class="flex justify-center items-center h-screen">
     <!-- Question 1 -->
     <div v-if="currentQuestion === 1" class="flex flex-col gap-10 justify-center items-center">
-      <div class="flex flex-col gap-2 items-center">
-        <h1>Your gender is...</h1>
+      <h1 class="text-muted-foreground flex justify-center items-center hover:text-foreground transition-all">
+        <Icon name="hugeicons:quill-write-02" size="23" class="mr-2"/>
+        Let's get you setup
+      </h1>
+      <div class="flex flex-col gap-4 items-center">
+        <h1>What's your gender?</h1>
         <div class="flex flex-col gap-2 justify-center">
           <div class="flex justify-center gap-2">
-            <Button :class="`hover:px-6 ${selectedGender === 'male' && 'bg-primary/60'}`"
-              @click="selectedGender = 'male'">Male</Button>
-            <Button :class="`hover:px-6 ${selectedGender === 'female' && 'bg-primary/60'}`"
-              @click="selectedGender = 'female'">Female</Button>
-            <Button variant="outline" :class="`hover:px-6 ${selectedGender === 'other' && ''}`"
-              @click="selectedGender = 'other'">Other</Button>
+            <Button :class="`size-20 ${selectedGender === 'male' && 'bg-primary/60'}`"
+              @click="selectedGender = 'male'">
+              <Icon name="streamline-pixel:interface-essential-profile-male" size="40"/>
+            </Button>
+            <Button :class="`size-20 {selectedGender === 'female' && 'bg-primary/60'}`"
+              @click="selectedGender = 'female'">
+              <Icon name="streamline-pixel:interface-essential-profile-female" size="40"/>
+            </Button>
+            <Button variant="outline" :class="`size-20 ${selectedGender === 'other' && ''}`"
+              @click="selectedGender = 'other'">
+              <Icon name="pixel:face-thinking-solid" size="40"/>
+            </Button>
           </div>
         </div>
       </div>
-      <div class="flex flex-col gap-2 items-center">
+      <div class="flex flex-col gap-4 items-center">
         <h1>When were you born?</h1>
         <Popover>
           <PopoverTrigger as-child>
@@ -72,14 +84,17 @@ const defaultPlaceholder = today(getLocalTimeZone())
           </PopoverTrigger>
           <PopoverContent class="w-auto p-0">
             <Calendar v-model="date" :initial-focus="true" :default-placeholder="defaultPlaceholder"
-              layout="month-and-year" />
+            layout="month-and-year" />
           </PopoverContent>
         </Popover>
       </div>
     </div>
     <!-- Question 2 -->
-    <div v-if="currentQuestion === 2" class="flex flex-col gap-6 justify-start items-start">
-      <h1>Let's get you set up</h1>
+    <div v-if="currentQuestion === 2" class="flex flex-col gap-10 justify-start items-start">
+      <h1 class="text-muted-foreground flex justify-center items-center hover:text-foreground transition-all">
+        <Icon name="hugeicons:quill-write-02" size="23" class="mr-2"/>
+        Some more basic info
+      </h1>
       <div class="flex flex-col gap-2 justify-start items-start">
         <h1>What should others call you?</h1>
         <Input placeholder="Pham" />
@@ -136,16 +151,29 @@ const defaultPlaceholder = today(getLocalTimeZone())
       </div>
     </div>
     <!-- Question 3 -->
-    <div v-if="currentQuestion === 3" class="flex flex-col gap-6 justify-center items-center">
-      <h1>Your vibe is...</h1>
-      <div class="flex justify-center gap-2">
-        <Button :class="`hover:px-6 ${selectedVibe === 'antara' && 'bg-primary/60'}`"
-          @click="selectedVibe = 'antara'">Antara</Button>
-        <Button :class="`hover:px-6 ${selectedVibe === 'quinx' && 'bg-primary/60'}`"
-          @click="selectedVibe = 'quinx'">Quinx</Button>
-        <Button :class="`hover:px-6 ${selectedVibe === 'owl' && 'bg-primary/60'}`"
-          @click="selectedVibe = 'owl'">Owl</Button>
-        <Button variant="outline" class="hover:px-6" @click="selectedGender = 'other'">Other</Button>
+    <div v-if="currentQuestion === 3" class="flex flex-col gap-10 justify-center items-center">
+      <h1 class="text-muted-foreground flex justify-center items-center hover:text-foreground transition-all">
+        <Icon name="streamline-pixel:interface-essential-question-help-square" size="23" class="mr-2"/>
+        What brings you here?
+      </h1>
+      <div class="flex flex-col gap-2">
+        <div class="flex justify-center gap-2">
+          <Button :class="`hover:px-6 ${selectedVibe === 'antara' && 'bg-primary/60'}`"
+            @click="selectedVibe = 'antara'">Find study buddy</Button>
+          <Button :class="`hover:px-6 ${selectedVibe === 'quinx' && 'bg-primary/60'}`"
+            @click="selectedVibe = 'quinx'">Find project teammate</Button>
+          <Button :class="`hover:px-6 ${selectedVibe === 'owl' && 'bg-primary/60'}`"
+            @click="selectedVibe = 'owl'">Learn new stuff</Button>
+        </div>
+        <div class="flex justify-center gap-2">
+          <Button :class="`hover:px-6 ${selectedVibe === 'antara' && 'bg-primary/60'}`"
+            @click="selectedVibe = 'antara'">Find sports buddy</Button>
+          <Button :class="`hover:px-6 ${selectedVibe === 'quinx' && 'bg-primary/60'}`"
+            @click="selectedVibe = 'quinx'">Share skills</Button>
+          <Button :class="`hover:px-6 ${selectedVibe === 'owl' && 'bg-primary/60'}`"
+            @click="selectedVibe = 'owl'">Hangout</Button>
+          <Button variant="outline" class="hover:px-6" @click="selectedGender = 'other'">Meet new people</Button>
+        </div>
       </div>
     </div>
     <!-- Question 4 -->

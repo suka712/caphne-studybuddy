@@ -30,7 +30,7 @@ export function useAuth() {
       })
 
       if (data.user) {
-        user.value = { ...user.value, ...data.user }
+        user.value = data.user
       }
 
       return data

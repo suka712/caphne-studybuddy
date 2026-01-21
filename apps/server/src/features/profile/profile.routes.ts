@@ -37,7 +37,7 @@ profileRouter.put('/update', requireAuth, async (req, res) => {
             return res.status(404).json({ message: 'User not found' })
         }
 
-        const { password, ...safeUser } = updatedUser[0]
+        const { password, createdAt, googleId, githubId, ...safeUser } = updatedUser[0]
         res.json({ user: safeUser })
     } catch (error) {
         console.error('Profile updated error:', error)

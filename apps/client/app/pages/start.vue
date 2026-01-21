@@ -44,34 +44,38 @@ const defaultPlaceholder = today(getLocalTimeZone())
 <template>
   <div class="flex justify-center items-center h-screen">
     <!-- Question 1 -->
-    <div v-if="currentQuestion === 1" class="flex flex-col gap-6 justify-center items-center">
-      <h1>Your gender is...</h1>
-      <div class="flex flex-col gap-2 justify-center">
-        <div class="flex justify-center gap-2">
-          <Button :class="`hover:px-6 ${selectedGender === 'male' && 'bg-primary/60'}`"
-            @click="selectedGender = 'male'">Male</Button>
-          <Button :class="`hover:px-6 ${selectedGender === 'female' && 'bg-primary/60'}`"
-            @click="selectedGender = 'female'">Female</Button>
-          <Button variant="outline" :class="`hover:px-6 ${selectedGender === 'other' && ''}`"
-            @click="selectedGender = 'other'">Other</Button>
+    <div v-if="currentQuestion === 1" class="flex flex-col gap-10 justify-center items-center">
+      <div class="flex flex-col gap-2 items-center">
+        <h1>Your gender is...</h1>
+        <div class="flex flex-col gap-2 justify-center">
+          <div class="flex justify-center gap-2">
+            <Button :class="`hover:px-6 ${selectedGender === 'male' && 'bg-primary/60'}`"
+              @click="selectedGender = 'male'">Male</Button>
+            <Button :class="`hover:px-6 ${selectedGender === 'female' && 'bg-primary/60'}`"
+              @click="selectedGender = 'female'">Female</Button>
+            <Button variant="outline" :class="`hover:px-6 ${selectedGender === 'other' && ''}`"
+              @click="selectedGender = 'other'">Other</Button>
+          </div>
         </div>
       </div>
-      <h1>When were you born?</h1>
-      <Popover>
-        <PopoverTrigger as-child>
-          <Button variant="outline" :class="cn(
-            'w-[280px] justify-start text-left font-normal',
-            !date && 'text-muted-foreground',
-          )">
-            <CalendarIcon class="mr-2 h-4 w-4" />
-            {{ date ? date.toString() : "Pick a date" }}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent class="w-auto p-0">
-          <Calendar v-model="date" :initial-focus="true" :default-placeholder="defaultPlaceholder"
-            layout="month-and-year" />
-        </PopoverContent>
-      </Popover>
+      <div class="flex flex-col gap-2 items-center">
+        <h1>When were you born?</h1>
+        <Popover>
+          <PopoverTrigger as-child>
+            <Button variant="outline" :class="cn(
+              'w-70 justify-start text-left font-normal',
+              !date && 'text-muted-foreground',
+            )">
+              <CalendarIcon class="mr-2 h-4 w-4" />
+              {{ date ? date.toString() : "Pick a date" }}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent class="w-auto p-0">
+            <Calendar v-model="date" :initial-focus="true" :default-placeholder="defaultPlaceholder"
+              layout="month-and-year" />
+          </PopoverContent>
+        </Popover>
+      </div>
     </div>
     <!-- Question 2 -->
     <div v-if="currentQuestion === 2" class="flex flex-col gap-6 justify-start items-start">

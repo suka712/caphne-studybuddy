@@ -53,7 +53,7 @@
             </Button>
           </NuxtLink>
 
-          <Button variant="ghost" class="w-full text-muted-foreground hover:text-foreground mt-3" @click="handleLogout">
+          <Button variant="outline" class="w-full text-muted-foreground hover:text-foreground mt-3" @click="handleLogout">
             <Icon name="mdi:logout" size="16" class="mr-2" />
             <span class="text-sm">Logout</span>
           </Button>

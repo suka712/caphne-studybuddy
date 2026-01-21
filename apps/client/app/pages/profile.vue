@@ -89,7 +89,7 @@ const startEditingUsername = () => {
 const saveUsername = async () => {
   const trimmedUsername = editingUsername.value.trim()
 
-  if (!trimmedUsername || trimmedUsername.length < 3 || trimmedUsername.length > 30) {
+  if (!trimmedUsername || trimmedUsername.length < 3 || trimmedUsername.length > 72) {
     console.error('Invalid username')
     return
   }

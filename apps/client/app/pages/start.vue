@@ -48,7 +48,7 @@ const defaultPlaceholder = today(getLocalTimeZone())
     <!-- Question 1 -->
     <div v-if="currentQuestion === 1" class="flex flex-col gap-10 justify-center items-center">
       <h1 class="text-muted-foreground flex justify-center items-center hover:text-foreground transition-all">
-        <Icon name="hugeicons:quill-write-02" size="23" class="mr-2"/>
+        <Icon name="streamline-pixel:food-drink-desert-cake" size="23" class="mr-2"/>
         Let's get you setup
       </h1>
       <div class="flex flex-col gap-4 items-center">
@@ -151,7 +151,7 @@ const defaultPlaceholder = today(getLocalTimeZone())
       </div>
     </div>
     <!-- Question 3 -->
-    <div v-if="currentQuestion === 3" class="flex flex-col gap-10 justify-center items-center">
+    <div v-if="currentQuestion === 3" class="flex flex-col gap-6 justify-center items-center">
       <h1 class="text-muted-foreground flex justify-center items-center hover:text-foreground transition-all">
         <Icon name="streamline-pixel:interface-essential-question-help-square" size="23" class="mr-2"/>
         What brings you here?

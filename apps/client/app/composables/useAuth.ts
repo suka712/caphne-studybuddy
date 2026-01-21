@@ -6,7 +6,7 @@ interface AuthUser {
 
 const user = ref<AuthUser | null>(null)
 
-export function useAuth() {
+export const useAuth = () => {
   const { public: { apiBase } } = useRuntimeConfig()
   const isAuthenticated = computed(() => !!user.value)
 
@@ -33,7 +33,6 @@ export function useAuth() {
         user.value = data.user
       }
 
-      return data
     } catch (error) {
       console.error('Failed to update profile', error)
       throw error

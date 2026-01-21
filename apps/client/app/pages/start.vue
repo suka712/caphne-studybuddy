@@ -10,7 +10,7 @@ const selectedGender = ref<Gender>();
 const selectedVibe = ref<Vibe>();
 const selectedPreference = ref<Preference>();
 
-const totalQuestions = 4;
+const totalQuestions = 5;
 
 const onNext = () => {
   if (currentQuestion.value <= totalQuestions) {
@@ -28,7 +28,21 @@ const onPrevious = () => {
 <template>
   <div class="flex justify-center items-center h-screen">
     <!-- Question 1 -->
-    <div v-if="currentQuestion === 1" class="flex flex-col gap-6 justify-start items-start">
+    <div v-if="currentQuestion === 1" class="flex flex-col gap-6 justify-center items-center">
+      <h1>Your gender is...</h1>
+      <div class="flex flex-col gap-2 justify-center">
+        <div class="flex justify-center gap-2">
+          <Button :class="`hover:px-6 ${selectedGender === 'male' && 'bg-primary/60'}`"
+            @click="selectedGender = 'male'">Male</Button>
+          <Button :class="`hover:px-6 ${selectedGender === 'female' && 'bg-primary/60'}`"
+            @click="selectedGender = 'female'">Female</Button>
+          <Button variant="outline" :class="`hover:px-6 ${selectedGender === 'other' && ''}`"
+            @click="selectedGender = 'other'">Other</Button>
+        </div>
+      </div>
+    </div>
+    <!-- Question 2 -->
+    <div v-if="currentQuestion === 2" class="flex flex-col gap-6 justify-start items-start">
       <h1>Let's get you set up</h1>
       <div class="flex flex-col gap-2 justify-start items-start">
         <h1>What should others call you?</h1>
@@ -85,21 +99,7 @@ const onPrevious = () => {
         </Select>
       </div>
     </div>
-    <!-- Question 1 -->
-    <div v-if="currentQuestion === 2" class="flex flex-col gap-6 justify-center items-center">
-      <h1>Your gender is...</h1>
-      <div class="flex flex-col gap-2 justify-center">
-        <div class="flex justify-center gap-2">
-          <Button :class="`hover:px-6 ${selectedGender === 'male' && 'bg-primary/60'}`"
-            @click="selectedGender = 'male'">Male</Button>
-          <Button :class="`hover:px-6 ${selectedGender === 'female' && 'bg-primary/60'}`"
-            @click="selectedGender = 'female'">Female</Button>
-          <Button variant="outline" :class="`hover:px-6 ${selectedGender === 'other' && ''}`"
-            @click="selectedGender = 'other'">Other</Button>
-        </div>
-      </div>
-    </div>
-    <!-- Question 2 -->
+    <!-- Question 3 -->
     <div v-if="currentQuestion === 3" class="flex flex-col gap-6 justify-center items-center">
       <h1>Your vibe is...</h1>
       <div class="flex justify-center gap-2">
@@ -112,7 +112,7 @@ const onPrevious = () => {
         <Button variant="outline" class="hover:px-6" @click="selectedGender = 'other'">Other</Button>
       </div>
     </div>
-    <!-- Question 3 -->
+    <!-- Question 4 -->
     <div v-if="currentQuestion === 4" class="flex flex-col gap-6 justify-center items-center">
       <h1>You fuck with...</h1>
       <div class="flex justify-center gap-2">
@@ -123,14 +123,14 @@ const onPrevious = () => {
         <Button variant="outline" class="hover:px-6" @click="selectedGender = 'other'">Other</Button>
       </div>
     </div>
-    <!-- Question 4 -->
+    <!-- Question 5 -->
     <div v-if="currentQuestion === 5" class="flex flex-col gap-6 justify-center items-center">
-      <h1>Anything else you would like your buddies to know?</h1>
+      <h1>A short bio to introduce yourself?</h1>
       <div class="flex justify-center gap-2">
-        <Input type="text" placeholder="I like to video call and work..." class="w-md" />
+        <Input type="text" placeholder="I like to video call and work..." class="w-sm h-15" />
       </div>
     </div>
-    <!-- Question 4 -->
+    <!-- Question 6 -->
     <div v-if="currentQuestion === 6" class="flex flex-col gap-6 justify-center items-center">
       <h1>Gathering the latest matches</h1>
       <Icon name="svg-spinners:ring-resize" size="25" />

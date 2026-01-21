@@ -44,3 +44,5 @@ Match-finding machanism number 2 - social media style
 - [ ] Account management
 - [ ] Language toggle
 - [ ] Delete account
+
+![alt text](userflow.png)

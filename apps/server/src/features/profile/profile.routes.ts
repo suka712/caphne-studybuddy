@@ -7,7 +7,7 @@ import type { User } from "../../db/schema.js";
 
 const profileRouter = Router()
 
-profileRouter.post('/update', requireAuth, async (req, res) => {
+profileRouter.put('/update', requireAuth, async (req, res) => {
     try {
         const authUser = req.user as User
         const { username } = req.body
@@ -33,7 +33,7 @@ profileRouter.post('/update', requireAuth, async (req, res) => {
             .where(eq(users.id, authUser.id))
             .returning()
 
-        if (updatedUser.length) {
+        if (!updatedUser.length) {
             return res.status(404).json({ message: 'User not found' })
         }
 

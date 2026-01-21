@@ -24,13 +24,13 @@ export function useAuth() {
   async function updateProfile(profileData: {username: string}) {
     try {
       const data = await $fetch<{ user: AuthUser }>(`${apiBase}/api/profile/update`, {
-        method: 'POST',
+        method: 'PUT',
         body: profileData,
         credentials: 'include',
       })
 
       if (data.user) {
-        user.value = data.user
+        user.value = { ...user.value, ...data.user}
       }
 
       return data

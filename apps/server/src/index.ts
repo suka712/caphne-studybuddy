@@ -6,6 +6,7 @@ import { authRouter } from './features/auth/auth.routes.js'
 import { env } from './config/env.js'
 import { healthRouter } from './features/health/health.routes.js'
 import { emailRouter } from './features/email/email.routes.js'
+import { profileRouter } from './features/profile/profile.routes.js'
 
 const app = express()
 
@@ -21,6 +22,7 @@ app.use(passport.initialize())
 app.use('/health', healthRouter)
 app.use('/api/auth', authRouter)
 app.use('/api/email-collection', emailRouter)
+app.use('/api/profile', profileRouter)
 
 app.listen(env.port, () => {
   console.log(`Server running on port ${env.port}`)

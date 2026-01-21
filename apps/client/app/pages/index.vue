@@ -173,7 +173,7 @@
 
 <script setup lang="ts">
 const { public: { apiBase } } = useRuntimeConfig()
-const { loginWithGoogle, loginWithGitHub, user, isAuthenticated } = useAuth()
+const { loginWithGoogle, loginWithGitHub, authUser: user, isAuthenticated } = useAuth()
 
 function scrollToSignup() {
   document.getElementById('signup')?.scrollIntoView({ behavior: 'smooth' })

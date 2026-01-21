@@ -71,7 +71,7 @@ definePageMeta({
   middleware: 'auth',
 })
 
-const { user, logout, updateProfile } = useAuth()
+const { authUser: user, logout, updateProfile } = useAuth()
 
 const isEditingUsername = ref(false)
 const editingUsername = ref('')

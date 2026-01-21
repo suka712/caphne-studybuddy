@@ -60,7 +60,7 @@ export function useAuth() {
   }
 
   return {
-    user: readonly(user),
+    authUser: readonly(user),
     isAuthenticated,
     fetchUser,
     updateProfile,

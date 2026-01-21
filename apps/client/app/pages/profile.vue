@@ -77,7 +77,7 @@ const isEditingUsername = ref(false)
 const editingUsername = ref('')
 const usernameInputRef = ref<HTMLInputElement | null>(null)
 
-function startEditingUsername() {
+const startEditingUsername = () => {
   editingUsername.value = user.value?.username || ''
   isEditingUsername.value = true
 
@@ -86,7 +86,7 @@ function startEditingUsername() {
   })
 }
 
-async function saveUsername() {
+const saveUsername = async () => {
   const trimmedUsername = editingUsername.value.trim()
 
   if (!trimmedUsername || trimmedUsername.length < 3 || trimmedUsername.length > 30) {
@@ -103,12 +103,12 @@ async function saveUsername() {
   }
 }
 
-function cancelEditingUsername() {
+const cancelEditingUsername = () => {
   isEditingUsername.value = false
   editingUsername.value = ''
 }
 
-async function handleLogout() {
+const handleLogout = async () => {
   await logout()
   navigateTo('/')
 }

@@ -10,7 +10,7 @@ export function useAuth() {
   const { public: { apiBase } } = useRuntimeConfig()
   const isAuthenticated = computed(() => !!user.value)
 
-  async function fetchUser() {
+  const fetchUser = async () => {
     try {
       const data = await $fetch<{ user: AuthUser }>(`${apiBase}/api/auth/me`, {
         credentials: 'include',
@@ -21,7 +21,7 @@ export function useAuth() {
     }
   }
 
-  async function updateProfile(profileData: {username: string}) {
+  const updateProfile = async (profileData: { username: string }) => {
     try {
       const data = await $fetch<{ user: AuthUser }>(`${apiBase}/api/profile/update`, {
         method: 'PUT',
@@ -30,7 +30,7 @@ export function useAuth() {
       })
 
       if (data.user) {
-        user.value = { ...user.value, ...data.user}
+        user.value = { ...user.value, ...data.user }
       }
 
       return data
@@ -40,7 +40,7 @@ export function useAuth() {
     }
   }
 
-  async function logout() {
+  const logout = async () => {
     try {
       await $fetch(`${apiBase}/api/auth/logout`, {
         method: 'POST',
@@ -51,11 +51,11 @@ export function useAuth() {
     }
   }
 
-  function loginWithGoogle() {
+  const loginWithGoogle = () => {
     window.location.href = `${apiBase}/api/auth/google`
   }
 
-  function loginWithGitHub() {
+  const loginWithGitHub = () => {
     window.location.href = `${apiBase}/api/auth/github`
   }
 

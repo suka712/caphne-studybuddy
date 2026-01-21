@@ -7,7 +7,7 @@ import type { User } from "../../db/schema.js";
 
 const profileRouter = Router()
 
-profileRouter.put('/update', requireAuth, async (req, res) => {
+profileRouter.put('/', requireAuth, async (req, res) => {
     try {
         const authUser = req.user as User
         const { username } = req.body

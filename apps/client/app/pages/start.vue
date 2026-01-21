@@ -55,15 +55,15 @@ const defaultPlaceholder = today(getLocalTimeZone())
         <h1>What's your gender?</h1>
         <div class="flex flex-col gap-2 justify-center">
           <div class="flex justify-center gap-2">
-            <Button :class="`size-20 ${selectedGender === 'male' && 'bg-primary/60'}`"
+            <Button :class="`size-17 ${selectedGender === 'male' && 'bg-primary/60'}`"
               @click="selectedGender = 'male'">
               <Icon name="streamline-pixel:interface-essential-profile-male" size="40"/>
             </Button>
-            <Button :class="`size-20 {selectedGender === 'female' && 'bg-primary/60'}`"
+            <Button :class="`size-17 {selectedGender === 'female' && 'bg-primary/60'}`"
               @click="selectedGender = 'female'">
               <Icon name="streamline-pixel:interface-essential-profile-female" size="40"/>
             </Button>
-            <Button variant="outline" :class="`size-20 ${selectedGender === 'other' && ''}`"
+            <Button variant="outline" :class="`size-17 ${selectedGender === 'other' && ''}`"
               @click="selectedGender = 'other'">
               <Icon name="pixel:face-thinking-solid" size="40"/>
             </Button>
@@ -75,11 +75,11 @@ const defaultPlaceholder = today(getLocalTimeZone())
         <Popover>
           <PopoverTrigger as-child>
             <Button variant="outline" :class="cn(
-              'w-70 justify-start text-left font-normal',
+              'w-56 justify-start text-left font-normal',
               !date && 'text-muted-foreground',
             )">
               <CalendarIcon class="mr-2 h-4 w-4" />
-              {{ date ? date.toString() : "Pick a date" }}
+              {{ date ? date.toString() : "dd/mm/yyyy" }}
             </Button>
           </PopoverTrigger>
           <PopoverContent class="w-auto p-0">
@@ -92,7 +92,7 @@ const defaultPlaceholder = today(getLocalTimeZone())
     <!-- Question 2 -->
     <div v-if="currentQuestion === 2" class="flex flex-col gap-10 justify-start items-start">
       <h1 class="text-muted-foreground flex justify-center items-center hover:text-foreground transition-all">
-        <Icon name="hugeicons:quill-write-02" size="23" class="mr-2"/>
+        <Icon name="streamline-pixel:interface-essential-information-circle-1" size="23" class="mr-2"/>
         Some more basic info
       </h1>
       <div class="flex flex-col gap-2 justify-start items-start">
@@ -145,6 +145,9 @@ const defaultPlaceholder = today(getLocalTimeZone())
             </SelectItem>
             <SelectItem value="alumni">
               Alumni
+            </SelectItem>
+            <SelectItem value="alumni">
+              Other
             </SelectItem>
           </SelectContent>
         </Select>

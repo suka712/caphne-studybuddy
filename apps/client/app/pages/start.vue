@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { DateValue } from 'reka-ui'
 import { cn } from '~/lib/utils'
-import { getLocalTimeZone, today } from '@internationalized/date'
+import { DateFormatter, getLocalTimeZone, today } from '@internationalized/date'
 import { CalendarIcon } from 'lucide-vue-next'
 import { ref } from 'vue'
 import { Button } from '@/components/ui/button'
@@ -37,10 +37,14 @@ const onPrevious = () => {
   }
 }
 
-currentQuestion.value = 3 // DEBUGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
-
 const date = ref<DateValue>()
 const defaultPlaceholder = today(getLocalTimeZone())
+
+const df = new DateFormatter('en-GB', {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric',
+})
 </script>
 
 <template>
@@ -55,13 +59,13 @@ const defaultPlaceholder = today(getLocalTimeZone())
         <h1>What's your gender?</h1>
         <div class="flex flex-col gap-2 justify-center">
           <div class="flex justify-center gap-2">
-            <Button :class="`size-17 ${selectedGender === 'male' && 'bg-primary/60'}`"
+            <Button variant="outline" :class="`size-17 ${selectedGender === 'male' && 'bg-primary/60'}`"
               @click="selectedGender = 'male'">
-              <Icon name="streamline-pixel:interface-essential-profile-male" size="40"/>
+              <Icon name="streamline-pixel:user-gender-male" size="40"/>
             </Button>
-            <Button :class="`size-17 {selectedGender === 'female' && 'bg-primary/60'}`"
+            <Button variant="outline" :class="`size-17 {selectedGender === 'female' && 'bg-primary/60'}`"
               @click="selectedGender = 'female'">
-              <Icon name="streamline-pixel:interface-essential-profile-female" size="40"/>
+              <Icon name="streamline-pixel:user-gender-female" size="40"/>
             </Button>
             <Button variant="outline" :class="`size-17 ${selectedGender === 'other' && ''}`"
               @click="selectedGender = 'other'">
@@ -71,7 +75,7 @@ const defaultPlaceholder = today(getLocalTimeZone())
         </div>
       </div>
       <div class="flex flex-col gap-4 items-center">
-        <h1>When were you born?</h1>
+        <h1>What is your birthday?</h1>
         <Popover>
           <PopoverTrigger as-child>
             <Button variant="outline" :class="cn(
@@ -79,7 +83,7 @@ const defaultPlaceholder = today(getLocalTimeZone())
               !date && 'text-muted-foreground',
             )">
               <CalendarIcon class="mr-2 h-4 w-4" />
-              {{ date ? date.toString() : "dd/mm/yyyy" }}
+              {{ date ? df.format(date.toDate(getLocalTimeZone())) : "dd/mm/yyyy" }}
             </Button>
           </PopoverTrigger>
           <PopoverContent class="w-auto p-0">

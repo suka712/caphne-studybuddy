@@ -26,7 +26,7 @@
               </div>
               <div v-else class="flex gap-1">
                 <Input ref="usernameInputRef" v-model="editingUsername" type="text" placeholder="Enter new username"
-                  class="flex-1 h-full border-input rounded-md bg-background focus:border-0" @keyup.enter="saveUsername"
+                  class="flex-1 h-7 border-input rounded-md bg-background focus:border-0" @keyup.enter="saveUsername"
                   @keyup.escape="cancelEditingUsername" aria-label="Edit username" />
                 <Button variant="default" size="sm" @click="saveUsername" class="size-7 p-0" title="Save username">
                   <Icon name="mdi:check" size="16" />

@@ -5,6 +5,7 @@ interface AuthUser {
 }
 
 const user = ref<AuthUser | null>(null)
+const isCheckingAuth = ref(true)
 
 export const useAuth = () => {
   const { public: { apiBase } } = useRuntimeConfig()
@@ -18,7 +19,17 @@ export const useAuth = () => {
       user.value = data.user
     } catch {
       user.value = null
+    } finally {
+      isCheckingAuth.value = false
     }
+  }
+
+  const loginWithGoogle = () => {
+    window.location.href = `${apiBase}/api/auth/google`
+  }
+
+  const loginWithGitHub = () => {
+    window.location.href = `${apiBase}/api/auth/github`
   }
 
   const updateProfile = async (profileData: { username: string }) => {
@@ -49,16 +60,9 @@ export const useAuth = () => {
     }
   }
 
-  const loginWithGoogle = () => {
-    window.location.href = `${apiBase}/api/auth/google`
-  }
-
-  const loginWithGitHub = () => {
-    window.location.href = `${apiBase}/api/auth/github`
-  }
-
   return {
     authUser: readonly(user),
+    isCheckingAuth,
     isAuthenticated,
     fetchUser,
     updateProfile,

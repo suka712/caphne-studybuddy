@@ -75,15 +75,10 @@ const { authUser: user, logout, updateProfile } = useAuth()
 
 const isEditingUsername = ref(false)
 const editingUsername = ref('')
-const usernameInputRef = ref<HTMLInputElement | null>(null)
 
 const startEditingUsername = () => {
   editingUsername.value = user.value?.username || ''
   isEditingUsername.value = true
-
-  nextTick(() => {
-    usernameInputRef.value?.focus()
-  })
 }
 
 const saveUsername = async () => {

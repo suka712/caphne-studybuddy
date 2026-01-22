@@ -25,9 +25,17 @@
                 </Button>
               </div>
               <div v-else class="flex gap-1">
-                <Input ref="usernameInputRef" v-model="editingUsername" type="text" placeholder="Enter new username"
-                  class="flex-1 h-full border-input rounded-md bg-background focus:border-0" @keyup.enter="saveUsername"
-                  @keyup.escape="cancelEditingUsername" aria-label="Edit username" />
+                <Input 
+                  ref="usernameInputRef" 
+                  v-model="editingUsername" 
+                  type="text" 
+                  placeholder="Enter new username"
+                  class="flex-1 h-full border-input rounded-md bg-background focus:border-0" 
+                  @keyup.enter="saveUsername"
+                  @keyup.escape="cancelEditingUsername" 
+                  aria-label="Edit username"
+                  autofocus
+                />
                 <Button variant="default" size="sm" @click="saveUsername" class="size-7 p-0" title="Save username">
                   <Icon name="mdi:check" size="16" />
                 </Button>
@@ -64,7 +72,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick } from 'vue'
+import { ref } from 'vue'
 
 definePageMeta({
   middleware: 'auth',
@@ -80,10 +88,6 @@ const usernameInputRef = ref<HTMLInputElement | null>(null)
 const startEditingUsername = () => {
   editingUsername.value = user.value?.username || ''
   isEditingUsername.value = true
-
-  nextTick(() => {
-    usernameInputRef.value?.focus()
-  })
 }
 
 const saveUsername = async () => {

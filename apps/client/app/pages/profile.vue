@@ -6,9 +6,9 @@
           <div class="size-12 rounded-xl bg-muted flex items-center justify-center">
             <Icon name="mdi:account" size="32" />
           </div>
-          <div>
-            <h1 class="text-xl font-bold">{{ editingUsername || user?.username }}</h1>
-            <p class="text-muted-foreground text-sm">{{ user?.email }}</p>
+          <div class="overflow-hidden">
+            <h1 class="text-xl font-bold">{{ editingUsername || authUser?.username }}</h1>
+            <p class="text-muted-foreground text-sm overflow-hidden">{{ authUser?.email }}</p>
           </div>
         </div>
 
@@ -19,7 +19,7 @@
                 Username
               </label>
               <div v-if="!isEditingUsername" class="flex items-center justify-between">
-                <p class="text-base">{{ user?.username }}</p>
+                <p class="text-base overflow-hidden">{{ authUser?.username }}</p>
                 <Button variant="outline" class="size-7 p-0" @click="startEditingUsername" title="Edit username">
                   <Icon name="mdi:pencil" size="18" />
                 </Button>
@@ -42,7 +42,7 @@
               <label class="text-sm text-muted-foreground/80">
                 Email
               </label>
-              <p class="text-base">{{ user?.email }}</p>
+              <p class="text-base">{{ authUser?.email }}</p>
             </div>
           </div>
 
@@ -53,7 +53,7 @@
             </Button>
           </NuxtLink>
 
-          <Button variant="outline" class="w-full text-muted-foreground hover:text-foreground mt-3" @click="handleLogout">
+          <Button variant="outline" class="w-full hover:text-foreground mt-3" @click="handleLogout">
             <Icon name="mdi:logout" size="16" class="mr-2" />
             <span class="text-sm">Logout</span>
           </Button>
@@ -64,20 +64,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick } from 'vue'
 
 definePageMeta({
   middleware: 'auth',
   layout: "internal"
 })
 
-const { authUser: user, logout, updateProfile } = useAuth()
+const { authUser, logout, updateProfile } = useAuth()
 
 const isEditingUsername = ref(false)
 const editingUsername = ref('')
 
 const startEditingUsername = () => {
-  editingUsername.value = user.value?.username || ''
+  editingUsername.value = authUser.value?.username || ''
   isEditingUsername.value = true
 }
 

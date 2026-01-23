@@ -1,3 +1,5 @@
+import { toast } from "vue-sonner"
+
 interface AuthUser {
   id: number
   username: string
@@ -44,8 +46,7 @@ export const useAuth = () => {
         user.value = data.user
       }
     } catch (error) {
-      console.error('Failed to update profile', error)
-      throw error
+      toast.error('Error updating profile')
     }
   }
 

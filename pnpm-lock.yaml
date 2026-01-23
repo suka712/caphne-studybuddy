@@ -99,6 +99,9 @@ importers:
       pg:
         specifier: ^8.16.3
         version: 8.16.3
+      typebox:
+        specifier: ^1.0.79
+        version: 1.0.79
     devDependencies:
       '@caphne-studymate-finder/eslint-config':
         specifier: workspace:^
@@ -4817,6 +4820,9 @@ packages:
 
   type-level-regexp@0.1.17:
     resolution: {integrity: sha512-wTk4DH3cxwk196uGLK/E9pE45aLfeKJacKmcEgEOA/q5dnPGNxXt0cfYdFxb57L+sEpf1oJH4Dnx/pnRcku9jg==}
+
+  typebox@1.0.79:
+    resolution: {integrity: sha512-luG4ORaG70S8mK00kCQR3Ow2xXaqzHv03/PHJJGs9Mjg1Q+0k3Kwz6Z5ORjoqSwWl3ixDUKgJajZ2vvBGs3ECA==}
 
   typescript-eslint@8.53.0:
     resolution: {integrity: sha512-xHURCQNxZ1dsWn0sdOaOfCSQG0HKeqSj9OexIxrz6ypU6wHYOdX2I3D2b8s8wFSsSOYJb+6q283cLiLlkEsBYw==}
@@ -10102,6 +10108,8 @@ snapshots:
       mime-types: 3.0.2
 
   type-level-regexp@0.1.17: {}
+
+  typebox@1.0.79: {}
 
   typescript-eslint@8.53.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3):
     dependencies:

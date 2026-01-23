@@ -59,48 +59,42 @@ const df = new DateFormatter('en-GB', {
 <template>
   <div class="flex justify-center items-center h-screen">
     <!-- Question 1 -->
-    <div v-if="currentQuestion === 1" class="flex flex-col gap-10 justify-center items-center">
+    <div v-if="currentQuestion === 1" class="flex flex-col justify-center items-center">
       <h1 class="text-muted-foreground flex justify-center items-center hover:text-foreground transition-all">
         <Icon name="streamline-pixel:food-drink-desert-cake" size="23" class="mr-2" />
         Let's get you setup
       </h1>
-      <div class="flex flex-col gap-4 items-center">
-        <h1>What's your gender?</h1>
-        <div class="flex flex-col gap-2 justify-center">
-          <div class="flex justify-center gap-2">
-            <Button variant="outline" :class="`size-17 ${selectedGender === 'male' && 'bg-primary/60'}`"
-              @click="selectedGender = 'male'">
-              <Icon name="streamline-pixel:user-gender-male" size="40" />
-            </Button>
-            <Button variant="outline" :class="`size-17 {selectedGender === 'female' && 'bg-primary/60'}`"
-              @click="selectedGender = 'female'">
-              <Icon name="streamline-pixel:user-gender-female" size="40" />
-            </Button>
-            <Button variant="outline" :class="`size-17 ${selectedGender === 'other' && ''}`"
-              @click="selectedGender = 'other'">
-              <Icon name="pixel:face-thinking-solid" size="40" />
-            </Button>
-          </div>
-        </div>
+      <h1 class="mt-10">What's your gender?</h1>
+      <div class="flex gap-2 mt-4">
+        <Button variant="outline" :class="`size-17 ${selectedGender === 'male' && 'bg-primary/60'}`"
+          @click="selectedGender = 'male'">
+          <Icon name="streamline-pixel:user-gender-male" size="40" />
+        </Button>
+        <Button variant="outline" :class="`size-17 {selectedGender === 'female' && 'bg-primary/60'}`"
+          @click="selectedGender = 'female'">
+          <Icon name="streamline-pixel:user-gender-female" size="40" />
+        </Button>
+        <Button variant="outline" :class="`size-17 ${selectedGender === 'other' && ''}`"
+          @click="selectedGender = 'other'">
+          <Icon name="pixel:face-thinking-solid" size="40" />
+        </Button>
       </div>
-      <div class="flex flex-col gap-4 items-center">
-        <h1>What is your birthday?</h1>
-        <Popover>
-          <PopoverTrigger as-child>
-            <Button variant="outline" :class="cn(
-              'w-56 justify-start text-left font-normal',
-              !date && 'text-muted-foreground',
-            )">
-              <CalendarIcon class="mr-2 h-4 w-4" />
-              {{ date ? df.format(date.toDate(getLocalTimeZone())) : "dd/MM/YYYY" }}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent class="w-auto p-0">
-            <Calendar v-model="date" :initial-focus="true" :default-placeholder="defaultPlaceholder"
-              layout="month-and-year" />
-          </PopoverContent>
-        </Popover>
-      </div>
+      <h1 class="mt-10">When is your birthday?</h1>
+      <Popover>
+        <PopoverTrigger as-child>
+          <Button variant="outline" :class="cn(
+            'w-56 justify-start text-left font-normal mt-4',
+            !date && 'text-muted-foreground',
+          )">
+            <CalendarIcon class="mr-2 h-4 w-4" />
+            {{ date ? df.format(date.toDate(getLocalTimeZone())) : "dd/MM/YYYY" }}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent class="w-auto p-0">
+          <Calendar v-model="date" :initial-focus="true" :default-placeholder="defaultPlaceholder"
+            layout="month-and-year" />
+        </PopoverContent>
+      </Popover>
     </div>
     <!-- Question 2 -->
     <div v-if="currentQuestion === 2" class="flex flex-col gap-10 justify-start items-start">

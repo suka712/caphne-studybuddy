@@ -64,6 +64,7 @@
 </template>
 
 <script setup lang="ts">
+import { toast } from 'vue-sonner'
 
 definePageMeta({
   middleware: 'auth',
@@ -84,7 +85,7 @@ const saveUsername = async () => {
   const trimmedUsername = editingUsername.value.trim()
 
   if (!trimmedUsername || trimmedUsername.length < 3 || trimmedUsername.length > 72) {
-    console.error('Invalid username')
+    toast.error('Username must be at least 3 characters')
     return
   }
 
@@ -93,7 +94,7 @@ const saveUsername = async () => {
     isEditingUsername.value = false
     editingUsername.value = ''
   } catch (error) {
-    console.error('Failed to update username:', error)
+    toast.error('Failed to update profile')
   }
 }
 

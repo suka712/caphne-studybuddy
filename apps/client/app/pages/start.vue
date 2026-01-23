@@ -97,17 +97,15 @@ const df = new DateFormatter('en-GB', {
       </Popover>
     </div>
     <!-- Question 2 -->
-    <div v-if="currentQuestion === 2" class="flex flex-col gap-10 justify-start items-start">
+    <div v-if="currentQuestion === 2">
       <h1 class="text-muted-foreground flex justify-center items-center hover:text-foreground transition-all">
         <Icon name="streamline-pixel:interface-essential-information-circle-1" size="23" class="mr-2" />
         Some more basic info
       </h1>
-      <div class="flex flex-col gap-2 justify-start items-start">
-        <h1>What should others call you?</h1>
-        <Input placeholder="Pham" />
-      </div>
-      <div class="flex flex-col gap-2 justify-start items-start">
-        <h1>What's your major</h1>
+      <h1 class="mt-10">What should others call you?</h1>
+      <Input placeholder="Pham" class="mt-2"/>
+      <h1 class="mt-7">What's your major</h1>
+      <div class="mt-2">
         <Select>
           <SelectTrigger>
             <SelectValue placeholder="Software engineering?" />
@@ -131,8 +129,8 @@ const df = new DateFormatter('en-GB', {
           </SelectContent>
         </Select>
       </div>
-      <div class="flex flex-col gap-2 justify-start items-start">
-        <h1>What year are you in?</h1>
+      <h1 class="mt-7">What year are you in?</h1>
+      <div class="mt-2">
         <Select>
           <SelectTrigger>
             <SelectValue placeholder="Second year?" />
@@ -168,19 +166,19 @@ const df = new DateFormatter('en-GB', {
       </h1>
       <div class="flex flex-col gap-2">
         <div class="flex justify-center gap-2">
-          <Button :class="`hover:px-6 ${selectedVibe === 'antara' && 'bg-primary/60'}`"
+          <Button variant="outline" :class="`hover:px-6 ${selectedVibe === 'antara' && 'bg-primary/60'}`"
             @click="selectedVibe = 'antara'">Find study buddy</Button>
-          <Button :class="`hover:px-6 ${selectedVibe === 'quinx' && 'bg-primary/60'}`"
+          <Button variant="outline" :class="`hover:px-6 ${selectedVibe === 'quinx' && 'bg-primary/60'}`"
             @click="selectedVibe = 'quinx'">Find project teammate</Button>
-          <Button :class="`hover:px-6 ${selectedVibe === 'owl' && 'bg-primary/60'}`" @click="selectedVibe = 'owl'">Learn
+          <Button variant="outline" :class="`hover:px-6 ${selectedVibe === 'owl' && 'bg-primary/60'}`" @click="selectedVibe = 'owl'">Learn
             new stuff</Button>
         </div>
         <div class="flex justify-center gap-2">
-          <Button :class="`hover:px-6 ${selectedVibe === 'antara' && 'bg-primary/60'}`"
+          <Button variant="outline" :class="`hover:px-6 ${selectedVibe === 'antara' && 'bg-primary/60'}`"
             @click="selectedVibe = 'antara'">Find sports buddy</Button>
-          <Button :class="`hover:px-6 ${selectedVibe === 'quinx' && 'bg-primary/60'}`"
+          <Button variant="outline" :class="`hover:px-6 ${selectedVibe === 'quinx' && 'bg-primary/60'}`"
             @click="selectedVibe = 'quinx'">Share skills</Button>
-          <Button :class="`hover:px-6 ${selectedVibe === 'owl' && 'bg-primary/60'}`"
+          <Button variant="outline" :class="`hover:px-6 ${selectedVibe === 'owl' && 'bg-primary/60'}`"
             @click="selectedVibe = 'owl'">Hangout</Button>
           <Button variant="outline" class="hover:px-6" @click="selectedGender = 'other'">Meet new people</Button>
         </div>
@@ -200,13 +198,13 @@ const df = new DateFormatter('en-GB', {
     <!-- Question 5 -->
     <div v-if="currentQuestion === 5" class="flex flex-col justify-center items-center">
       <h1>Upload your profile picture</h1>
-      <Card class="border border-dashed size-20">
+      <Card class="border border-dashed size-20 mt-2">
         <CardContent>
           <Icon name="mdi:account" size="32" />
         </CardContent>
       </Card>
-      <h1>A short bio to introduce yourself</h1>
-      <div class="w-sm">
+      <h1 class="mt-7">A short bio to introduce yourself</h1>
+      <div class="w-sm mt-2">
         <FieldSet>
           <FieldGroup>
             <Field>

@@ -474,7 +474,7 @@ const onPrevious = () => {
         </div>
         <Textarea
           v-model="bio"
-          placeholder="I'm into League of Legends, late night coding sessions, and finding study buddies for exam prep..."
+          placeholder="I'm into late night study sessions. LF study buddies..."
           :rows="4"
           :maxlength="bioMaxLength"
           class="resize-none"

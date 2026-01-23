@@ -94,7 +94,7 @@ const saveUsername = async () => {
     isEditingUsername.value = false
     editingUsername.value = ''
   } catch (error) {
-    toast.error('Failed to update profile')
+    toast.error('Error updating profile')
   }
 }
 

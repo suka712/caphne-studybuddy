@@ -19,7 +19,7 @@
               Find your match now
             </Button>
           </NuxtLink>
-          <div class="flex gap-3 mt-3">
+          <div class="flex gap-2 mt-2">
             <Button class="h-8 hover:px-6" variant="secondary" @click="loginWithGoogle">
               <Icon name="ci:google" size="20" />
               Google

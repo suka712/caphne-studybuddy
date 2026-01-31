@@ -41,8 +41,8 @@ definePageMeta({ layout: "internal" })
 
 type Gender = "male" | "female" | "other"
 
+const totalQuestions = 6
 const currentQuestion = ref(1)
-const totalQuestions = 7
 
 const selectedGender = ref<Gender>()
 const date = ref<DateValue>()
@@ -392,11 +392,11 @@ const onPrevious = () => {
     </div>
 
     <!---------------------------------------Screen 7--------------------------------------->
-    <div v-if="currentQuestion === 7" class="flex flex-col items-center justify-center">
+    <!-- <div v-if="currentQuestion === 7" class="flex flex-col items-center justify-center">
       <Icon name="svg-spinners:ring-resize" size="40" class="text-primary mb-6" />
       <h2 class="text-2xl font-semibold mb-2">Setting things up...</h2>
       <p class="text-muted-foreground text-center">Finding the best matches for you</p>
-    </div>
+    </div> -->
   </div>
 
   <ProgressControl :currentQuestion="currentQuestion" :totalQuestions="totalQuestions" :onNext="onNext"

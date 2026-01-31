@@ -108,12 +108,42 @@ const bioLength = computed(() => bio.value.length)
 
 const showPublicProfile = ref(false)
 
-const onNext = () => {
+const { public: { apiBase } } = useRuntimeConfig()
+
+const submitProfile = async () => {
+  try {
+    await $fetch(`${apiBase}/api/profile`, {
+      method: 'POST',
+      credentials: 'include',
+      body: {
+        displayName: displayName.value,
+        gender: selectedGender.value,
+        birthday: date.value?.toString() || null,
+        year: selectedYear.value,
+        major: selectedMajor.value,
+        bio: bio.value || null,
+        photoUrl: null,
+        isPublic: showPublicProfile.value,
+        goals: selectedGoals.value,
+        vibes: selectedVibes.value,
+        interests: selectedInterests.value,
+      }
+    })
+    navigateTo('/profile')
+  } catch (e) {
+    console.error('Failed to create profile:', e)
+    isLoading.value = false
+  }
+}
+
+const onNext = async () => {
   if (isLoading.value) {
     return
   }
   if (currentQuestion.value === totalQuestion) {
     isLoading.value = true
+    await submitProfile()
+    return
   }
   if (currentQuestion.value < totalQuestion) {
     currentQuestion.value++

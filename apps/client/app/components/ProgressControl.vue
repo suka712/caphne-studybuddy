@@ -12,8 +12,7 @@ const progress = computed(() => {
   return Math.round((props.currentQuestion / props.totalQuestions) * 100)
 })
 
-const isLastScreen = computed(() => props.currentQuestion >= props.totalQuestions)
-const isLoading = computed(() => props.currentQuestion > props.totalQuestions)
+const isLastQuestion = computed(() => props.currentQuestion >= props.totalQuestions)
 </script>
 
 <template>
@@ -39,8 +38,8 @@ const isLoading = computed(() => props.currentQuestion > props.totalQuestions)
       </div>
 
       <div class="flex-1 flex justify-end">
-        <Button :variant="isLastScreen ? 'default' : 'ghost'" @click="onNext" class="gap-2">
-          {{ isLastScreen ? 'Finish' : 'Next' }}
+        <Button :variant="isLastQuestion ? 'default' : 'ghost'" @click="onNext" class="gap-2">
+          {{ isLastQuestion ? 'Finish' : 'Next' }}
           <Icon name="material-symbols:arrow-forward-ios-rounded" size="16" />
         </Button>
       </div>

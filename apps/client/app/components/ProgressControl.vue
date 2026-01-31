@@ -34,7 +34,7 @@ const isLastQuestion = computed(() => props.currentQuestion === props.totalQuest
 
       <div class="flex-1 flex justify-center">
         <span class="text-sm text-muted-foreground">
-          {{ currentQuestion }} of {{ totalQuestions}}
+          {{ currentQuestion }} of {{ totalQuestions }}
         </span>
       </div>
 

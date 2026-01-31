@@ -35,6 +35,7 @@ import {
   Card,
   CardContent,
 } from '@/components/ui/card'
+import { goalOptions, interestCategories, majorOptions, vibeOptions, yearOptions } from '~/data/startOptions'
 
 definePageMeta({ layout: "internal" })
 
@@ -56,55 +57,8 @@ const displayName = ref('')
 const selectedYear = ref('')
 const selectedMajor = ref('')
 
-const majorOptions = [
-  { group: 'Computer Science', items: [
-    { value: 'software-engineering', label: 'Software Engineering' },
-    { value: 'ai-engineering', label: 'AI Engineering' },
-    { value: 'cyber-security', label: 'Cyber Security' },
-    { value: 'data-science', label: 'Data Science' },
-  ]},
-  { group: 'Business', items: [
-    { value: 'business-analytics', label: 'Business Analytics' },
-    { value: 'marketing', label: 'Marketing' },
-    { value: 'finance', label: 'Finance' },
-  ]},
-  { group: 'Medicine', items: [
-    { value: 'pharmacy', label: 'Pharmacy' },
-    { value: 'medical-tech', label: 'Medical Technology' },
-  ]},
-  { group: 'Law', items: [
-    { value: 'law', label: 'Law' },
-    { value: 'political-science', label: 'Political Science' },
-  ]},
-  { group: 'Other', items: [
-    { value: 'other', label: 'Other' },
-  ]},
-]
-
-const yearOptions = [
-  { value: 'year-1', label: 'Year 1' },
-  { value: 'year-2', label: 'Year 2' },
-  { value: 'year-3', label: 'Year 3' },
-  { value: 'year-4', label: 'Year 4' },
-  { value: 'alumni', label: 'Alumni' },
-  { value: 'other', label: 'Other' },
-]
-
 const selectedGoals = ref<string[]>([])
 const selectedVibes = ref<string[]>([])
-
-const goalOptions = [
-  { id: 'study-buddy', label: 'Find study buddy', icon: 'streamline-pixel:education-graduation-cap' },
-  { id: 'project-teammate', label: 'Project teammate', icon: 'streamline-pixel:user-profile-focus' },
-  { id: 'learn-new', label: 'Learn something new', icon: 'streamline-pixel:bookmarks' },
-  { id: 'sports-buddy', label: 'Sports/gym buddy', icon: 'streamline-pixel:sport-fitness-dumbbell-weight-lift' },
-  { id: 'meet-people', label: 'Meet new people', icon: 'streamline-pixel:user-profile-focus' },
-  { id: 'share-skills', label: 'Share skills/mentor', icon: 'streamline-pixel:interface-essential-star-2' },
-]
-
-const vibeOptions = [
-  'Introvert', 'Extrovert', 'Night owl', 'Early bird', 'Chill', 'Grinder'
-]
 
 const toggleGoal = (goalId: string) => {
   if (selectedGoals.value.includes(goalId)) {
@@ -124,46 +78,6 @@ const toggleVibe = (vibe: string) => {
 
 const selectedInterests = ref<string[]>([])
 const customTag = ref('')
-
-const interestCategories = [
-  {
-    id: 'academic',
-    label: 'Academic',
-    icon: 'streamline-pixel:education-graduation-cap',
-    options: ['Study groups', 'Exam prep', 'Research', 'Thesis/Capstone', 'Tutoring']
-  },
-  {
-    id: 'tech',
-    label: 'Tech',
-    icon: 'streamline-pixel:computer-desktop',
-    options: ['Programming', 'Web Dev', 'Mobile Dev', 'Data/AI', 'Design/UI', 'Security/CTF', 'DevOps']
-  },
-  {
-    id: 'business',
-    label: 'Business',
-    icon: 'streamline-pixel:money-graph-arrow-increase',
-    options: ['Startups', 'Marketing', 'Case competitions', 'Networking', 'Finance']
-  },
-  {
-    id: 'creative',
-    label: 'Creative',
-    icon: 'streamline-pixel:interface-essential-star-2',
-    options: ['Music', 'Art', 'Content creation', 'Photography', 'Video editing', 'Writing']
-  },
-  {
-    id: 'lifestyle',
-    label: 'Lifestyle',
-    icon: 'streamline-pixel:food-drink-desert-cake',
-    options: ['Football', 'Basketball', 'Gym', 'Gaming', 'Anime', 'Coffee/hangouts', 'Reading', 'Travel']
-  },
-  {
-    id: 'career',
-    label: 'Career',
-    icon: 'streamline-pixel:money-bag-dollar',
-    options: ['Internships', 'Interview prep', 'Resume review', 'Portfolio', 'LinkedIn']
-  },
-]
-
 const customTags = ref<string[]>([])
 
 const toggleInterest = (interest: string) => {
@@ -211,7 +125,8 @@ const onPrevious = () => {
     <!---------------------------------------Screen 1--------------------------------------->
     <div v-if="currentQuestion === 1" class="flex flex-col items-center max-w-md px-4">
       <div class="text-center mb-8">
-        <h1 class="text-muted-foreground flex justify-center items-center hover:text-foreground transition-all text-sm mb-2">
+        <h1
+          class="text-muted-foreground flex justify-center items-center hover:text-foreground transition-all text-sm mb-2">
           <Icon name="streamline-pixel:food-drink-desert-cake" size="20" class="mr-2" />
           Let's get started
         </h1>
@@ -222,27 +137,21 @@ const onPrevious = () => {
       <div class="w-full mb-8">
         <Label class="text-sm text-muted-foreground mb-3 block">Your gender</Label>
         <div class="flex gap-3">
-          <Button
-            variant="outline"
+          <Button variant="outline"
             :class="cn('flex-1 h-16 flex-col gap-1 size-18', selectedGender === 'male' && 'border-primary bg-primary/10')"
-            @click="selectedGender = 'male'"
-          >
+            @click="selectedGender = 'male'">
             <Icon name="streamline-pixel:user-gender-male" size="28" />
             <span class="text-xs">Male</span>
           </Button>
-          <Button
-            variant="outline"
+          <Button variant="outline"
             :class="cn('flex-1 h-16 flex-col gap-1 size-18', selectedGender === 'female' && 'border-primary bg-primary/10')"
-            @click="selectedGender = 'female'"
-          >
+            @click="selectedGender = 'female'">
             <Icon name="streamline-pixel:user-gender-female" size="28" />
             <span class="text-xs">Female</span>
           </Button>
-          <Button
-            variant="outline"
+          <Button variant="outline"
             :class="cn('flex-1 h-16 flex-col gap-1 size-18', selectedGender === 'other' && 'border-primary bg-primary/10')"
-            @click="selectedGender = 'other'"
-          >
+            @click="selectedGender = 'other'">
             <Icon name="streamline-pixel:interface-essential-question-help-square" size="28" />
             <span class="text-xs">Other</span>
           </Button>
@@ -254,16 +163,15 @@ const onPrevious = () => {
         <Label class="text-sm text-muted-foreground mb-3 block">Birthday</Label>
         <Popover>
           <PopoverTrigger as-child>
-            <Button
-              variant="outline"
-              :class="cn('w-full justify-start text-left font-normal h-9', !date && 'text-muted-foreground')"
-            >
+            <Button variant="outline"
+              :class="cn('w-full justify-start text-left font-normal h-9', !date && 'text-muted-foreground')">
               <CalendarIcon class="mr-2 h-4 w-4" />
               {{ date ? df.format(date.toDate(getLocalTimeZone())) : "Select your birthday" }}
             </Button>
           </PopoverTrigger>
           <PopoverContent class="w-auto p-0">
-            <Calendar v-model="date" :initial-focus="true" :default-placeholder="defaultPlaceholder" layout="month-and-year" />
+            <Calendar v-model="date" :initial-focus="true" :default-placeholder="defaultPlaceholder"
+              layout="month-and-year" />
           </PopoverContent>
         </Popover>
       </div>
@@ -272,7 +180,8 @@ const onPrevious = () => {
     <!---------------------------------------Screen 2--------------------------------------->
     <div v-if="currentQuestion === 2" class="flex flex-col items-center max-w-md px-4">
       <div class="text-center mb-8">
-        <h1 class="text-muted-foreground flex justify-center items-center hover:text-foreground transition-all text-sm mb-2">
+        <h1
+          class="text-muted-foreground flex justify-center items-center hover:text-foreground transition-all text-sm mb-2">
           <Icon name="streamline-pixel:interface-essential-information-circle-1" size="20" class="mr-2" />
           School info
         </h1>
@@ -322,7 +231,8 @@ const onPrevious = () => {
     <!---------------------------------------Screen 3--------------------------------------->
     <div v-if="currentQuestion === 3" class="flex flex-col items-center max-w-lg px-4">
       <div class="text-center mb-8">
-        <h1 class="text-muted-foreground flex justify-center items-center hover:text-foreground transition-all text-sm mb-2">
+        <h1
+          class="text-muted-foreground flex justify-center items-center hover:text-foreground transition-all text-sm mb-2">
           <Icon name="streamline-pixel:interface-essential-question-help-square" size="20" class="mr-2" />
           Pick all that apply
         </h1>
@@ -333,16 +243,10 @@ const onPrevious = () => {
       <div class="w-full mb-8">
         <Label class="text-sm text-muted-foreground mb-3 block">Goals</Label>
         <div class="grid grid-cols-2 gap-3">
-          <Button
-            v-for="goal in goalOptions"
-            :key="goal.id"
-            variant="outline"
-            :class="cn(
-              'h-auto py-4 px-4 items-center gap-2 text-center',
-              selectedGoals.includes(goal.id) && 'border-primary bg-primary/10'
-            )"
-            @click="toggleGoal(goal.id)"
-          >
+          <Button v-for="goal in goalOptions" :key="goal.id" variant="outline" :class="cn(
+            'h-auto py-4 px-4 items-center gap-2 text-center',
+            selectedGoals.includes(goal.id) && 'border-primary bg-primary/10'
+          )" @click="toggleGoal(goal.id)">
             <Icon :name="goal.icon" size="24" />
             <span class="text-sm">{{ goal.label }}</span>
           </Button>
@@ -353,16 +257,11 @@ const onPrevious = () => {
       <div class="w-full">
         <Label class="text-sm text-muted-foreground mb-3 block">Your vibe</Label>
         <div class="flex flex-wrap gap-2">
-          <Badge
-            v-for="vibe in vibeOptions"
-            :key="vibe"
-            :variant="selectedVibes.includes(vibe) ? 'default' : 'outline'"
+          <Badge v-for="vibe in vibeOptions" :key="vibe" :variant="selectedVibes.includes(vibe) ? 'default' : 'outline'"
             :class="cn(
               'cursor-pointer px-4 py-2 text-sm transition-all hover:scale-105',
               selectedVibes.includes(vibe) && 'bg-primary'
-            )"
-            @click="toggleVibe(vibe)"
-          >
+            )" @click="toggleVibe(vibe)">
             {{ vibe }}
           </Badge>
         </div>
@@ -372,7 +271,8 @@ const onPrevious = () => {
     <!---------------------------------------Screen 4--------------------------------------->
     <div v-if="currentQuestion === 4" class="flex flex-col items-center max-w-lg px-4 w-full">
       <div class="text-center mb-6">
-        <h1 class="text-muted-foreground flex justify-center items-center hover:text-foreground transition-all text-sm mb-2">
+        <h1
+          class="text-muted-foreground flex justify-center items-center hover:text-foreground transition-all text-sm mb-2">
           <Icon name="streamline-pixel:interface-essential-star-2" size="20" class="mr-2" />
           Tap everything you vibe with
         </h1>
@@ -386,23 +286,19 @@ const onPrevious = () => {
               <div class="flex items-center gap-2">
                 <Icon :name="category.icon" size="18" />
                 <span>{{ category.label }}</span>
-                <Badge v-if="selectedInterests.filter(i => category.options.includes(i)).length > 0" variant="secondary" class="ml-2 text-xs">
-                  {{ selectedInterests.filter(i => category.options.includes(i)).length }}
+                <Badge v-if="selectedInterests.filter(i => category.options.includes(i)).length > 0" variant="secondary"
+                  class="ml-2 text-xs">
+                  {{selectedInterests.filter(i => category.options.includes(i)).length}}
                 </Badge>
               </div>
             </AccordionTrigger>
             <AccordionContent>
               <div class="flex flex-wrap gap-2 pt-2">
-                <Badge
-                  v-for="option in category.options"
-                  :key="option"
-                  :variant="selectedInterests.includes(option) ? 'default' : 'outline'"
-                  :class="cn(
+                <Badge v-for="option in category.options" :key="option"
+                  :variant="selectedInterests.includes(option) ? 'default' : 'outline'" :class="cn(
                     'cursor-pointer px-3 py-1.5 text-sm transition-all hover:scale-105',
                     selectedInterests.includes(option) && 'bg-primary'
-                  )"
-                  @click="toggleInterest(option)"
-                >
+                  )" @click="toggleInterest(option)">
                   {{ option }}
                 </Badge>
               </div>
@@ -414,23 +310,14 @@ const onPrevious = () => {
         <div class="pt-4 border-t">
           <Label class="text-sm text-muted-foreground mb-3 block">Add your own tags</Label>
           <div class="flex gap-2 mb-3">
-            <Input
-              v-model="customTag"
-              placeholder="Type a tag..."
-              class="flex-1"
-              @keyup.enter="addCustomTag"
-            />
+            <Input v-model="customTag" placeholder="Type a tag..." class="flex-1" @keyup.enter="addCustomTag" />
             <Button variant="outline" size="icon" @click="addCustomTag">
               <Plus class="h-4 w-4" />
             </Button>
           </div>
           <div v-if="customTags.length > 0" class="flex flex-wrap gap-2">
-            <Badge
-              v-for="tag in customTags"
-              :key="tag"
-              variant="default"
-              class="bg-primary px-3 py-1.5 text-sm flex items-center gap-1"
-            >
+            <Badge v-for="tag in customTags" :key="tag" variant="default"
+              class="bg-primary px-3 py-1.5 text-sm flex items-center gap-1">
               {{ tag }}
               <X class="h-3 w-3 cursor-pointer hover:text-destructive" @click="removeCustomTag(tag)" />
             </Badge>
@@ -442,7 +329,8 @@ const onPrevious = () => {
     <!---------------------------------------Screen 5--------------------------------------->
     <div v-if="currentQuestion === 5" class="flex flex-col items-center max-w-md px-4">
       <div class="text-center mb-8">
-        <h1 class="text-muted-foreground flex justify-center items-center hover:text-foreground transition-all text-sm mb-2">
+        <h1
+          class="text-muted-foreground flex justify-center items-center hover:text-foreground transition-all text-sm mb-2">
           <Icon name="streamline-pixel:user-profile-focus" size="20" class="mr-2" />
           Almost there
         </h1>
@@ -472,20 +360,16 @@ const onPrevious = () => {
             {{ bioLength }}/{{ bioMaxLength }}
           </span>
         </div>
-        <Textarea
-          v-model="bio"
-          placeholder="I'm into late night study sessions. LF study buddies..."
-          :rows="4"
-          :maxlength="bioMaxLength"
-          class="resize-none"
-        />
+        <Textarea v-model="bio" placeholder="I'm into late night study sessions. LF study buddies..." :rows="4"
+          :maxlength="bioMaxLength" class="resize-none" />
       </div>
     </div>
 
     <!---------------------------------------Screen 6--------------------------------------->
     <div v-if="currentQuestion === 6" class="flex flex-col items-center max-w-md px-4">
       <div class="text-center mb-8">
-        <h1 class="text-muted-foreground flex justify-center items-center hover:text-foreground transition-all text-sm mb-2">
+        <h1
+          class="text-muted-foreground flex justify-center items-center hover:text-foreground transition-all text-sm mb-2">
           Account privacy
         </h1>
         <h2 class="text-2xl font-semibold">Control who finds you</h2>
@@ -515,10 +399,6 @@ const onPrevious = () => {
     </div>
   </div>
 
-  <ProgressControl
-    :currentQuestion="currentQuestion"
-    :totalQuestions="totalQuestions"
-    :onNext="onNext"
-    :onPrevious="onPrevious"
-  />
+  <ProgressControl :currentQuestion="currentQuestion" :totalQuestions="totalQuestions" :onNext="onNext"
+    :onPrevious="onPrevious" />
 </template>

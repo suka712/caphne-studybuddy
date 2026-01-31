@@ -77,5 +77,5 @@ profileRouter.put('/', requireAuth, async (req, res) => {
   }
 
   console.log(`User with ID ${authUser.id} updated profile` )
-  return res.json({ success: true })
+  return res.json({ profile: updated[0] })
 })

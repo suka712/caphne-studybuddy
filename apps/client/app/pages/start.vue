@@ -37,7 +37,7 @@ import {
 } from '@/components/ui/card'
 import { goalOptions, interestCategories, majorOptions, vibeOptions, yearOptions } from '~/data/startOptions'
 
-definePageMeta({ layout: "internal" })
+definePageMeta({ layout: "internal", middleware: "auth" })
 
 type Gender = "male" | "female" | "other"
 

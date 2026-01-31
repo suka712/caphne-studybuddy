@@ -1,13 +1,17 @@
 <template>
   <div class="flex justify-center items-center min-h-screen">
-    <Card class="w-full max-w-xs">
+    <div v-if="isLoading" class="flex flex-col items-center">
+      <Icon name="svg-spinners:ring-resize" size="40" class="text-primary" />
+    </div>
+
+    <Card v-else-if="profile" class="w-full max-w-xs">
       <CardContent>
         <div class="flex items-center gap-4 mb-6">
           <div class="size-12 rounded-xl bg-muted flex items-center justify-center">
             <Icon name="mdi:account" size="32" />
           </div>
           <div class="overflow-hidden">
-            <h1 class="text-xl font-bold">{{ editingUsername || authUser?.username }}</h1>
+            <h1 class="text-xl font-bold">{{ profile.displayName }}</h1>
             <p class="text-muted-foreground text-sm overflow-hidden">{{ authUser?.email }}</p>
           </div>
         </div>
@@ -15,45 +19,43 @@
         <div class="space-y-4">
           <div class="p-4 rounded-lg bg-muted space-y-3">
             <div>
-              <label class="text-sm text-muted-foreground/80">
-                Username
-              </label>
-              <div v-if="!isEditingUsername" class="flex items-center justify-between">
-                <p class="text-base overflow-hidden">{{ authUser?.username }}</p>
-                <Button variant="outline" class="size-7 p-0" @click="startEditingUsername" title="Edit username">
+              <label class="text-sm text-muted-foreground/80">Display Name</label>
+              <div v-if="!isEditing" class="flex items-center justify-between">
+                <p class="text-base overflow-hidden">{{ profile.displayName }}</p>
+                <Button variant="outline" class="size-7 p-0" @click="startEditing" title="Edit name">
                   <Icon name="mdi:pencil" size="18" />
                 </Button>
               </div>
               <div v-else class="flex gap-1">
-                <Input ref="usernameInputRef" v-model="editingUsername" type="text" placeholder="Enter new username"
-                  class="flex-1 h-7 border-input rounded-md bg-background focus:border-0" @keyup.enter="saveUsername"
-                  @keyup.escape="cancelEditingUsername" aria-label="Edit username" />
-                <Button variant="default" size="sm" @click="saveUsername" class="size-7 p-0" title="Save username">
+                <Input v-model="editingName" type="text" placeholder="Enter new name"
+                  class="flex-1 h-7 border-input rounded-md bg-background" @keyup.enter="saveName"
+                  @keyup.escape="cancelEditing" />
+                <Button variant="default" size="sm" @click="saveName" class="size-7 p-0" title="Save">
                   <Icon name="mdi:check" size="16" />
                 </Button>
-                <Button variant="outline" size="sm" @click="cancelEditingUsername" class="size-7 p-0"
-                  title="Cancel editing">
+                <Button variant="outline" size="sm" @click="cancelEditing" class="size-7 p-0" title="Cancel">
                   <Icon name="mdi:close" size="16" />
                 </Button>
               </div>
             </div>
 
             <div>
-              <label class="text-sm text-muted-foreground/80">
-                Email
-              </label>
-              <p class="text-base">{{ authUser?.email }}</p>
+              <label class="text-sm text-muted-foreground/80">Major</label>
+              <p class="text-base">{{ profile.major }}</p>
+            </div>
+
+            <div>
+              <label class="text-sm text-muted-foreground/80">Year</label>
+              <p class="text-base">{{ profile.year }}</p>
+            </div>
+
+            <div v-if="profile.bio">
+              <label class="text-sm text-muted-foreground/80">Bio</label>
+              <p class="text-base">{{ profile.bio }}</p>
             </div>
           </div>
 
-          <NuxtLink to="/start">
-            <Button variant="default" class="w-full">
-              <Icon name="ri:sparkling-2-fill" size="20" class="mr-2" />
-              Get Started
-            </Button>
-          </NuxtLink>
-
-          <Button variant="outline" class="w-full hover:text-foreground mt-3" @click="handleLogout">
+          <Button variant="outline" class="w-full hover:text-foreground" @click="handleLogout">
             <Icon name="mdi:logout" size="16" class="mr-2" />
             <span class="text-sm">Logout</span>
           </Button>
@@ -71,36 +73,65 @@ definePageMeta({
   layout: "internal"
 })
 
-const { authUser, logout, updateProfile } = useAuth()
+const { public: { apiBase } } = useRuntimeConfig()
+const { authUser, logout } = useAuth()
 
-const isEditingUsername = ref(false)
-const editingUsername = ref('')
+const isLoading = ref(true)
+const profile = ref<any>(null)
 
-const startEditingUsername = () => {
-  editingUsername.value = authUser.value?.username || ''
-  isEditingUsername.value = true
+const isEditing = ref(false)
+const editingName = ref('')
+
+onMounted(async () => {
+  try {
+    const data = await $fetch<{ profile: any }>(`${apiBase}/api/profile`, {
+      credentials: 'include',
+    })
+
+    if (!data.profile) {
+      navigateTo('/start')
+      return
+    }
+
+    profile.value = data.profile
+  } catch (e) {
+    console.error('Failed to fetch profile:', e)
+    navigateTo('/start')
+  } finally {
+    isLoading.value = false
+  }
+})
+
+const startEditing = () => {
+  editingName.value = profile.value?.displayName || ''
+  isEditing.value = true
 }
 
-const saveUsername = async () => {
-  const trimmedUsername = editingUsername.value.trim()
-
-  if (!trimmedUsername || trimmedUsername.length < 3 || trimmedUsername.length > 72) {
-    toast.error('Username must be at least 3 characters')
+const saveName = async () => {
+  const trimmed = editingName.value.trim()
+  if (!trimmed || trimmed.length < 2) {
+    toast.error('Name must be at least 2 characters')
     return
   }
 
   try {
-    await updateProfile({ username: trimmedUsername })
-    isEditingUsername.value = false
-    editingUsername.value = ''
-  } catch (error) {
-    toast.error('Error updating profile')
+    const data = await $fetch<{ profile: any }>(`${apiBase}/api/profile`, {
+      method: 'PUT',
+      credentials: 'include',
+      body: { displayName: trimmed }
+    })
+    profile.value = data.profile
+    isEditing.value = false
+    editingName.value = ''
+    toast.success('Name updated')
+  } catch (e) {
+    toast.error('Failed to update name')
   }
 }
 
-const cancelEditingUsername = () => {
-  isEditingUsername.value = false
-  editingUsername.value = ''
+const cancelEditing = () => {
+  isEditing.value = false
+  editingName.value = ''
 }
 
 const handleLogout = async () => {

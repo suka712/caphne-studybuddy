@@ -5,7 +5,7 @@ import { requireAuth } from '../../middleware/requireAuth.js'
 import { env } from '../../config/env.js'
 import type { User } from '../../db/schema.js'
 
-const authRouter = Router()
+export const authRouter = Router()
 
 authRouter.get('/google', passport.authenticate('google', {
   session: false,
@@ -40,13 +40,11 @@ authRouter.get(
 )
 
 authRouter.get('/me', requireAuth, (req, res) => {
-  const { password, ...safeUser } = req.user as User
-  res.json({ user: safeUser })
+  const user = req.user as User
+  res.json({ user: { id: user.id, email: user.email } })
 })
 
 authRouter.post('/logout', (req, res) => {
   clearAuthCookie(res)
   res.json({ message: 'Logged out successfully' })
 })
-
-export { authRouter }

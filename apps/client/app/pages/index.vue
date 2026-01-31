@@ -1,3 +1,41 @@
+<script setup lang="ts">
+const { public: { apiBase } } = useRuntimeConfig()
+const { loginWithGoogle, loginWithGitHub, isAuthenticated, fetchUser, isCheckingAuth } = useAuth()
+
+onMounted(() => {
+  fetchUser()
+})
+
+function scrollToSignup() {
+  document.getElementById('signup')?.scrollIntoView({ behavior: 'smooth' })
+}
+
+const email = ref('')
+const isSubmitting = ref(false)
+const message = ref('')
+const isError = ref(false)
+
+async function submitEmail() {
+  isSubmitting.value = true
+  message.value = ''
+  isError.value = false
+
+  try {
+    await $fetch(`${apiBase}/api/email-collection`, {
+      method: 'POST',
+      body: { email: email.value }
+    })
+    message.value = "Thanks! We'll notify you when we launch."
+    email.value = ''
+  } catch (e) {
+    isError.value = true
+    message.value = 'Something went wrong. Please try again.'
+  } finally {
+    isSubmitting.value = false
+  }
+}
+</script>
+
 <template>
   <!--------------------------------Hero Card--------------------------------->
   <div class="flex justify-center items-center h-svh pb-20 md:pb-50 px-4">
@@ -13,12 +51,10 @@
             <p>Find your perfect</p>
             <p>study buddy today.</p>
           </div>
-          <NuxtLink to="/start">
-            <Button class="mt-8 h-8 hover:px-6" variant="default">
-              <Icon name="ri:sparkling-2-fill" size="20" />
-              Find your match now
-            </Button>
-          </NuxtLink>
+          <Button class="mt-8 h-8 hover:px-6" variant="default" @click="loginWithGoogle">
+            <Icon name="ri:sparkling-2-fill" size="20" />
+            Find your match now
+          </Button>
           <div class="flex gap-2 mt-2">
             <Button class="h-8 hover:px-6" variant="secondary" @click="loginWithGoogle">
               <Icon name="ci:google" size="20" />
@@ -33,8 +69,7 @@
 
         <div v-else>
           <div class="text-xl leading-relaxed">
-            <p class="mt-8">Welcome back,</p>
-            <p class="font-semibold">{{ user?.username }}!</p>
+            <p class="mt-8">Welcome back!</p>
           </div>
           <NuxtLink to="/profile">
             <Button class="mt-8 h-8 hover:px-6" variant="default">
@@ -170,37 +205,3 @@
     </Card>
   </div>
 </template>
-
-<script setup lang="ts">
-const { public: { apiBase } } = useRuntimeConfig()
-const { loginWithGoogle, loginWithGitHub, authUser: user, isAuthenticated } = useAuth()
-
-function scrollToSignup() {
-  document.getElementById('signup')?.scrollIntoView({ behavior: 'smooth' })
-}
-
-const email = ref('')
-const isSubmitting = ref(false)
-const message = ref('')
-const isError = ref(false)
-
-async function submitEmail() {
-  isSubmitting.value = true
-  message.value = ''
-  isError.value = false
-
-  try {
-    await $fetch(`${apiBase}/api/email-collection`, {
-      method: 'POST',
-      body: { email: email.value }
-    })
-    message.value = "Thanks! We'll notify you when we launch."
-    email.value = ''
-  } catch (e) {
-    isError.value = true
-    message.value = 'Something went wrong. Please try again.'
-  } finally {
-    isSubmitting.value = false
-  }
-}
-</script>

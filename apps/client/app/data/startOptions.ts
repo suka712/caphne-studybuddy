@@ -1,22 +1,25 @@
 export const majorOptions = [
-  { group: 'Computer Science', items: [
+  { group: 'Information Technology', items: [
     { value: 'software-engineering', label: 'Software Engineering' },
-    { value: 'ai-engineering', label: 'AI Engineering' },
-    { value: 'cyber-security', label: 'Cyber Security' },
-    { value: 'data-science', label: 'Data Science' },
+    { value: 'information-security', label: 'Information Security' },
+    { value: 'artificial-intelligence', label: 'Artificial Intelligence' },
   ]},
   { group: 'Business', items: [
-    { value: 'business-analytics', label: 'Business Analytics' },
-    { value: 'marketing', label: 'Marketing' },
-    { value: 'finance', label: 'Finance' },
+    { value: 'business-administration', label: 'Business Administration' },
+    { value: 'international-business', label: 'International Business' },
+    { value: 'digital-marketing', label: 'Digital Marketing' },
+    { value: 'finance-banking', label: 'Finance & Banking' },
   ]},
-  { group: 'Medicine', items: [
-    { value: 'pharmacy', label: 'Pharmacy' },
-    { value: 'medical-tech', label: 'Medical Technology' },
+  { group: 'Languages', items: [
+    { value: 'japanese', label: 'Japanese Language' },
+    { value: 'korean', label: 'Korean Language' },
+    { value: 'english', label: 'English Language' },
   ]},
-  { group: 'Law', items: [
-    { value: 'law', label: 'Law' },
-    { value: 'political-science', label: 'Political Science' },
+  { group: 'Design & Media', items: [
+    { value: 'graphic-design', label: 'Graphic Design' },
+  ]},
+  { group: 'Hospitality', items: [
+    { value: 'hotel-management', label: 'Hotel Management' },
   ]},
   { group: 'Other', items: [
     { value: 'other', label: 'Other' },
@@ -57,7 +60,7 @@ export const interestCategories = [
     id: 'tech',
     label: 'Tech',
     icon: 'streamline-pixel:technology-robot-ai-signal-1',
-    options: ['Programming', 'Web Dev', 'Mobile Dev', 'Data/AI', 'Design/UI', 'Security/CTF', 'DevOps']
+    options: ['Programming', 'Web Dev', 'Mobile Dev', 'Game Dev', 'Data/AI', 'Design/UI', 'Security/CTF', 'DevOps']
   },
   {
     id: 'business',

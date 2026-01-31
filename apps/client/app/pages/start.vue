@@ -41,8 +41,9 @@ definePageMeta({ layout: "internal" })
 
 type Gender = "male" | "female" | "other"
 
-const totalScreens = 7
-const currentScreen = ref(1)
+const totalQuestion = 6
+const currentQuestion = ref(1)
+const isLoading = ref(false)
 
 const selectedGender = ref<Gender>()
 const date = ref<DateValue>()
@@ -108,14 +109,23 @@ const bioLength = computed(() => bio.value.length)
 const showPublicProfile = ref(false)
 
 const onNext = () => {
-  if (currentScreen.value < totalScreens) {
-    currentScreen.value++
+  if (isLoading.value) {
+    return
+  }
+  if (currentQuestion.value === totalQuestion) {
+    isLoading.value = true
+  }
+  if (currentQuestion.value < totalQuestion) {
+    currentQuestion.value++
   }
 }
 
 const onPrevious = () => {
-  if (currentScreen.value > 1) {
-    currentScreen.value--
+  if (isLoading.value) {
+    return
+  }
+  if (currentQuestion.value > 1) {
+    currentQuestion.value--
   }
 }
 </script>
@@ -123,7 +133,7 @@ const onPrevious = () => {
 <template>
   <div class="flex justify-center items-center min-h-screen pb-20">
     <!---------------------------------------Screen 1--------------------------------------->
-    <div v-if="currentScreen === 1" class="flex flex-col items-center max-w-md px-4">
+    <div v-if="currentQuestion === 1 && !isLoading" class="flex flex-col items-center max-w-md px-4">
       <div class="text-center mb-8">
         <h1
           class="text-muted-foreground flex justify-center items-center hover:text-foreground transition-all text-sm mb-2">
@@ -178,7 +188,7 @@ const onPrevious = () => {
     </div>
 
     <!---------------------------------------Screen 2--------------------------------------->
-    <div v-if="currentScreen === 2" class="flex flex-col items-center max-w-md px-4">
+    <div v-if="currentQuestion === 2 && !isLoading" class="flex flex-col items-center max-w-md px-4">
       <div class="text-center mb-8">
         <h1
           class="text-muted-foreground flex justify-center items-center hover:text-foreground transition-all text-sm mb-2">
@@ -229,7 +239,7 @@ const onPrevious = () => {
     </div>
 
     <!---------------------------------------Screen 3--------------------------------------->
-    <div v-if="currentScreen === 3" class="flex flex-col items-center max-w-lg px-4">
+    <div v-if="currentQuestion === 3 && !isLoading" class="flex flex-col items-center max-w-lg px-4">
       <div class="text-center mb-8">
         <h1
           class="text-muted-foreground flex justify-center items-center hover:text-foreground transition-all text-sm mb-2">
@@ -269,7 +279,7 @@ const onPrevious = () => {
     </div>
 
     <!---------------------------------------Screen 4--------------------------------------->
-    <div v-if="currentScreen === 4" class="flex flex-col items-center max-w-lg px-4 w-full">
+    <div v-if="currentQuestion === 4 && !isLoading" class="flex flex-col items-center max-w-lg px-4 w-full">
       <div class="text-center mb-6">
         <h1
           class="text-muted-foreground flex justify-center items-center hover:text-foreground transition-all text-sm mb-2">
@@ -327,7 +337,7 @@ const onPrevious = () => {
     </div>
 
     <!---------------------------------------Screen 5--------------------------------------->
-    <div v-if="currentScreen === 5" class="flex flex-col items-center max-w-md px-4">
+    <div v-if="currentQuestion === 5 && !isLoading" class="flex flex-col items-center max-w-md px-4">
       <div class="text-center mb-8">
         <h1
           class="text-muted-foreground flex justify-center items-center hover:text-foreground transition-all text-sm mb-2">
@@ -366,7 +376,7 @@ const onPrevious = () => {
     </div>
 
     <!---------------------------------------Screen 6--------------------------------------->
-    <div v-if="currentScreen === 6" class="flex flex-col items-center max-w-md px-4">
+    <div v-if="currentQuestion === 6 && !isLoading" class="flex flex-col items-center max-w-md px-4">
       <div class="text-center mb-8">
         <h1
           class="text-muted-foreground flex justify-center items-center hover:text-foreground transition-all text-sm mb-2">
@@ -392,13 +402,13 @@ const onPrevious = () => {
     </div>
 
     <!---------------------------------------Screen 7--------------------------------------->
-    <div v-if="currentScreen === totalScreens" class="flex flex-col items-center justify-center">
+    <div v-if="isLoading && currentQuestion <= totalQuestion" class="flex flex-col items-center justify-center">
       <Icon name="svg-spinners:ring-resize" size="40" class="text-primary mb-6" />
       <h2 class="text-2xl font-semibold mb-2">Setting things up...</h2>
       <p class="text-muted-foreground text-center">Finding the best matches for you</p>
     </div>
   </div>
 
-  <ProgressControl :currentScreen="currentScreen" :totalScreens="totalScreens" :onNext="onNext"
+  <ProgressControl :currentQuestion="currentQuestion" :totalQuestions="totalQuestion" :isLoading="isLoading" :onNext="onNext"
     :onPrevious="onPrevious" />
 </template>

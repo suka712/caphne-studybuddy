@@ -2,17 +2,18 @@
 import { computed } from 'vue'
 
 const props = defineProps<{
-  currentScreen: number
-  totalScreens: number
+  currentQuestion: number
+  totalQuestions: number
+  isLoading: boolean
   onNext: () => void
   onPrevious: () => void
 }>()
 
 const progress = computed(() => {
-  return Math.round((props.currentScreen / props.totalScreens) * 100)
+  return Math.round((props.currentQuestion / props.totalQuestions) * 100)
 })
 
-const isLastScreen = computed(() => props.currentScreen >= props.totalScreens)
+const isLastQuestion = computed(() => props.currentQuestion === props.totalQuestions)
 </script>
 
 <template>
@@ -25,7 +26,7 @@ const isLastScreen = computed(() => props.currentScreen >= props.totalScreens)
     <!-- Controls -->
     <div class="h-16 flex items-center justify-between max-w-2xl mx-auto px-4">
       <div class="flex-1">
-        <Button variant="ghost" @click="onPrevious" :disabled="currentScreen === 1" class="gap-2">
+        <Button variant="ghost" @click="onPrevious" :disabled="currentQuestion === 1 || isLoading" class="gap-2">
           <Icon name="material-symbols:arrow-back-ios-rounded" size="16" />
           Back
         </Button>
@@ -33,13 +34,13 @@ const isLastScreen = computed(() => props.currentScreen >= props.totalScreens)
 
       <div class="flex-1 flex justify-center">
         <span class="text-sm text-muted-foreground">
-          {{ currentScreen }} of {{ totalScreens}}
+          {{ currentQuestion }} of {{ totalQuestions}}
         </span>
       </div>
 
       <div class="flex-1 flex justify-end">
-        <Button :disabled="isLastScreen" :variant="isLastScreen ? 'default' : 'ghost'" @click="onNext" class="gap-2">
-          {{ isLastScreen ? 'Finish' : 'Next' }}
+        <Button :disabled="isLoading" :variant="isLastQuestion ? 'default' : 'ghost'" @click="onNext" class="gap-2">
+          {{ isLastQuestion ? 'Finish' : 'Next' }}
           <Icon name="material-symbols:arrow-forward-ios-rounded" size="16" />
         </Button>
       </div>

@@ -2,7 +2,6 @@ import { pgTable, serial, text, timestamp, integer, boolean, date } from 'drizzl
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
-  username: text('username').notNull(),
   email: text('email').notNull().unique(),
   password: text('password'),
   createdAt: timestamp('created_at').defaultNow(),

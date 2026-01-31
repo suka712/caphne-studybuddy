@@ -177,20 +177,20 @@ const onPrevious = () => {
       <div class="w-full mb-8">
         <Label class="text-sm text-muted-foreground mb-3 block">Your gender</Label>
         <div class="flex gap-3">
-          <Button variant="outline"
-            :class="cn('flex-1 h-16 flex-col gap-1 size-18', selectedGender === 'male' && 'border-primary bg-primary/10')"
+          <Button :variant="selectedGender === 'male' ? 'default' : 'outline'"
+            class="flex-1 h-16 flex-col gap-1 size-18"
             @click="selectedGender = 'male'">
             <Icon name="streamline-pixel:user-gender-male" size="28" />
             <span class="text-xs">Male</span>
           </Button>
-          <Button variant="outline"
-            :class="cn('flex-1 h-16 flex-col gap-1 size-18', selectedGender === 'female' && 'border-primary bg-primary/10')"
+          <Button :variant="selectedGender === 'female' ? 'default' : 'outline'"
+            class="flex-1 h-16 flex-col gap-1 size-18"
             @click="selectedGender = 'female'">
             <Icon name="streamline-pixel:user-gender-female" size="28" />
             <span class="text-xs">Female</span>
           </Button>
-          <Button variant="outline"
-            :class="cn('flex-1 h-16 flex-col gap-1 size-18', selectedGender === 'other' && 'border-primary bg-primary/10')"
+          <Button :variant="selectedGender === 'other' ? 'default' : 'outline'"
+            class="flex-1 h-16 flex-col gap-1 size-18"
             @click="selectedGender = 'other'">
             <Icon name="streamline-pixel:interface-essential-question-help-square" size="28" />
             <span class="text-xs">Other</span>
@@ -283,10 +283,8 @@ const onPrevious = () => {
       <div class="w-full mb-8">
         <Label class="text-sm text-muted-foreground mb-3 block">Goals</Label>
         <div class="grid grid-cols-2 gap-3">
-          <Button v-for="goal in goalOptions" :key="goal.id" variant="outline" :class="cn(
-            'h-auto py-4 px-4 items-center gap-2 text-center',
-            selectedGoals.includes(goal.id) && 'border-primary bg-primary/10'
-          )" @click="toggleGoal(goal.id)">
+          <Button v-for="goal in goalOptions" :key="goal.id" :variant="selectedGoals.includes(goal.id) ? 'default' : 'outline'"
+            class="h-auto py-4 px-4 items-center gap-2 text-center" @click="toggleGoal(goal.id)">
             <span class="text-sm">{{ goal.label }}</span>
           </Button>
         </div>
@@ -297,10 +295,7 @@ const onPrevious = () => {
         <Label class="text-sm text-muted-foreground mb-3 block">Your vibe</Label>
         <div class="flex flex-wrap gap-2">
           <Badge v-for="vibe in vibeOptions" :key="vibe" :variant="selectedVibes.includes(vibe) ? 'default' : 'outline'"
-            :class="cn(
-              'cursor-pointer px-4 py-2 text-sm transition-all hover:scale-105',
-              selectedVibes.includes(vibe) && 'bg-primary'
-            )" @click="toggleVibe(vibe)">
+            class="cursor-pointer px-4 py-2 text-sm transition-all hover:scale-105" @click="toggleVibe(vibe)">
             {{ vibe }}
           </Badge>
         </div>
@@ -334,10 +329,8 @@ const onPrevious = () => {
             <AccordionContent>
               <div class="flex flex-wrap gap-2 pt-2">
                 <Badge v-for="option in category.options" :key="option"
-                  :variant="selectedInterests.includes(option) ? 'default' : 'outline'" :class="cn(
-                    'cursor-pointer px-3 py-1.5 text-sm transition-all hover:scale-105',
-                    selectedInterests.includes(option) && 'bg-primary'
-                  )" @click="toggleInterest(option)">
+                  :variant="selectedInterests.includes(option) ? 'default' : 'outline'"
+                  class="cursor-pointer px-3 py-1.5 text-sm transition-all hover:scale-105" @click="toggleInterest(option)">
                   {{ option }}
                 </Badge>
               </div>

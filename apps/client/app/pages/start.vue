@@ -257,7 +257,6 @@ const onPrevious = () => {
             'h-auto py-4 px-4 items-center gap-2 text-center',
             selectedGoals.includes(goal.id) && 'border-primary bg-primary/10'
           )" @click="toggleGoal(goal.id)">
-            <Icon :name="goal.icon" size="24" />
             <span class="text-sm">{{ goal.label }}</span>
           </Button>
         </div>

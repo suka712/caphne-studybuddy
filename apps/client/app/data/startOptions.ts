@@ -34,12 +34,12 @@ export const yearOptions = [
 
 
 export const goalOptions = [
-  { id: 'study-buddy', label: 'Find study buddy', icon: 'streamline-pixel:education-graduation-cap' },
-  { id: 'project-teammate', label: 'Project teammate', icon: 'streamline-pixel:user-profile-focus' },
-  { id: 'learn-new', label: 'Learn something new', icon: 'streamline-pixel:bookmarks' },
-  { id: 'sports-buddy', label: 'Sports/gym buddy', icon: 'streamline-pixel:sport-fitness-dumbbell-weight-lift' },
-  { id: 'meet-people', label: 'Meet new people', icon: 'streamline-pixel:user-profile-focus' },
-  { id: 'share-skills', label: 'Share skills/mentor', icon: 'streamline-pixel:interface-essential-star-2' },
+  { id: 'study-buddy', label: 'Find study buddy' },
+  { id: 'project-teammate', label: 'Project teammate' },
+  { id: 'learn-new', label: 'Learn something new' },
+  { id: 'sports-buddy', label: 'Sports/gym buddy' },
+  { id: 'meet-people', label: 'Meet new people' },
+  { id: 'share-skills', label: 'Share skills/mentor' },
 ]
 
 export const vibeOptions = [
@@ -50,25 +50,25 @@ export const interestCategories = [
   {
     id: 'academic',
     label: 'Academic',
-    icon: 'streamline-pixel:education-graduation-cap',
+    icon: 'pixel:book-heart',
     options: ['Study groups', 'Exam prep', 'Research', 'Thesis/Capstone', 'Tutoring']
   },
   {
     id: 'tech',
     label: 'Tech',
-    icon: 'streamline-pixel:computer-desktop',
+    icon: 'streamline-pixel:technology-robot-ai-signal-1',
     options: ['Programming', 'Web Dev', 'Mobile Dev', 'Data/AI', 'Design/UI', 'Security/CTF', 'DevOps']
   },
   {
     id: 'business',
     label: 'Business',
-    icon: 'streamline-pixel:money-graph-arrow-increase',
+    icon: 'pixel:chart-line-solid',
     options: ['Startups', 'Marketing', 'Case competitions', 'Networking', 'Finance']
   },
   {
     id: 'creative',
     label: 'Creative',
-    icon: 'streamline-pixel:interface-essential-star-2',
+    icon: 'pixel:chart-network-solid',
     options: ['Music', 'Art', 'Content creation', 'Photography', 'Video editing', 'Writing']
   },
   {
@@ -80,7 +80,7 @@ export const interestCategories = [
   {
     id: 'career',
     label: 'Career',
-    icon: 'streamline-pixel:money-bag-dollar',
+    icon: 'pixel:bolt-solid',
     options: ['Internships', 'Interview prep', 'Resume review', 'Portfolio', 'LinkedIn']
   },
 ]

@@ -20,21 +20,13 @@ const isLoading = computed(() => props.currentQuestion > props.totalQuestions)
   <div class="fixed bottom-0 left-0 right-0 bg-background border-t">
     <!-- Progress bar -->
     <div class="h-1 bg-muted">
-      <div
-        class="h-full bg-primary transition-all duration-300 ease-out"
-        :style="{ width: `${progress}%` }"
-      />
+      <div class="h-full bg-primary transition-all duration-300 ease-out" :style="{ width: `${progress}%` }" />
     </div>
 
     <!-- Controls -->
     <div class="h-16 flex items-center justify-between max-w-2xl mx-auto px-4">
       <div class="flex-1">
-        <Button
-          variant="ghost"
-          @click="onPrevious"
-          :disabled="currentQuestion === 1"
-          class="gap-2"
-        >
+        <Button variant="ghost" @click="onPrevious" :disabled="currentQuestion === 1" class="gap-2">
           <Icon name="material-symbols:arrow-back-ios-rounded" size="16" />
           Back
         </Button>
@@ -47,12 +39,7 @@ const isLoading = computed(() => props.currentQuestion > props.totalQuestions)
       </div>
 
       <div class="flex-1 flex justify-end">
-        <Button
-          v-if="!isLoading"
-          :variant="isLastScreen ? 'default' : 'ghost'"
-          @click="onNext"
-          class="gap-2"
-        >
+        <Button :variant="isLastScreen ? 'default' : 'ghost'" @click="onNext" class="gap-2">
           {{ isLastScreen ? 'Finish' : 'Next' }}
           <Icon name="material-symbols:arrow-forward-ios-rounded" size="16" />
         </Button>

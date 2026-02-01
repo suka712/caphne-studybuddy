@@ -70,7 +70,7 @@ profileRouter.post('/', requireAuth, typeboxMiddleware(createProfileSchema) , as
   return res.status(201).json({ success: true })
 })
 
-profileRouter.put('/', requireAuth, async (req, res) => {
+profileRouter.put('/', requireAuth, typeboxMiddleware(createProfileSchema), async (req, res) => {
   const authUser = req.user as User
   const updates = req.body
 

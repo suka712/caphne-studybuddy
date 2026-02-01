@@ -1,6 +1,5 @@
 interface AuthUser {
   id: number
-  username: string
   email: string
 }
 
@@ -32,23 +31,6 @@ export const useAuth = () => {
     window.location.href = `${apiBase}/api/auth/github`
   }
 
-  const updateProfile = async (profileData: { username: string }) => {
-    try {
-      const data = await $fetch<{ user: AuthUser }>(`${apiBase}/api/profile`, {
-        method: 'PUT',
-        body: profileData,
-        credentials: 'include',
-      })
-
-      if (data.user) {
-        user.value = data.user
-      }
-    } catch (error) {
-      console.error('Failed to update profile', error)
-      throw error
-    }
-  }
-
   const logout = async () => {
     try {
       await $fetch(`${apiBase}/api/auth/logout`, {
@@ -65,7 +47,6 @@ export const useAuth = () => {
     isCheckingAuth,
     isAuthenticated,
     fetchUser,
-    updateProfile,
     logout,
     loginWithGoogle,
     loginWithGitHub,

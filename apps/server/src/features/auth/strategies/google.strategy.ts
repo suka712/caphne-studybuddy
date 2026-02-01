@@ -25,7 +25,6 @@ export const googleStrategy = new GoogleStrategy(
 async function findOrCreateUser(profile: Profile, provider: 'google' | 'github') {
   const providerId = profile.id
   const email = profile.emails?.[0]?.value
-  const username = profile.displayName || email?.split('@')[0] || 'user'
 
   if (!email) {
     throw new Error('Email not provided by OAuth provider')
@@ -63,7 +62,6 @@ async function findOrCreateUser(profile: Profile, provider: 'google' | 'github')
   const [newUser] = await db
     .insert(users)
     .values({
-      username,
       email,
       ...(provider === 'google' ? { googleId: providerId } : { githubId: providerId }),
     })

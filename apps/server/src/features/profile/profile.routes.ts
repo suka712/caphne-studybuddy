@@ -1,45 +1,95 @@
 import { Router } from "express";
 import { requireAuth } from "../../middleware/requireAuth.js";
 import { db } from "../../db/db.js";
-import { users } from "../../db/schema.js";
+import { profiles } from "../../db/schema.js";
 import { eq } from "drizzle-orm";
 import type { User } from "../../db/schema.js";
-import { Type } from "typebox";
-import { typeboxMiddleware } from "../../middleware/typebox.js";
+import { typeboxMiddleware } from "../../middleware/typebox.js"
+import { Static, Type } from "typebox";
 
-const profileRouter = Router();
+export const profileRouter = Router()
 
-const updateProfileSchema = Type.Object({
-  username: Type.String({ minLength: 3, maxLength: 72 }),
-});
+profileRouter.get('/', requireAuth, async (req, res) => {
+  const authUser = req.user as User
 
-profileRouter.put(
-  "/",
-  typeboxMiddleware(updateProfileSchema),
-  requireAuth,
-  async (req, res) => {
-    try {
-      const authUser = req.user as User;
-      const { username } = req.body;
+  let profile
+  try {
+    [profile] = await db
+      .select()
+      .from(profiles)
+      .where(eq(profiles.userId, authUser.id))
+      .limit(1)
+  } catch (e) {
+    console.error(`Error getting profile for user ID ${authUser.id}:`, e)
+    return res.status(500).json({ message: 'Something went wrong' })
+  }
 
-      const updatedUser = await db
-        .update(users)
-        .set({ username })
-        .where(eq(users.id, authUser.id))
-        .returning();
+  console.log(`User with ID ${authUser.id} fetched profile` )
+  return res.json({ profile: profile || null })
+})
 
-      if (!updatedUser.length) {
-        return res.status(404).json({ message: "User not found" });
-      }
+const createProfileSchema = Type.Object({
+  displayName: Type.String(),
+  gender: Type.String(),
+  birthday: Type.String({ format: "date" }),
+  year: Type.String(),
+  major: Type.String(),
+  bio: Type.Optional(Type.String()),
+  photoUrl: Type.Optional(Type.String()),
+  isPublic: Type.Optional(Type.Boolean()),
+  goals: Type.Optional(Type.Array(Type.String())),
+  vibes: Type.Optional(Type.Array(Type.String())),
+  interests: Type.Optional(Type.Array(Type.String()))
+})
 
-      const { password, createdAt, googleId, githubId, ...safeUser } =
-        updatedUser[0];
-      res.json({ user: safeUser });
-    } catch (error) {
-      console.error("Profile updated error:", error);
-      res.status(500).json({ message: "Failed to update profile" });
+profileRouter.post('/', requireAuth, typeboxMiddleware(createProfileSchema) , async (req, res) => {
+  const authUser = req.user as User
+  const { displayName, gender, birthday, year, major, bio, photoUrl, isPublic, goals, vibes, interests } = req.body as Static<typeof createProfileSchema>
+
+  try {
+    await db.insert(profiles).values({
+      userId: authUser.id,
+      displayName,
+      gender,
+      birthday,
+      year,
+      major,
+      bio,
+      photoUrl,
+      isPublic,
+      goals,
+      vibes,
+      interests,
+    })
+  } catch (e) {
+    console.error(`Error creating profile for user ID ${authUser.id}:`, e)
+    return res.status(500).json({ message: 'Something went wrong' })
+  }
+
+  console.log(`User with ID ${authUser.id} added profile` )
+  return res.status(201).json({ success: true })
+})
+
+profileRouter.put('/', requireAuth, async (req, res) => {
+  const authUser = req.user as User
+  const updates = req.body
+
+  let updated
+  try {
+    updated = await db
+      .update(profiles)
+      .set(updates)
+      .where(eq(profiles.userId, authUser.id))
+      .returning()
+
+    if (!updated.length) {
+      return res.status(404).json({ message: 'Profile not found' })
     }
-  },
-);
+  } catch (e) {
+    console.error(`Error updating profile for user ID ${authUser.id}:`, e)
+    return res.status(500).json({ message: 'Something went wrong' })
+  }
 
-export { profileRouter };
+  console.log(`User with ID ${authUser.id} updated profile` )
+  return res.json({ profile: updated[0] })
+})

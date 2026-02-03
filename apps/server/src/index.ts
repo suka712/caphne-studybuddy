@@ -7,6 +7,7 @@ import { env } from './config/env.js'
 import { healthRouter } from './features/health/health.routes.js'
 import { emailRouter } from './features/email/email.routes.js'
 import { profileRouter } from './features/profile/profile.routes.js'
+import { matchesRouter } from './features/matches/matches.routes.js'
 
 const app = express()
 

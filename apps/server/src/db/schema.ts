@@ -10,7 +10,6 @@ export const users = pgTable('users', {
 });
 
 export type User = typeof users.$inferSelect
-export type NewUser = typeof users.$inferInsert
 
 export const profiles = pgTable('profiles', {
   id: serial('id').primaryKey(),
@@ -30,11 +29,38 @@ export const profiles = pgTable('profiles', {
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 })
 
-export type Profile = typeof profiles.$inferSelect
-export type NewProfile = typeof profiles.$inferInsert
-
 export const emailCollection = pgTable('email_collection', {
   id: serial('id').primaryKey(),
   email: text('email').notNull().unique(),
   collectedAt: timestamp('collected_at').notNull().defaultNow(),
 });
+
+export const matches = pgTable('matches', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  matchedUserId: integer('matched_user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
+export type Match = typeof matches.$inferSelect
+
+// export const matchInteractions = pgTable('match_interactions', {
+//   id: serial('id').primaryKey(),
+//   userId: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+//   matchedUserId: integer('matched_user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+//   action: text('action').notNull(), // 'accepted' | 'rejected' | 'messaged' | 'unmatched'
+//   createdAt: timestamp('created_at').defaultNow(),
+// });
+
+// export type MatchInteraction = typeof matchInteractions.$inferSelect;
+// export type NewMatchInteraction = typeof matchInteractions.$inferInsert;
+
+// export const matchQuota = pgTable('match_quota', {
+//   id: serial('id').primaryKey(),
+//   userId: integer('user_id').notNull().unique().references(() => users.id, { onDelete: 'cascade' }),
+//   matchesGivenToday: integer('matches_given_today').default(0),
+//   lastResetAt: timestamp('last_reset_at').defaultNow(),
+// });
+
+// export type MatchQuota = typeof matchQuota.$inferSelect;
+// export type NewMatchQuota = typeof matchQuota.$inferInsert;

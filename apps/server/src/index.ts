@@ -20,9 +20,9 @@ app.use(cookieParser())
 app.use(passport.initialize())
 
 app.use('/health', healthRouter)
-app.use('/api/auth', authRouter)
-app.use('/api/email-collection', emailRouter)
-app.use('/api/profile', profileRouter)
+app.use('/auth', authRouter)
+app.use('/email-collection', emailRouter)
+app.use('/profile', profileRouter)
 
 app.listen(env.port, () => {
   console.log(`Server running on port ${env.port}`)

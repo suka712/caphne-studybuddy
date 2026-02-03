@@ -84,7 +84,7 @@ const editingName = ref('')
 
 onMounted(async () => {
   try {
-    const data = await $fetch<{ profile: any }>(`${apiBase}/api/profile`, {
+    const data = await $fetch<{ profile: any }>(`${apiBase}/profile`, {
       credentials: 'include',
     })
 
@@ -115,7 +115,7 @@ const saveName = async () => {
   }
 
   try {
-    const data = await $fetch<{ profile: any }>(`${apiBase}/api/profile`, {
+    const data = await $fetch<{ profile: any }>(`${apiBase}/profile`, {
       method: 'PUT',
       credentials: 'include',
       body: { displayName: trimmed }

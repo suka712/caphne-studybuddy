@@ -21,7 +21,7 @@ async function submitEmail() {
   isError.value = false
 
   try {
-    await $fetch(`${apiBase}/api/email-collection`, {
+    await $fetch(`${apiBase}/email-collection`, {
       method: 'POST',
       body: { email: email.value }
     })

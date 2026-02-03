@@ -112,7 +112,7 @@ const { public: { apiBase } } = useRuntimeConfig()
 
 const submitProfile = async () => {
   try {
-    await $fetch(`${apiBase}/api/profile`, {
+    await $fetch(`${apiBase}/profile`, {
       method: 'POST',
       credentials: 'include',
       body: {

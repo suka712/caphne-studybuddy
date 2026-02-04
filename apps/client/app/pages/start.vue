@@ -112,13 +112,15 @@ const { public: { apiBase } } = useRuntimeConfig()
 
 const submitProfile = async () => {
   try {
+    const birthday = date.value ? `${date.value.year}-${String(date.value.month).padStart(2, '0')}-${String(date.value.day).padStart(2, '0')}` : null
+
     await $fetch(`${apiBase}/profile`, {
       method: 'POST',
       credentials: 'include',
       body: {
         displayName: displayName.value,
         gender: selectedGender.value,
-        birthday: date.value?.toString() || null,
+        birthday,
         year: selectedYear.value,
         major: selectedMajor.value,
         bio: bio.value || null,

@@ -4,7 +4,7 @@ import { db } from "../../db/db.js";
 import { profiles } from "../../db/schema.js";
 import { eq } from "drizzle-orm";
 import type { User } from "../../db/schema.js";
-import { validateBody } from "../../middleware/typebox.js"
+import { validateBody } from "../../middleware/validateBody.js"
 import { Static, Type } from "typebox";
 
 export const profileRouter = Router()
@@ -29,17 +29,17 @@ profileRouter.get('/', requireAuth, async (req, res) => {
 })
 
 const createProfileSchema = Type.Object({
-  displayName: Type.String(),
+  displayName: Type.String({ minLength: 1 }),
   gender: Type.String(),
-  birthday: Type.String({ format: "date" }),
+  birthday: Type.Optional(Type.Union([Type.String({ format: "date" }), Type.Null()])),
   year: Type.String({ minLength: 1, maxLength: 20 }),
-  major: Type.String(),
-  bio: Type.Optional(Type.String({ minLength: 1 })),
-  photoUrl: Type.Optional(Type.String()),
-  isPublic: Type.Optional(Type.Boolean()),
-  goals: Type.Optional(Type.Array(Type.String())),
-  vibes: Type.Optional(Type.Array(Type.String())),
-  interests: Type.Optional(Type.Array(Type.String()))
+  major: Type.String({ minLength: 1 }),
+  bio: Type.Optional(Type.Union([Type.String({ minLength: 1 }), Type.Null()])),
+  photoUrl: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+  isPublic: Type.Boolean(),
+  goals: Type.Array(Type.String(), { minItems: 1 }),
+  vibes: Type.Array(Type.String(), { minItems: 1 }),
+  interests: Type.Array(Type.String(), { minItems: 1 }),
 })
 
 profileRouter.post('/', requireAuth, validateBody(createProfileSchema) , async (req, res) => {

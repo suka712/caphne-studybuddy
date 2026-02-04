@@ -22,10 +22,10 @@ export const profiles = pgTable('profiles', {
   major: text('major').notNull(),
   bio: text('bio'),
   photoUrl: text('photo_url'),
-  isPublic: boolean('is_public').default(false),
-  goals: text('goals').array(), // ['study-buddy', 'project-teammate', ...]
-  vibes: text('vibes').array(), // ['introvert', 'night-owl', ...]
-  interests: text('interests').array(), // ['Programming', 'Web Dev', ...]
+  isPublic: boolean('is_public').notNull().default(false),
+  goals: text('goals').array().notNull(), // ['study-buddy', 'project-teammate', ...]
+  vibes: text('vibes').array().notNull(), // ['introvert', 'night-owl', ...]
+  interests: text('interests').array().notNull(), // ['Programming', 'Web Dev', ...]
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 })

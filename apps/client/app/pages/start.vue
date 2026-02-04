@@ -123,7 +123,7 @@ const submitProfile = async () => {
         birthday,
         year: selectedYear.value,
         major: selectedMajor.value,
-        bio: bio.value || null,
+        bio: bio.value || '',
         photoUrl: null,
         isPublic: showPublicProfile.value,
         goals: selectedGoals.value,

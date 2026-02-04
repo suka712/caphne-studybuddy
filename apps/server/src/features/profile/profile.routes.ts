@@ -24,25 +24,25 @@ profileRouter.get('/', requireAuth, async (req, res) => {
     return res.status(500).json({ message: 'Something went wrong' })
   }
 
-  console.log(`User with ID ${authUser.id} fetched profile` )
+  console.log(`User with ID ${authUser.id} fetched profile`)
   return res.json({ profile: profile || null })
 })
 
 const createProfileSchema = Type.Object({
   displayName: Type.String({ minLength: 1 }),
-  gender: Type.String(),
+  gender: Type.String({ minLength: 1 }),
   birthday: Type.Optional(Type.Union([Type.String({ format: "date" }), Type.Null()])),
   year: Type.String({ minLength: 1, maxLength: 20 }),
   major: Type.String({ minLength: 1 }),
-  bio: Type.Optional(Type.Union([Type.String({ minLength: 1 }), Type.Null()])),
+  bio: Type.Optional(Type.String()),
   photoUrl: Type.Optional(Type.Union([Type.String(), Type.Null()])),
   isPublic: Type.Boolean(),
-  goals: Type.Array(Type.String(), { minItems: 1 }),
-  vibes: Type.Array(Type.String(), { minItems: 1 }),
-  interests: Type.Array(Type.String(), { minItems: 1 }),
+  goals: Type.Array(Type.String({ minLength: 1 }), { minItems: 1 }),
+  vibes: Type.Array(Type.String({ minLength: 1 }), { minItems: 1 }),
+  interests: Type.Array(Type.String({ minLength: 1 }), { minItems: 1 }),
 })
 
-profileRouter.post('/', requireAuth, validateBody(createProfileSchema) , async (req, res) => {
+profileRouter.post('/', requireAuth, validateBody(createProfileSchema), async (req, res) => {
   const authUser = req.user as User
   const { displayName, gender, birthday, year, major, bio, photoUrl, isPublic, goals, vibes, interests } = req.body as Static<typeof createProfileSchema>
 
@@ -62,11 +62,15 @@ profileRouter.post('/', requireAuth, validateBody(createProfileSchema) , async (
       interests,
     })
   } catch (e) {
+    if (e instanceof Error && 'code' in e || (e as any).code === '23505') {
+      console.error(`Duplicate Error creating profile for user ID ${authUser.id}:`, e)
+      return res.status(409).json({ message: 'Profile already exist' })
+    }
     console.error(`Error creating profile for user ID ${authUser.id}:`, e)
     return res.status(500).json({ message: 'Something went wrong' })
   }
 
-  console.log(`User with ID ${authUser.id} added profile` )
+  console.log(`User with ID ${authUser.id} added profile`)
   return res.status(201).json({ success: true })
 })
 
@@ -92,6 +96,6 @@ profileRouter.put('/', requireAuth, validateBody(updateProfileSchema), async (re
     return res.status(500).json({ message: 'Something went wrong' })
   }
 
-  console.log(`User with ID ${authUser.id} updated profile` )
+  console.log(`User with ID ${authUser.id} updated profile`)
   return res.json({ profile: updated[0] })
 })

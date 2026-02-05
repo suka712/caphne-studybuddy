@@ -20,7 +20,7 @@ app.use(cookieParser())
 app.use(passport.initialize())
 
 app.use('/health', healthRouter)
-app.use('/api/auth', authRouter)
+app.use('/auth', authRouter)
 app.use('/email-collection', emailRouter)
 app.use('/profile', profileRouter)
 

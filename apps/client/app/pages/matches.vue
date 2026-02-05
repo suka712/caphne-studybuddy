@@ -6,8 +6,15 @@
 
     <Card v-else class="w-full max-w-xs">
       <CardContent>
-        <div class="flex items-center justify-between mb-6">
-          <h1 class="text-xl font-bold">Your Matches</h1>
+        <div class="flex items-center gap-4 mb-6 justify-between">
+          <div class="flex items-center gap-2">
+            <div class="size-12 rounded-xl bg-muted flex items-center justify-center">
+              <Icon name="mdi:account" size="32" />
+            </div>
+            <div class="overflow-hidden">
+              <h1 class="text-xl font-bold">{{ profile.displayName }}</h1>
+            </div>
+          </div>
           <Button variant="outline" class="h-7 text-xs" :disabled="!canGenerate || isGenerating"
             @click="handleGenerate">
             <Icon v-if="isGenerating" name="svg-spinners:ring-resize" size="14" class="mr-1" />
@@ -35,7 +42,7 @@
           <div class="flex gap-2">
             <NuxtLink class="flex flex-1" to="/profile">
               <Button variant="outline" class="hover:text-foreground w-full">
-                <Icon name="material-symbols:heart-smile" size="16"/>
+                <Icon name="material-symbols:person" size="16"/>
                 <span class="text-sm">Profile</span>
               </Button>
             </NuxtLink>
@@ -69,6 +76,8 @@ const matches = ref<MatchCard[]>([])
 const nextMatchAt = ref<Date | null>(null)
 const isLoading = ref(true)
 const isGenerating = ref(false)
+const profile = ref<any>(null)
+
 
 const canGenerate = computed(() => {
   if (!nextMatchAt.value) return true
@@ -111,8 +120,24 @@ const fetchMatches = async () => {
 }
 
 onMounted(async () => {
-  await fetchMatches()
-  isLoading.value = false
+  try {
+    await fetchMatches()
+    const data = await $fetch<{ profile: any }>(`${apiBase}/profile`, {
+      credentials: 'include',
+    })
+
+    if (!data.profile) {
+      navigateTo('/start')
+      return
+    }
+
+    profile.value = data.profile
+  } catch (e) {
+    console.error('Failed to fetch profile:', e)
+    navigateTo('/start')
+  } finally {
+    isLoading.value = false
+  }
 })
 
 const handleGenerate = async () => {

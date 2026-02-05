@@ -6,7 +6,7 @@
 
     <Card v-else-if="profile" class="w-full max-w-xs">
       <CardContent>
-        <div class="flex items-center gap-4 mb-6">
+        <div class="flex items-center gap-2 mb-6">
           <div class="size-12 rounded-xl bg-muted flex items-center justify-center">
             <Icon name="mdi:account" size="32" />
           </div>
@@ -15,7 +15,6 @@
             <p class="text-muted-foreground text-sm overflow-hidden">{{ authUser?.email }}</p>
           </div>
         </div>
-
         <div class="space-y-4">
           <div class="p-4 rounded-lg bg-muted space-y-3">
             <div>
@@ -63,7 +62,7 @@
               </Button>
             </NuxtLink>
             <Button variant="outline" class="hover:text-foreground flex" @click="handleLogout">
-              <Icon name="mdi:logout" size="16"/>
+              <Icon name="streamline:emergency-exit-solid" size="16"/>
             </Button>
           </div>
         </div>

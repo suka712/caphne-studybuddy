@@ -4,7 +4,7 @@ import { db } from '../../../db/db.js'
 import { users } from '../../../db/schema.js'
 import { env } from '../../../config/env.js'
 
-const CALLBACK_URL = `${env.serverUrl}/auth/google/callback`
+const CALLBACK_URL = `${env.serverUrl}/api/auth/google/callback`
 
 export const googleStrategy = new GoogleStrategy(
   {

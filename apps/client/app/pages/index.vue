@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const { public: { apiBase } } = useRuntimeConfig()
-const { loginWithGoogle, loginWithGitHub, isAuthenticated, fetchUser, isCheckingAuth } = useAuth()
+const { loginWithGoogle, loginWithGitHub, isAuthenticated, fetchUser } = useAuth()
 
 onMounted(() => {
   fetchUser()
@@ -62,7 +62,7 @@ async function submitEmail() {
             </Button>
             <Button class="h-8 hover:px-6" variant="secondary" @click="loginWithGitHub">
               <Icon name="ci:github" size="20" />
-              Github
+              GitHub
             </Button>
           </div>
         </div>

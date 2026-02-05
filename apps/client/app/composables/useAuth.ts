@@ -12,7 +12,7 @@ export const useAuth = () => {
 
   const fetchUser = async () => {
     try {
-      const data = await $fetch<{ user: AuthUser }>(`${apiBase}/auth/me`, {
+      const data = await $fetch<{ user: AuthUser }>(`${apiBase}/api/auth/me`, {
         credentials: 'include',
       })
       user.value = data.user
@@ -24,16 +24,16 @@ export const useAuth = () => {
   }
 
   const loginWithGoogle = () => {
-    window.location.href = `${apiBase}/auth/google`
+    window.location.href = `${apiBase}/api/auth/google`
   }
 
   const loginWithGitHub = () => {
-    window.location.href = `${apiBase}/auth/github`
+    window.location.href = `${apiBase}/api/auth/github`
   }
 
   const logout = async () => {
     try {
-      await $fetch(`${apiBase}/auth/logout`, {
+      await $fetch(`${apiBase}/api/auth/logout`, {
         method: 'POST',
         credentials: 'include',
       })

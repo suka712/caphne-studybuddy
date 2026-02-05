@@ -15,7 +15,6 @@ app.use(cors({
   origin: env.clientUrl,
   credentials: true
 }))
-
 app.use(express.json())
 app.use(cookieParser())
 app.use(passport.initialize())
@@ -24,6 +23,7 @@ app.use('/health', healthRouter)
 app.use('/auth', authRouter)
 app.use('/email-collection', emailRouter)
 app.use('/profile', profileRouter)
+app.use('/matches', matchesRouter)
 
 app.listen(env.port, () => {
   console.log(`Server running on port ${env.port}`)

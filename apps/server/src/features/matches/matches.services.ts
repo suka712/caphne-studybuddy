@@ -1,19 +1,18 @@
+import { matchConfig } from "../../config/matching.js"
 import { db } from "../../db/db.js"
 import { matches, users, profiles } from "../../db/schema.js"
 import { and, desc, eq, ne, notInArray, sql } from 'drizzle-orm'
-
-const ADMIN_EMAIL = 'khiemnguyen.hye@gmail.com' // Hard coded match
-const MATCH_COOLDOWN_MS = 24 * 60 * 60 * 1000 // 24 hours
-const MATCHES_PER_ROUND = 3
 
 const ensureAdminMatch = async (userId: number) => {
   const [admin] = await db
     .select()
     .from(users)
-    .where(eq(users.email, ADMIN_EMAIL))
+    .where(eq(users.email, matchConfig.adminEmail))
     .limit(1)
 
-  if (!admin || admin.id === userId) return
+  if (!admin || admin.id === userId) {
+    return
+  }
 
   const [existing] = await db
     .select()
@@ -24,7 +23,9 @@ const ensureAdminMatch = async (userId: number) => {
     ))
     .limit(1)
 
-  if (existing) return
+  if (existing) {
+    return
+  }
 
   await db.insert(matches).values({
     userId,
@@ -33,11 +34,10 @@ const ensureAdminMatch = async (userId: number) => {
 }
 
 export const generateMatches = async (userId: number) => {
-  // Cooldown check: find most recent non-admin match
   const [admin] = await db
     .select({ id: users.id })
     .from(users)
-    .where(eq(users.email, ADMIN_EMAIL))
+    .where(eq(users.email, matchConfig.adminEmail))
     .limit(1)
 
   const adminId = admin?.id
@@ -57,8 +57,8 @@ export const generateMatches = async (userId: number) => {
 
   if (recentMatch?.createdAt) {
     const elapsed = Date.now() - recentMatch.createdAt.getTime()
-    if (elapsed < MATCH_COOLDOWN_MS) {
-      const nextMatchAt = new Date(recentMatch.createdAt.getTime() + MATCH_COOLDOWN_MS)
+    if (elapsed < matchConfig.matchCooldownMs) {
+      const nextMatchAt = new Date(recentMatch.createdAt.getTime() + matchConfig.matchCooldownMs)
       return { error: 'cooldown' as const, nextMatchAt }
     }
   }
@@ -70,13 +70,12 @@ export const generateMatches = async (userId: number) => {
 
   const excludeIds = [userId, ...existingMatches.map(m => m.matchedUserId)]
 
-  // Select random candidates
   const candidates = await db
     .select()
     .from(users)
     .where(notInArray(users.id, excludeIds))
     .orderBy(sql`RANDOM()`)
-    .limit(MATCHES_PER_ROUND)
+    .limit(matchConfig.matchesPerRound)
 
   if (candidates.length === 0) {
     return { matches: [] }
@@ -111,11 +110,10 @@ export const getAllMatches = async (userId: number) => {
     .where(eq(matches.userId, userId))
     .orderBy(desc(matches.createdAt))
 
-  // Compute nextMatchAt from most recent non-admin match
   const [admin] = await db
     .select({ id: users.id })
     .from(users)
-    .where(eq(users.email, ADMIN_EMAIL))
+    .where(eq(users.email, matchConfig.adminEmail))
     .limit(1)
 
   const adminId = admin?.id
@@ -133,7 +131,7 @@ export const getAllMatches = async (userId: number) => {
 
   let nextMatchAt: Date | null = null
   if (recentMatch?.createdAt) {
-    const nextTime = recentMatch.createdAt.getTime() + MATCH_COOLDOWN_MS
+    const nextTime = recentMatch.createdAt.getTime() + matchConfig.matchCooldownMs
     if (nextTime > Date.now()) {
       nextMatchAt = new Date(nextTime)
     }

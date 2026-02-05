@@ -6,7 +6,7 @@
 
     <Card v-else class="w-full max-w-xs">
       <CardContent>
-        <div class="flex items-center gap-4 mb-6">
+        <div class="flex items-center gap-4 mb-6 justify-between">
           <div class="flex items-center gap-2 min-w-0">
             <div class="size-15 rounded-xl bg-muted flex items-center justify-center shrink-0">
               <Icon name="material-symbols:person-heart-rounded" size="32" />

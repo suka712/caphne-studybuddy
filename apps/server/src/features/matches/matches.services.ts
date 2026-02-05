@@ -1,7 +1,7 @@
 import { matchConfig } from "../../config/matching.js"
 import { db } from "../../db/db.js"
 import { matches, users, profiles } from "../../db/schema.js"
-import { and, desc, eq, gte, ne, notInArray, or, sql } from 'drizzle-orm'
+import { and, desc, eq, gte, ne, notInArray, sql } from 'drizzle-orm'
 
 const getAdminId = async () => {
   const [admin] = await db

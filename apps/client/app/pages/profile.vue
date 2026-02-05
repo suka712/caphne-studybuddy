@@ -7,8 +7,8 @@
     <Card v-else-if="profile" class="w-full max-w-xs">
       <CardContent>
         <div class="flex items-center gap-2 mb-6">
-          <div class="size-12 rounded-xl bg-muted flex items-center justify-center">
-            <Icon name="mdi:account" size="32" />
+          <div class="size-15 rounded-xl bg-muted flex items-center justify-center">
+            <Icon name="material-symbols:person-heart-rounded" size="32" />
           </div>
           <div class="overflow-hidden">
             <h1 class="text-xl font-bold">{{ profile.displayName }}</h1>

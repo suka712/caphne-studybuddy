@@ -6,16 +6,14 @@
 
     <Card v-else class="w-full max-w-xs">
       <CardContent>
-        <div class="flex items-center gap-4 mb-6 justify-between">
-          <div class="flex items-center gap-2">
-            <div class="size-12 rounded-xl bg-muted flex items-center justify-center">
-              <Icon name="mdi:account" size="32" />
+        <div class="flex items-center gap-4 mb-6">
+          <div class="flex items-center gap-2 min-w-0">
+            <div class="size-15 rounded-xl bg-muted flex items-center justify-center shrink-0">
+              <Icon name="material-symbols:person-heart-rounded" size="32" />
             </div>
-            <div class="overflow-hidden">
-              <h1 class="text-xl font-bold">{{ profile.displayName }}</h1>
-            </div>
+              <h1 class="text-xl font-bold truncate">{{ profile.displayName }}</h1>
           </div>
-          <Button variant="outline" class="h-7 text-xs" :disabled="!canGenerate || isGenerating"
+          <Button variant="outline" class="h-7 text-xs shrink-0" :disabled="!canGenerate || isGenerating"
             @click="handleGenerate">
             <Icon v-if="isGenerating" name="svg-spinners:ring-resize" size="14" class="mr-1" />
             <span v-if="canGenerate && !isGenerating">New Match</span>

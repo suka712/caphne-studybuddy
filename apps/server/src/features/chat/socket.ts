@@ -13,7 +13,6 @@ export function setupSocketIO(httpServer: HttpServer) {
     },
   })
 
-  // Auth middleware — extract JWT from cookie on handshake
   io.use((socket, next) => {
     try {
       const cookieHeader = socket.handshake.headers.cookie

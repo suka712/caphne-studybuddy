@@ -15,7 +15,7 @@
             @click="handleGenerate"
           >
             <Icon v-if="isGenerating" name="svg-spinners:ring-resize" size="14" class="mr-1" />
-            <span v-if="canGenerate && !isGenerating">New Matches</span>
+            <span v-if="canGenerate && !isGenerating">New Match</span>
             <span v-else-if="isGenerating">Loading...</span>
             <span v-else>{{ cooldownText }}</span>
           </Button>
@@ -77,8 +77,10 @@ const cooldownText = computed(() => {
   if (diff <= 0) return ''
   const hours = Math.floor(diff / (1000 * 60 * 60))
   const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+  const seconds = Math.floor((diff % (1000 * 60)) / 1000)
   if (hours > 0) return `${hours}h ${minutes}m`
-  return `${minutes}m`
+  if (minutes > 0) return `${minutes}m ${seconds}s`
+  return `${seconds}s`
 })
 
 let cooldownTimer: ReturnType<typeof setInterval>
@@ -87,7 +89,7 @@ onMounted(() => {
     if (nextMatchAt.value) {
       nextMatchAt.value = new Date(nextMatchAt.value)
     }
-  }, 60_000)
+  }, 1_000)
 })
 onUnmounted(() => clearInterval(cooldownTimer))
 
@@ -112,12 +114,16 @@ onMounted(async () => {
 const handleGenerate = async () => {
   isGenerating.value = true
   try {
-    await $fetch(`${apiBase}/matches`, {
+    const result = await $fetch<{ match: any }>(`${apiBase}/matches`, {
       method: 'POST',
       credentials: 'include',
     })
     await fetchMatches()
-    toast.success('New matches found!')
+    if (result.match) {
+      toast.success('New match found!')
+    } else {
+      toast.info('No more matches available right now')
+    }
   } catch (e: any) {
     if (e?.response?.status === 429) {
       const body = e.response._data

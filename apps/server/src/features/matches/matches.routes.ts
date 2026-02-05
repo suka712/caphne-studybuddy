@@ -28,7 +28,7 @@ matchesRouter.post('/', requireAuth, async (req, res) => {
       return
     }
 
-    res.json({ matches: result.matches })
+    res.json({ match: result.match })
   } catch (e) {
     console.log(`Error generating new matches: ${e}`)
     res.status(500).json({ error: 'Something went wrong' })

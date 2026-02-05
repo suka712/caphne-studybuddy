@@ -51,15 +51,15 @@ export const generateMatches = async (userId: number) => {
 
   if (recentMatches.length >= matchConfig.matchesPerWindow) {
     const oldest = recentMatches[recentMatches.length - 1]!
-    const nextMatchAt = new Date(oldest.createdAt!.getTime() + matchConfig.windowMs)
+    const nextMatchAt = new Date(oldest.createdAt.getTime() + matchConfig.windowMs)
     return { error: 'cooldown' as const, nextMatchAt }
   }
 
   if (recentMatches.length > 0) {
     const lastMatch = recentMatches[0]!
-    const elapsed = now - lastMatch.createdAt!.getTime()
+    const elapsed = now - lastMatch.createdAt.getTime()
     if (elapsed < matchConfig.cooldownBetweenMatchesMs) {
-      const nextMatchAt = new Date(lastMatch.createdAt!.getTime() + matchConfig.cooldownBetweenMatchesMs)
+      const nextMatchAt = new Date(lastMatch.createdAt.getTime() + matchConfig.cooldownBetweenMatchesMs)
       return { error: 'cooldown' as const, nextMatchAt }
     }
   }
@@ -119,10 +119,10 @@ export const getAllMatches = async (userId: number) => {
 
   if (remainingMatches <= 0) {
     const oldest = recentMatches[recentMatches.length - 1]!
-    nextMatchAt = new Date(oldest.createdAt!.getTime() + matchConfig.windowMs)
+    nextMatchAt = new Date(oldest.createdAt.getTime() + matchConfig.windowMs)
   } else if (recentMatches.length > 0) {
     const lastMatch = recentMatches[0]!
-    const nextTime = lastMatch.createdAt!.getTime() + matchConfig.cooldownBetweenMatchesMs
+    const nextTime = lastMatch.createdAt.getTime() + matchConfig.cooldownBetweenMatchesMs
     if (nextTime > now) {
       nextMatchAt = new Date(nextTime)
     }

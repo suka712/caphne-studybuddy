@@ -27,7 +27,12 @@
             No matches yet...
           </p>
 
-          <div v-for="match in matches" :key="match.matchId" class="flex items-center gap-3 p-3 rounded-lg bg-muted">
+          <NuxtLink
+            v-for="match in matches"
+            :key="match.matchId"
+            :to="`/chat/${match.matchId}`"
+            class="flex items-center gap-3 p-3 rounded-lg bg-muted hover:bg-muted/80 transition-colors cursor-pointer"
+          >
             <div class="size-10 rounded-xl bg-background flex items-center justify-center shrink-0">
               <img v-if="match.photoUrl" :src="match.photoUrl" class="size-10 rounded-xl object-cover" />
               <Icon v-else name="mdi:account" size="24" />
@@ -36,7 +41,7 @@
               <p class="text-sm font-semibold truncate">{{ match.displayName }}</p>
               <p class="text-xs text-muted-foreground truncate">{{ match.major }} · {{ match.year }}</p>
             </div>
-          </div>
+          </NuxtLink>
           <div class="flex gap-2">
             <NuxtLink class="flex flex-1" to="/profile">
               <Button variant="outline" class="hover:text-foreground w-full">

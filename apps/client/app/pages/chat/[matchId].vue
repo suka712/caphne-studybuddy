@@ -1,0 +1,230 @@
+<template>
+  <div class="flex justify-center items-center min-h-screen">
+    <div v-if="isLoading" class="flex flex-col items-center">
+      <Icon name="svg-spinners:ring-resize" size="40" class="text-primary" />
+    </div>
+
+    <Card v-else class="w-full max-w-xs flex flex-col py-0" style="height: 50vh;">
+      <CardContent class="flex flex-col h-full p-0">
+        <!-- Header -->
+        <div class="flex items-center gap-2 p-3 border-b border-border">
+          <NuxtLink to="/matches">
+            <Button variant="ghost" size="sm" class="size-8 p-0">
+              <Icon name="mdi:arrow-left" size="20" />
+            </Button>
+          </NuxtLink>
+          <p class="text-sm font-semibold truncate">{{ matchDisplayName }}</p>
+        </div>
+
+        <!-- Messages -->
+        <ScrollArea ref="scrollAreaRef" class="flex-1 min-h-0">
+          <div class="p-4 space-y-2">
+            <Button
+              v-if="hasMore"
+              variant="ghost"
+              size="sm"
+              class="w-full text-xs text-muted-foreground"
+              :disabled="isLoadingMore"
+              @click="loadMore"
+            >
+              {{ isLoadingMore ? 'Loading...' : 'Load older messages' }}
+            </Button>
+
+            <p v-if="messages.length === 0 && !hasMore" class="text-muted-foreground text-sm text-center py-4">
+              No messages yet. Say hi!
+            </p>
+
+            <div
+              v-for="msg in messages"
+              :key="msg.id"
+              :class="[
+                'max-w-[80%] rounded-lg px-3 py-2 text-sm wrap-break-word',
+                msg.senderId === currentUserId
+                  ? 'ml-auto bg-primary text-primary-foreground'
+                  : 'mr-auto bg-muted'
+              ]"
+            >
+              <p>{{ msg.content }}</p>
+              <p class="text-[10px] opacity-60 mt-1">
+                {{ formatTime(msg.createdAt) }}
+              </p>
+            </div>
+          </div>
+        </ScrollArea>
+
+        <!-- Input -->
+        <div class="p-4 border-t border-border">
+          <form @submit.prevent="sendMessage" class="flex gap-2 h-full">
+            <Input
+              v-model="newMessage"
+              placeholder="Type a message..."
+              class="flex-1"
+              :disabled="!isConnected"
+            />
+            <Button type="submit" size="sm" class="h-full" :disabled="!canSend">
+              <Icon name="mdi:send" size="18" />
+            </Button>
+          </form>
+        </div>
+      </CardContent>
+    </Card>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { toast } from 'vue-sonner'
+import { ScrollArea } from '@/components/ui/scroll-area'
+
+definePageMeta({
+  middleware: 'auth',
+  layout: 'internal',
+})
+
+const route = useRoute()
+const { public: { apiBase } } = useRuntimeConfig()
+const { authUser } = useAuth()
+const { connect, disconnect, getSocket } = useSocket()
+
+const matchId = Number(route.params.matchId)
+const currentUserId = computed(() => authUser.value?.id)
+
+interface ChatMessage {
+  id: number
+  matchId: number
+  senderId: number
+  content: string
+  createdAt: string
+}
+
+const messages = ref<ChatMessage[]>([])
+const matchDisplayName = ref('')
+const newMessage = ref('')
+const isLoading = ref(true)
+const isLoadingMore = ref(false)
+const isConnected = ref(false)
+const hasMore = ref(true)
+const scrollAreaRef = ref<InstanceType<typeof ScrollArea> | null>(null)
+
+const canSend = computed(() =>
+  isConnected.value && newMessage.value.trim().length > 0
+)
+
+const formatTime = (dateStr: string) => {
+  const d = new Date(dateStr)
+  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+}
+
+const scrollToBottom = () => {
+  nextTick(() => {
+    const viewport = scrollAreaRef.value?.$el?.querySelector('[data-slot="scroll-area-viewport"]')
+    if (viewport) {
+      viewport.scrollTop = viewport.scrollHeight
+    }
+  })
+}
+
+const PAGE_SIZE = 50
+
+const fetchMessages = async (beforeId?: number) => {
+  const params = new URLSearchParams({ limit: String(PAGE_SIZE) })
+  if (beforeId) params.set('before', String(beforeId))
+
+  const data = await $fetch<{ messages: ChatMessage[] }>(
+    `${apiBase}/chat/${matchId}/messages?${params}`,
+    { credentials: 'include' }
+  )
+  return data.messages
+}
+
+const loadMore = async () => {
+  if (!hasMore.value || messages.value.length === 0) return
+  isLoadingMore.value = true
+  try {
+    const oldestId = messages.value[0].id
+    const older = await fetchMessages(oldestId)
+    if (older.length < PAGE_SIZE) hasMore.value = false
+    messages.value = [...older, ...messages.value]
+  } catch {
+    toast.error('Failed to load older messages')
+  } finally {
+    isLoadingMore.value = false
+  }
+}
+
+const sendMessage = () => {
+  const content = newMessage.value.trim()
+  if (!content) return
+
+  const socket = getSocket()
+  if (!socket) return
+
+  socket.emit('send_message', { matchId, content })
+  newMessage.value = ''
+}
+
+onMounted(async () => {
+  try {
+    // Get match display name from the matches list
+    const matchesData = await $fetch<{ matches: any[] }>(
+      `${apiBase}/matches`,
+      { credentials: 'include' }
+    )
+    const thisMatch = matchesData.matches.find((m: any) => m.matchId === matchId)
+    if (!thisMatch) {
+      toast.error('Match not found')
+      navigateTo('/matches')
+      return
+    }
+    matchDisplayName.value = thisMatch.displayName
+
+    // Load initial messages
+    const initialMessages = await fetchMessages()
+    messages.value = initialMessages
+    if (initialMessages.length < PAGE_SIZE) hasMore.value = false
+    scrollToBottom()
+
+    // Connect socket and join room
+    const socket = connect()
+
+    socket.on('connect', () => {
+      isConnected.value = true
+      socket.emit('join', matchId)
+    })
+
+    if (socket.connected) {
+      isConnected.value = true
+      socket.emit('join', matchId)
+    }
+
+    socket.on('new_message', (msg: ChatMessage) => {
+      messages.value.push(msg)
+      scrollToBottom()
+    })
+
+    socket.on('error', (err: { message: string }) => {
+      toast.error(err.message)
+    })
+
+    socket.on('disconnect', () => {
+      isConnected.value = false
+    })
+  } catch (e) {
+    console.error('Failed to initialize chat:', e)
+    toast.error('Failed to load chat')
+    navigateTo('/matches')
+  } finally {
+    isLoading.value = false
+  }
+})
+
+onUnmounted(() => {
+  const socket = getSocket()
+  if (socket) {
+    socket.off('new_message')
+    socket.off('error')
+    socket.off('connect')
+    socket.off('disconnect')
+  }
+  disconnect()
+})
+</script>

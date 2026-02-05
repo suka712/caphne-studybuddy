@@ -140,7 +140,7 @@ const loadMore = async () => {
   if (!hasMore.value || messages.value.length === 0) return
   isLoadingMore.value = true
   try {
-    const oldestId = messages.value[0].id
+    const oldestId = messages.value[0]!.id
     const older = await fetchMessages(oldestId)
     if (older.length < PAGE_SIZE) hasMore.value = false
     messages.value = [...older, ...messages.value]

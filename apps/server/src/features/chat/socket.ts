@@ -73,7 +73,7 @@ export function setupSocketIO(httpServer: HttpServer) {
       const message = await createMessage(matchId, userId, trimmed)
       io.to(`match:${matchId}`).emit('new_message', message)
     })
-  })
+  }) // Test commit
 
   return io
 }

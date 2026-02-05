@@ -5,6 +5,7 @@ const props = defineProps<{
   currentQuestion: number
   totalQuestions: number
   isLoading: boolean
+  canProceed?: boolean
   onNext: () => void
   onPrevious: () => void
 }>()
@@ -39,7 +40,7 @@ const isLastQuestion = computed(() => props.currentQuestion === props.totalQuest
       </div>
 
       <div class="flex-1 flex justify-end">
-        <Button :disabled="isLoading" :variant="isLastQuestion ? 'default' : 'ghost'" @click="onNext" class="gap-2">
+        <Button :disabled="isLoading || canProceed === false" :variant="isLastQuestion ? 'default' : 'ghost'" @click="onNext" class="gap-2">
           {{ isLastQuestion ? 'Finish' : 'Next' }}
           <Icon name="material-symbols:arrow-forward-ios-rounded" size="16" />
         </Button>

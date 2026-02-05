@@ -108,6 +108,18 @@ const bioLength = computed(() => bio.value.length)
 
 const showPublicProfile = ref(false)
 
+const canProceedScreen1 = computed(() => !!selectedGender.value)
+const canProceedScreen2 = computed(() =>
+  displayName.value.trim() !== '' &&
+  selectedYear.value !== '' &&
+  selectedMajor.value !== ''
+)
+const canProceedScreen3 = computed(() =>
+  selectedGoals.value.length > 0 &&
+  selectedVibes.value.length > 0
+)
+const canProceedScreen4 = computed(() => selectedInterests.value.length > 0)
+
 const { public: { apiBase } } = useRuntimeConfig()
 
 const submitProfile = async () => {
@@ -138,8 +150,26 @@ const submitProfile = async () => {
   }
 }
 
+const canProceedCurrentScreen = computed(() => {
+  switch (currentQuestion.value) {
+    case 1:
+      return canProceedScreen1.value
+    case 2:
+      return canProceedScreen2.value
+    case 3:
+      return canProceedScreen3.value
+    case 4:
+      return canProceedScreen4.value
+    default:
+      return true
+  }
+})
+
 const onNext = async () => {
   if (isLoading.value) {
+    return
+  }
+  if (!canProceedCurrentScreen.value) {
     return
   }
   if (currentQuestion.value === totalQuestion) {
@@ -433,6 +463,6 @@ const onPrevious = () => {
     </div>
   </div>
 
-  <ProgressControl :currentQuestion="currentQuestion" :totalQuestions="totalQuestion" :isLoading="isLoading" :onNext="onNext"
-    :onPrevious="onPrevious" />
+  <ProgressControl :currentQuestion="currentQuestion" :totalQuestions="totalQuestion" :isLoading="isLoading"
+    :canProceed="canProceedCurrentScreen" :onNext="onNext" :onPrevious="onPrevious" />
 </template>

@@ -58,7 +58,7 @@
           <div class="flex gap-2">
             <NuxtLink class="flex flex-1" to="/matches">
               <Button variant="outline" class="hover:text-foreground w-full">
-                <Icon name="material-symbols:heart-smile" size="16" class="mr-2" />
+                <Icon name="material-symbols:heart-smile" size="16" />
                 <span class="text-sm">Matches</span>
               </Button>
             </NuxtLink>

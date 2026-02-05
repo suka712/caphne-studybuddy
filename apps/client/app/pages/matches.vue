@@ -8,12 +8,8 @@
       <CardContent>
         <div class="flex items-center justify-between mb-6">
           <h1 class="text-xl font-bold">Your Matches</h1>
-          <Button
-            variant="outline"
-            class="h-7 text-xs"
-            :disabled="!canGenerate || isGenerating"
-            @click="handleGenerate"
-          >
+          <Button variant="outline" class="h-7 text-xs" :disabled="!canGenerate || isGenerating"
+            @click="handleGenerate">
             <Icon v-if="isGenerating" name="svg-spinners:ring-resize" size="14" class="mr-1" />
             <span v-if="canGenerate && !isGenerating">New Match</span>
             <span v-else-if="isGenerating">Loading...</span>
@@ -35,6 +31,14 @@
               <p class="text-sm font-semibold truncate">{{ match.displayName }}</p>
               <p class="text-xs text-muted-foreground truncate">{{ match.major }} · {{ match.year }}</p>
             </div>
+          </div>
+          <div class="flex gap-2">
+            <NuxtLink class="flex flex-1" to="/profile">
+              <Button variant="outline" class="hover:text-foreground w-full">
+                <Icon name="material-symbols:heart-smile" size="16"/>
+                <span class="text-sm">Profile</span>
+              </Button>
+            </NuxtLink>
           </div>
         </div>
       </CardContent>

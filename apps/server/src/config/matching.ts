@@ -3,4 +3,4 @@ export const matchConfig = {
   windowMs: 3 * 60 * 60 * 1000,
   matchesPerWindow: 3,
   cooldownBetweenMatchesMs: 60 * 1000,
-} as const
+} as const // test commit

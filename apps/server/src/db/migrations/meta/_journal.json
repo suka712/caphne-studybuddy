@@ -57,6 +57,13 @@
       "when": 1770308074177,
       "tag": "0007_cuddly_amazoness",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1770312128217,
+      "tag": "0008_abnormal_groot",
+      "breakpoints": true
     }
   ]
 }

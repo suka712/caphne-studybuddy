@@ -42,6 +42,14 @@ export const matches = pgTable('matches', {
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
+export const messages = pgTable('messages', {
+  id: serial('id').primaryKey(),
+  matchId: integer('match_id').notNull().references(() => matches.id, { onDelete: 'cascade' }),
+  senderId: integer('sender_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  content: text('content').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
 // export const matchInteractions = pgTable('match_interactions', {
 //   id: serial('id').primaryKey(),
 //   userId: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),

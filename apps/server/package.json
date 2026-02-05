@@ -13,6 +13,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "cookie": "^1.1.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
@@ -23,10 +24,12 @@
     "passport-github2": "^0.1.12",
     "passport-google-oauth20": "^2.0.0",
     "pg": "^8.16.3",
+    "socket.io": "^4.8.3",
     "typebox": "^1.0.79"
   },
   "devDependencies": {
     "@caphne-studymate-finder/eslint-config": "workspace:^",
+    "@types/cookie": "^1.0.0",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",

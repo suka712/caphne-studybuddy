@@ -62,7 +62,7 @@
               :disabled="!isConnected"
             />
             <Button type="submit" size="sm" class="h-full" :disabled="!canSend">
-              <Icon name="mdi:send" size="18" />
+              <Icon name="mingcute:send-fill" size="18" />
             </Button>
           </form>
         </div>

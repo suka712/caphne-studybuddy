@@ -1,45 +1,44 @@
 <template>
-  <div class="flex justify-center items-start min-h-screen py-8 px-4">
-    <div v-if="isLoading" class="flex flex-col items-center mt-32">
+  <div class="flex justify-center items-center min-h-screen">
+    <div v-if="isLoading" class="flex flex-col items-center">
       <Icon name="svg-spinners:ring-resize" size="40" class="text-primary" />
     </div>
 
-    <div v-else class="w-full max-w-md space-y-4">
-      <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-bold">Your Matches</h1>
-        <Button
-          :disabled="!canGenerate || isGenerating"
-          @click="handleGenerate"
-        >
-          <Icon v-if="isGenerating" name="svg-spinners:ring-resize" size="16" class="mr-2" />
-          <span v-if="canGenerate && !isGenerating">Get New Matches</span>
-          <span v-else-if="isGenerating">Generating...</span>
-          <span v-else class="text-xs">{{ cooldownText }}</span>
-        </Button>
-      </div>
+    <Card v-else class="w-full max-w-xs">
+      <CardContent>
+        <div class="flex items-center justify-between mb-6">
+          <h1 class="text-xl font-bold">Your Matches</h1>
+          <Button
+            variant="outline"
+            class="h-7 text-xs"
+            :disabled="!canGenerate || isGenerating"
+            @click="handleGenerate"
+          >
+            <Icon v-if="isGenerating" name="svg-spinners:ring-resize" size="14" class="mr-1" />
+            <span v-if="canGenerate && !isGenerating">New Matches</span>
+            <span v-else-if="isGenerating">Loading...</span>
+            <span v-else>{{ cooldownText }}</span>
+          </Button>
+        </div>
 
-      <p v-if="matches.length === 0" class="text-muted-foreground text-sm text-center py-8">
-        No matches yet. Tap "Get New Matches" to find study buddies!
-      </p>
+        <div class="space-y-3">
+          <p v-if="matches.length === 0" class="text-muted-foreground text-sm text-center py-4">
+            No matches yet. Tap "New Matches" to find study buddies!
+          </p>
 
-      <div class="space-y-3">
-        <Card v-for="match in matches" :key="match.matchId">
-          <CardContent class="flex items-center gap-4">
-            <div class="size-12 rounded-xl bg-muted flex items-center justify-center shrink-0">
-              <img v-if="match.photoUrl" :src="match.photoUrl" class="size-12 rounded-xl object-cover" />
-              <Icon v-else name="mdi:account" size="32" />
+          <div v-for="match in matches" :key="match.matchId" class="flex items-center gap-3 p-3 rounded-lg bg-muted">
+            <div class="size-10 rounded-xl bg-background flex items-center justify-center shrink-0">
+              <img v-if="match.photoUrl" :src="match.photoUrl" class="size-10 rounded-xl object-cover" />
+              <Icon v-else name="mdi:account" size="24" />
             </div>
             <div class="overflow-hidden">
-              <p class="font-semibold truncate">{{ match.displayName }}</p>
-              <div class="flex gap-2 mt-1">
-                <Badge variant="secondary">{{ match.major }}</Badge>
-                <Badge variant="outline">{{ match.year }}</Badge>
-              </div>
+              <p class="text-sm font-semibold truncate">{{ match.displayName }}</p>
+              <p class="text-xs text-muted-foreground truncate">{{ match.major }} · {{ match.year }}</p>
             </div>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   </div>
 </template>
 
@@ -82,11 +81,9 @@ const cooldownText = computed(() => {
   return `${minutes}m`
 })
 
-// Refresh cooldownText every minute
 let cooldownTimer: ReturnType<typeof setInterval>
 onMounted(() => {
   cooldownTimer = setInterval(() => {
-    // Trigger reactivity by reassigning
     if (nextMatchAt.value) {
       nextMatchAt.value = new Date(nextMatchAt.value)
     }
@@ -115,17 +112,10 @@ onMounted(async () => {
 const handleGenerate = async () => {
   isGenerating.value = true
   try {
-    const data = await $fetch<{ matches?: MatchCard[]; error?: string; nextMatchAt?: string }>(`${apiBase}/matches`, {
+    await $fetch(`${apiBase}/matches`, {
       method: 'POST',
       credentials: 'include',
     })
-
-    if (data.error === 'cooldown' && data.nextMatchAt) {
-      nextMatchAt.value = new Date(data.nextMatchAt)
-      toast.error('Please wait before generating new matches')
-      return
-    }
-
     await fetchMatches()
     toast.success('New matches found!')
   } catch (e: any) {

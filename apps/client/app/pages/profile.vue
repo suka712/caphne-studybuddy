@@ -61,9 +61,9 @@
                 <span class="text-sm">Matches</span>
               </Button>
             </NuxtLink>
-            <Button variant="outline" class="hover:text-foreground flex" @click="handleLogout">
+            <!-- <Button variant="outline" class="hover:text-foreground flex" @click="handleLogout">
               <Icon name="streamline:emergency-exit-solid" size="16"/>
-            </Button>
+            </Button> -->
           </div>
         </div>
       </CardContent>

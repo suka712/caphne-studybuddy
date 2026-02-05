@@ -1,78 +1,69 @@
 import { matchConfig } from "../../config/matching.js"
 import { db } from "../../db/db.js"
 import { matches, users, profiles } from "../../db/schema.js"
-import { and, desc, eq, ne, notInArray, sql } from 'drizzle-orm'
+import { and, desc, eq, gte, ne, notInArray, sql } from 'drizzle-orm'
 
-const ensureAdminMatch = async (userId: number) => {
-  const [admin] = await db
-    .select()
-    .from(users)
-    .where(eq(users.email, matchConfig.adminEmail))
-    .limit(1)
-
-  if (!admin || admin.id === userId) {
-    return
-  }
-
-  const [existing] = await db
-    .select()
-    .from(matches)
-    .where(and(
-      eq(matches.userId, userId),
-      eq(matches.matchedUserId, admin.id)
-    ))
-    .limit(1)
-
-  if (existing) {
-    return
-  }
-
-  await db.insert(matches).values({
-    userId,
-    matchedUserId: admin.id,
-  })
-}
-
-export const generateMatches = async (userId: number) => {
+const getAdminId = async () => {
   const [admin] = await db
     .select({ id: users.id })
     .from(users)
     .where(eq(users.email, matchConfig.adminEmail))
     .limit(1)
+  return admin?.id
+}
 
-  const adminId = admin?.id
+const getRecentMatchTimestamps = async (userId: number, adminId: number | undefined, windowStart: Date) => {
+  const filter = adminId
+    ? and(eq(matches.userId, userId), ne(matches.matchedUserId, adminId))
+    : eq(matches.userId, userId)
+
+  return db
+    .select({ createdAt: matches.createdAt })
+    .from(matches)
+    .where(and(filter, gte(matches.createdAt, windowStart)))
+    .orderBy(desc(matches.createdAt))
+}
+
+const ensureAdminMatch = async (userId: number) => {
+  const adminId = await getAdminId()
+  if (!adminId || adminId === userId) return
+
+  const [existing] = await db
+    .select({ id: matches.id })
+    .from(matches)
+    .where(and(
+      eq(matches.userId, userId),
+      eq(matches.matchedUserId, adminId)
+    ))
+    .limit(1)
+
+  if (!existing) {
+    await db.insert(matches).values({ userId, matchedUserId: adminId })
+  }
+}
+
+export const generateMatches = async (userId: number) => {
+  const adminId = await getAdminId()
   const now = Date.now()
   const windowStart = new Date(now - matchConfig.windowMs)
 
-  const nonAdminFilter = adminId
-    ? and(eq(matches.userId, userId), ne(matches.matchedUserId, adminId!))
-    : eq(matches.userId, userId)
+  const recentMatches = await getRecentMatchTimestamps(userId, adminId, windowStart)
 
-  // Count matches in the current 24h window
-  const recentMatches = await db
-    .select({ createdAt: matches.createdAt })
-    .from(matches)
-    .where(and(nonAdminFilter, sql`${matches.createdAt} >= ${windowStart}`))
-    .orderBy(desc(matches.createdAt))
-
-  // If all tries used, cooldown until oldest match in window expires
   if (recentMatches.length >= matchConfig.matchesPerWindow) {
     const oldest = recentMatches[recentMatches.length - 1]!
-    const nextMatchAt = new Date(oldest.createdAt.getTime() + matchConfig.windowMs)
+    const nextMatchAt = new Date(oldest.createdAt!.getTime() + matchConfig.windowMs)
     return { error: 'cooldown' as const, nextMatchAt }
   }
 
-  // 1-minute cooldown between individual matches
   if (recentMatches.length > 0) {
     const lastMatch = recentMatches[0]!
-    const elapsed = now - lastMatch.createdAt.getTime()
+    const elapsed = now - lastMatch.createdAt!.getTime()
     if (elapsed < matchConfig.cooldownBetweenMatchesMs) {
-      const nextMatchAt = new Date(lastMatch.createdAt.getTime() + matchConfig.cooldownBetweenMatchesMs)
+      const nextMatchAt = new Date(lastMatch.createdAt!.getTime() + matchConfig.cooldownBetweenMatchesMs)
       return { error: 'cooldown' as const, nextMatchAt }
     }
   }
 
-  // Find 1 new candidate
   const existingMatches = await db
     .select({ matchedUserId: matches.matchedUserId })
     .from(matches)
@@ -117,37 +108,21 @@ export const getAllMatches = async (userId: number) => {
     .where(eq(matches.userId, userId))
     .orderBy(desc(matches.createdAt))
 
-  const [admin] = await db
-    .select({ id: users.id })
-    .from(users)
-    .where(eq(users.email, matchConfig.adminEmail))
-    .limit(1)
-
-  const adminId = admin?.id
+  const adminId = await getAdminId()
   const now = Date.now()
   const windowStart = new Date(now - matchConfig.windowMs)
 
-  const nonAdminFilter = adminId
-    ? and(eq(matches.userId, userId), ne(matches.matchedUserId, adminId!))
-    : eq(matches.userId, userId)
-
-  const recentMatches = await db
-    .select({ createdAt: matches.createdAt })
-    .from(matches)
-    .where(and(nonAdminFilter, sql`${matches.createdAt} >= ${windowStart}`))
-    .orderBy(desc(matches.createdAt))
+  const recentMatches = await getRecentMatchTimestamps(userId, adminId, windowStart)
 
   let nextMatchAt: Date | null = null
   const remainingMatches = matchConfig.matchesPerWindow - recentMatches.length
 
   if (remainingMatches <= 0) {
-    // All tries used — next match when the oldest in window expires
     const oldest = recentMatches[recentMatches.length - 1]!
-    nextMatchAt = new Date(oldest.createdAt.getTime() + matchConfig.windowMs)
+    nextMatchAt = new Date(oldest.createdAt!.getTime() + matchConfig.windowMs)
   } else if (recentMatches.length > 0) {
-    // Check 1-minute cooldown from last match
     const lastMatch = recentMatches[0]!
-    const nextTime = lastMatch.createdAt.getTime() + matchConfig.cooldownBetweenMatchesMs
+    const nextTime = lastMatch.createdAt!.getTime() + matchConfig.cooldownBetweenMatchesMs
     if (nextTime > now) {
       nextMatchAt = new Date(nextTime)
     }

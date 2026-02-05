@@ -4,7 +4,7 @@ export const users = pgTable('users', {
   id: serial('id').primaryKey(),
   email: text('email').notNull().unique(),
   password: text('password'),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   googleId: text('google_id').unique(),
   githubId: text('github_id').unique(),
 });
@@ -25,24 +25,22 @@ export const profiles = pgTable('profiles', {
   goals: text('goals').array().notNull(), // ['study-buddy', 'project-teammate', ...]
   vibes: text('vibes').array().notNull(), // ['introvert', 'night-owl', ...]
   interests: text('interests').array().notNull(), // ['Programming', 'Web Dev', ...]
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 })
 
 export const emailCollection = pgTable('email_collection', {
   id: serial('id').primaryKey(),
   email: text('email').notNull().unique(),
-  collectedAt: timestamp('collected_at').notNull().defaultNow(),
+  collectedAt: timestamp('collected_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
 export const matches = pgTable('matches', {
   id: serial('id').primaryKey(),
   userId: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   matchedUserId: integer('matched_user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  createdAt: timestamp('created_at').defaultNow(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
-
-export type Match = typeof matches.$inferSelect
 
 // export const matchInteractions = pgTable('match_interactions', {
 //   id: serial('id').primaryKey(),
@@ -52,15 +50,9 @@ export type Match = typeof matches.$inferSelect
 //   createdAt: timestamp('created_at').defaultNow(),
 // });
 
-// export type MatchInteraction = typeof matchInteractions.$inferSelect;
-// export type NewMatchInteraction = typeof matchInteractions.$inferInsert;
-
 // export const matchQuota = pgTable('match_quota', {
 //   id: serial('id').primaryKey(),
 //   userId: integer('user_id').notNull().unique().references(() => users.id, { onDelete: 'cascade' }),
 //   matchesGivenToday: integer('matches_given_today').default(0),
 //   lastResetAt: timestamp('last_reset_at').defaultNow(),
 // });
-
-// export type MatchQuota = typeof matchQuota.$inferSelect;
-// export type NewMatchQuota = typeof matchQuota.$inferInsert;

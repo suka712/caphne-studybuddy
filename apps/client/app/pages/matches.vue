@@ -23,7 +23,7 @@
 
         <div class="space-y-3">
           <p v-if="matches.length === 0" class="text-muted-foreground text-sm text-center py-4">
-            No matches yet. Tap "New Matches" to find study buddies!
+            No matches yet...
           </p>
 
           <div v-for="match in matches" :key="match.matchId" class="flex items-center gap-3 p-3 rounded-lg bg-muted">

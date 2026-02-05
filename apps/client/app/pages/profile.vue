@@ -55,10 +55,17 @@
             </div>
           </div>
 
-          <Button variant="outline" class="w-full hover:text-foreground" @click="handleLogout">
-            <Icon name="mdi:logout" size="16" class="mr-2" />
-            <span class="text-sm">Logout</span>
-          </Button>
+          <div class="flex gap-2">
+            <NuxtLink class="flex flex-1" to="/matches">
+              <Button variant="outline" class="hover:text-foreground w-full">
+                <Icon name="material-symbols:heart-smile" size="16" class="mr-2" />
+                <span class="text-sm">Matches</span>
+              </Button>
+            </NuxtLink>
+            <Button variant="outline" class="hover:text-foreground flex" @click="handleLogout">
+              <Icon name="mdi:logout" size="16"/>
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>

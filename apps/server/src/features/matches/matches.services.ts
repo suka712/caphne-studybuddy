@@ -1,7 +1,7 @@
 import { matchConfig } from "../../config/matching.js"
 import { db } from "../../db/db.js"
 import { matches, users, profiles } from "../../db/schema.js"
-import { and, desc, eq, gte, ne, notInArray, sql } from 'drizzle-orm'
+import { and, desc, eq, gte, ne, notInArray, or, sql } from 'drizzle-orm'
 
 const getAdminId = async () => {
   const [admin] = await db
@@ -93,7 +93,8 @@ export const generateMatches = async (userId: number) => {
 export const getAllMatches = async (userId: number) => {
   await ensureAdminMatch(userId)
 
-  const userMatches = await db
+  // Matches the user initiated (join the other person's profile)
+  const initiated = await db
     .select({
       matchId: matches.id,
       displayName: profiles.displayName,
@@ -106,7 +107,29 @@ export const getAllMatches = async (userId: number) => {
     .innerJoin(users, eq(matches.matchedUserId, users.id))
     .innerJoin(profiles, eq(profiles.userId, users.id))
     .where(eq(matches.userId, userId))
-    .orderBy(desc(matches.createdAt))
+
+  const received = await db
+    .select({
+      matchId: matches.id,
+      displayName: profiles.displayName,
+      major: profiles.major,
+      year: profiles.year,
+      photoUrl: profiles.photoUrl,
+      matchedAt: matches.createdAt,
+    })
+    .from(matches)
+    .innerJoin(users, eq(matches.userId, users.id))
+    .innerJoin(profiles, eq(profiles.userId, users.id))
+    .where(eq(matches.matchedUserId, userId))
+
+  const seen = new Set<number>()
+  const userMatches = [...initiated, ...received]
+    .sort((a, b) => new Date(b.matchedAt).getTime() - new Date(a.matchedAt).getTime())
+    .filter(m => {
+      if (seen.has(m.matchId)) return false
+      seen.add(m.matchId)
+      return true
+    })
 
   const adminId = await getAdminId()
   const now = Date.now()

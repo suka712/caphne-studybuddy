@@ -48,6 +48,8 @@ export const messages = pgTable('messages', {
   senderId: integer('sender_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   content: text('content').notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  deliveredAt: timestamp('delivered_at', { withTimezone: true }),
+  seenAt: timestamp('seen_at', { withTimezone: true }),
 });
 
 // export const matchInteractions = pgTable('match_interactions', {

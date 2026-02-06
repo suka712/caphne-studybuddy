@@ -1,6 +1,6 @@
 import { db } from '../../db/db.js'
 import { matches, messages } from '../../db/schema.js'
-import { and, eq, or, desc, lt } from 'drizzle-orm'
+import { and, eq, or, desc, lt, ne, isNull, count } from 'drizzle-orm'
 
 export const verifyMatchParticipant = async (matchId: number, userId: number) => {
   const [match] = await db
@@ -33,6 +33,7 @@ export const getMessages = async (matchId: number, limit = 50, beforeId?: number
       senderId: messages.senderId,
       content: messages.content,
       createdAt: messages.createdAt,
+      readAt: messages.readAt,
     })
     .from(messages)
     .where(and(...conditions))
@@ -49,4 +50,43 @@ export const createMessage = async (matchId: number, senderId: number, content: 
     .returning()
 
   return msg!
+}
+
+export const markMessagesRead = async (matchId: number, recipientId: number) => {
+  const result = await db
+    .update(messages)
+    .set({ readAt: new Date() })
+    .where(
+      and(
+        eq(messages.matchId, matchId),
+        ne(messages.senderId, recipientId),
+        isNull(messages.readAt)
+      )
+    )
+    .returning({ id: messages.id })
+
+  return result.length
+}
+
+export const getUnreadCounts = async (userId: number) => {
+  const rows = await db
+    .select({
+      matchId: messages.matchId,
+      count: count(messages.id),
+    })
+    .from(messages)
+    .innerJoin(matches, eq(messages.matchId, matches.id))
+    .where(
+      and(
+        or(
+          eq(matches.userId, userId),
+          eq(matches.matchedUserId, userId)
+        ),
+        ne(messages.senderId, userId),
+        isNull(messages.readAt)
+      )
+    )
+    .groupBy(messages.matchId)
+
+  return rows
 }

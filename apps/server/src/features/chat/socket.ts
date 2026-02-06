@@ -2,8 +2,15 @@ import { Server as SocketIOServer } from 'socket.io'
 import type { Server as HttpServer } from 'http'
 import { parse as parseCookie } from 'cookie'
 import { verifyToken } from '../auth/jwt.service.js'
-import { verifyMatchParticipant, createMessage } from './chat.services.js'
+import { verifyMatchParticipant, createMessage, markMessagesRead } from './chat.services.js'
 import { env } from '../../config/env.js'
+
+let ioInstance: SocketIOServer | null = null
+
+export function getIO(): SocketIOServer {
+  if (!ioInstance) throw new Error('Socket.IO not initialized')
+    return ioInstance
+}
 
 export function setupSocketIO(httpServer: HttpServer) {
   const io = new SocketIOServer(httpServer, {
@@ -12,6 +19,8 @@ export function setupSocketIO(httpServer: HttpServer) {
       credentials: true,
     },
   })
+
+  ioInstance = io
 
   io.use((socket, next) => {
     try {
@@ -35,6 +44,8 @@ export function setupSocketIO(httpServer: HttpServer) {
   io.on('connection', (socket) => {
     const userId: number = socket.data.userId
 
+    socket.join(`user:${userId}`)
+
     socket.on('join', async (matchId: number) => {
       if (typeof matchId !== 'number' || isNaN(matchId)) {
         socket.emit('error', { message: 'Invalid match ID' })
@@ -48,6 +59,23 @@ export function setupSocketIO(httpServer: HttpServer) {
       }
 
       socket.join(`match:${matchId}`)
+    })
+
+    socket.on('leave', (matchId: number) => {
+      if (typeof matchId !== 'number') return
+      socket.leave(`match:${matchId}`)
+    })
+
+    socket.on('mark_read', async (matchId: number) => {
+      if (typeof matchId !== 'number') return
+      const match = await verifyMatchParticipant(matchId, userId)
+      if (!match) return
+      
+      const readCount = await markMessagesRead(matchId, userId)
+      if (readCount > 0) {
+        const senderId = match.userId === userId ? match.matchedUserId : match.userId
+        io.to(`user:${senderId}`).emit('messages_read', { matchId })
+      }
     })
 
     socket.on('send_message', async (data: { matchId: number; content: string }) => {
@@ -72,6 +100,15 @@ export function setupSocketIO(httpServer: HttpServer) {
 
       const message = await createMessage(matchId, userId, trimmed)
       io.to(`match:${matchId}`).emit('new_message', message)
+
+      const recipientId = match.userId === userId ? match.matchedUserId : match.userId
+      io.to(`user:${recipientId}`).emit('new_message_notification', {
+        matchId,
+        messageId: message.id,
+        senderId: userId,
+        content: trimmed,
+        createdAt: message.createdAt,
+      })
     })
   })
 

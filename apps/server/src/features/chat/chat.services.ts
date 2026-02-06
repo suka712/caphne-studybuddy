@@ -88,5 +88,5 @@ export const getUnreadCounts = async (userId: number) => {
     )
     .groupBy(messages.matchId)
 
-  return rows
+  return rows // { "unreadCounts": [{ "matchId": 5, "count": 3 }, { "matchId": 12, "count": 1 }] }
 }

@@ -1,9 +1,20 @@
 import { Router } from 'express'
 import { requireAuth } from '../../middleware/requireAuth.js'
-import { verifyMatchParticipant, getMessages } from './chat.services.js'
+import { verifyMatchParticipant, getMessages, getUnreadCounts } from './chat.services.js'
 import { User } from '../../db/schema.js'
 
 export const chatRouter = Router()
+
+chatRouter.get('/unread-counts', requireAuth, async (req, res) => {
+  const user = req.user as User
+  try {
+    const unreadCounts = await getUnreadCounts(user.id)
+    res.json({ unreadCounts }) // { "unreadCounts": [{ "matchId": 5, "count": 3 }, { "matchId": 12, "count": 1 }] }
+  } catch (e) {
+    console.error('Error fetching unread messages: ', e)
+    res.status(500).json({ error: 'Something went wrong' })
+  }
+})
 
 chatRouter.get('/:matchId/messages', requireAuth, async (req, res) => {
   const user = req.user as User

@@ -1,1 +1,1 @@
-export { default } from "@repo/eslint-config/client";
+export { default } from "@caphne/eslint-config/client";

@@ -113,6 +113,7 @@ const cooldownText = computed(() => {
 
 let cooldownTimer: ReturnType<typeof setInterval>
 onMounted(() => {
+  console.log('Matches mounted')
   cooldownTimer = setInterval(() => {
     if (nextMatchAt.value) {
       nextMatchAt.value = new Date(nextMatchAt.value)
@@ -120,10 +121,11 @@ onMounted(() => {
   }, 1_000)
 })
 onUnmounted(() => {
+  console.log('Matches unmounted')
   clearInterval(cooldownTimer)
   const socket = getSocket()
   if (socket) {
-    socket.off('new_message_notification')
+    // socket.off('new_message_notification')
   }
 })
 

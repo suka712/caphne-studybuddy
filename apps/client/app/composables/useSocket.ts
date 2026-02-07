@@ -6,7 +6,8 @@ const isConnected = ref(false)
 export const useSocket = () => {
   const { public: { apiBase } } = useRuntimeConfig()
 
-  const connect = () => {
+  const internalConnect = () => {
+    console.log('Internal connect ran')
     if (socket?.connected) return socket
 
     socket = io(apiBase, {
@@ -28,7 +29,8 @@ export const useSocket = () => {
     return socket
   }
 
-  const disconnect = () => {
+  const internalDisconnect = () => {
+    console.log('Internal disconnect ran')
     if (socket) {
       socket.removeAllListeners()
       socket.disconnect()
@@ -40,8 +42,8 @@ export const useSocket = () => {
   const getSocket = () => socket
 
   return {
-    connect,
-    disconnect,
+    internalConnect,
+    internalDisconnect,
     getSocket,
     isConnected: readonly(isConnected),
   }

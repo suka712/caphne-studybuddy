@@ -186,6 +186,7 @@ onMounted(async () => {
     clearUnread(matchId)
 
     socket.on('new_message', (msg: ChatMessage) => {
+      console.log('New message socket ran')
       messages.value.push(msg)
       scrollToBottom()
       if (msg.senderId !== currentUserId.value) {
@@ -219,14 +220,16 @@ const handleVisibilityChange = () => {
 }
 
 onUnmounted(() => {
+  console.log('MatchID unmounted')
   const socket = getSocket()
   if (socket) {
+    console.log('Socket detected after component unmount')
     socket.emit('leave', matchId)
     socket.off('new_message')
     socket.off('error')
     socket.off('connect')
     socket.off('disconnect')
   }
-  document.removeEventListener('visibilitychange', handleVisibilityChange)
+  // document.removeEventListener('visibilitychange', handleVisibilityChange)
 })
 </script>

@@ -39,6 +39,8 @@ export const useAuth = () => {
       })
     } finally {
       user.value = null
+      const { disconnect } = useSocket()
+      disconnect()
     }
   }
 

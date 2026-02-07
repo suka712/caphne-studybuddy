@@ -32,16 +32,7 @@ export const useChatNotifications = () => {
   };
 
   const showBrowserNotification = (title: string, body: string) => {
-    // console.log('Document hidden:', document.hidden )
-    // console.log('Notification permission granted:', Notification.permission === 'granted' )
-    // console.log('Notification in window:', "Notification" in window )
     new Notification(title, { body, icon: "/favicon.ico" });
-
-    // if (
-    //   "Notification" in window &&
-    //   Notification.permission === "granted" &&
-    //   document.hidden
-    // ) 
   };
 
   const showToast = (data: MessageData) => {
@@ -70,15 +61,18 @@ export const useChatNotifications = () => {
 
     socket.on("has_new_message",
       (messageData: MessageData) => {
-        // console.log('New chat message detected')
-        const currentPath = route.path;
+        if (route.path !== `/chat/${messageData.matchId}`) {
+          showToast(messageData)
+        }
 
-        // if (currentPath === `/chat/${messageData.matchId}`) {
-        //   console.log('Current path does not support notification')
-        // }
+        if (
+          "Notification" in window &&
+          Notification.permission === "granted" &&
+          document.hidden
+        ) {
+          showBrowserNotification("New message", messageData.content);
+        }
 
-        showBrowserNotification("New message", messageData.content);
-        showToast(messageData)
 
         const current = unreadCounts.value.get(messageData.matchId) || 0;
         console.log('current:', current)

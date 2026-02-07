@@ -123,10 +123,6 @@ onMounted(() => {
 onUnmounted(() => {
   console.log('Matches unmounted')
   clearInterval(cooldownTimer)
-  const socket = getSocket()
-  if (socket) {
-    // socket.off('new_message_notification')
-  }
 })
 
 const fetchMatches = async () => {
@@ -166,7 +162,7 @@ onMounted(async () => {
 
   const socket = getSocket()
   if (socket) {
-    socket.on('new_message_notification', (data: { matchId: number }) => {
+    socket.on('has_new_message', (data: { matchId: number }) => {
       const idx = matches.value.findIndex(m => m.matchId === data.matchId)
       if (idx > 0) {
         const [match] = matches.value.splice(idx, 1)

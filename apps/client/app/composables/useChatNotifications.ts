@@ -68,7 +68,7 @@ export const useChatNotifications = () => {
     const socket = getSocket();
     if (!socket) return;
 
-    socket.on("new_message_notification",
+    socket.on("has_new_message",
       (messageData: MessageData) => {
         // console.log('New chat message detected')
         const currentPath = route.path;

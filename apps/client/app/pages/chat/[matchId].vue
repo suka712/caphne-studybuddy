@@ -185,7 +185,7 @@ onMounted(async () => {
     socket.emit('mark_read', matchId)
     clearUnread(matchId)
 
-    socket.on('new_message', (msg: ChatMessage) => {
+    socket.on('has_new_message', (msg: ChatMessage) => {
       console.log('New message socket ran')
       messages.value.push(msg)
       scrollToBottom()
@@ -225,7 +225,7 @@ onUnmounted(() => {
   if (socket) {
     console.log('Socket detected after component unmount')
     socket.emit('leave', matchId)
-    socket.off('new_message')
+    socket.off('new_message_from_match')
     socket.off('error')
     socket.off('connect')
     socket.off('disconnect')

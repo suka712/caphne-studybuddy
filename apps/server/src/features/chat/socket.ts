@@ -99,10 +99,10 @@ export function setupSocketIO(httpServer: HttpServer) {
       }
 
       const message = await createMessage(matchId, userId, trimmed)
-      io.to(`match:${matchId}`).emit('new_message', message)
+      io.to(`match:${matchId}`).emit('new_message_from_match', message)
 
       const recipientId = match.userId === userId ? match.matchedUserId : match.userId
-      io.to(`user:${recipientId}`).emit('new_message_notification', {
+      io.to(`user:${recipientId}`).emit('has_new_message', {
         matchId,
         messageId: message.id,
         senderId: userId,

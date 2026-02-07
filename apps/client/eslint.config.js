@@ -1,1 +1,1 @@
-export { default } from "@caphne-studymate-finder/eslint-config/client";
+export { default } from "@repo/eslint-config/client";

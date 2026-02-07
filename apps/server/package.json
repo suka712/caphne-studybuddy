@@ -1,5 +1,5 @@
 {
-  "name": "@caphne-studymate-finder/server",
+  "name": "server",
   "version": "1.0.0",
   "type": "module",
   "scripts": {
@@ -28,7 +28,7 @@
     "typebox": "^1.0.79"
   },
   "devDependencies": {
-    "@caphne-studymate-finder/eslint-config": "workspace:^",
+    "@repo/eslint-config": "workspace:^",
     "@types/cookie": "^1.0.0",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",

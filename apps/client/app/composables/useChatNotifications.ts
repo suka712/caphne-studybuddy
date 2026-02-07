@@ -75,9 +75,7 @@ export const useChatNotifications = () => {
 
 
         const current = unreadCounts.value.get(messageData.matchId) || 0;
-        console.log('current:', current)
         unreadCounts.value.set(messageData.matchId, current + 1);
-        console.log('unreadCounts:', unreadCounts)
         unreadCounts.value = new Map(unreadCounts.value);
       },
     );

@@ -4,10 +4,13 @@ import 'vue-sonner/style.css'
 
 const { isAuthenticated } = useAuth()
 const { connect, disconnect } = useSocket()
+const { attachListeners, requestBrowserPermission } = useChatNotifications()
 
 onMounted(() => {
   if (isAuthenticated.value) {
     connect()
+    attachListeners()
+    requestBrowserPermission()
   }
 })
 

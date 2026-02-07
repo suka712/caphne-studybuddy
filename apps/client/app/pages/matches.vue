@@ -30,20 +30,21 @@
               No matches yet...
             </p>
 
-            <NuxtLink
-              v-for="match in matches"
-              :key="match.matchId"
-              :to="`/chat/${match.matchId}`"
-              class="flex items-center gap-3 p-3 rounded-lg bg-muted hover:bg-muted/80 transition-colors cursor-pointer"
-            >
+            <NuxtLink v-for="match in matches" :key="match.matchId" :to="`/chat/${match.matchId}`"
+              class="flex items-center gap-3 p-3 rounded-lg bg-muted hover:bg-muted/80 transition-colors cursor-pointer">
               <div class="size-10 rounded-xl bg-background flex items-center justify-center shrink-0">
                 <img v-if="match.photoUrl" :src="match.photoUrl" class="size-10 rounded-xl object-cover" />
                 <Icon v-else name="mdi:account" size="24" />
               </div>
-              <div class="overflow-hidden">
+              <div class="overflow-hidden flex-1">
                 <p class="text-sm font-semibold truncate">{{ match.displayName }}</p>
                 <p class="text-xs text-muted-foreground truncate">{{ match.major }} · {{ match.year }}</p>
               </div>
+              <!-- Unread count badge -->
+              <Badge v-if="getUnreadCount(match.matchId) > 0"
+                class="size-5 p-0 text-[10px] flex items-center justify-center shrink-0">
+                {{ getUnreadCount(match.matchId) }}
+              </Badge>
             </NuxtLink>
           </div>
         </ScrollArea>
@@ -52,7 +53,7 @@
         <div class="p-4 border-t border-border">
           <NuxtLink to="/profile">
             <Button variant="outline" class="hover:text-foreground w-full">
-              <Icon name="material-symbols:person" size="16"/>
+              <Icon name="material-symbols:person" size="16" />
               <span class="text-sm">Profile</span>
             </Button>
           </NuxtLink>
@@ -65,11 +66,15 @@
 <script setup lang="ts">
 import { toast } from 'vue-sonner'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { Badge } from '~/components/ui/badge'
 
 definePageMeta({
   middleware: 'auth',
   layout: 'internal',
 })
+
+const { getSocket } = useSocket()
+const { fetchUnreadCounts, getUnreadCount } = useChatNotifications()
 
 const { public: { apiBase } } = useRuntimeConfig()
 
@@ -114,7 +119,13 @@ onMounted(() => {
     }
   }, 1_000)
 })
-onUnmounted(() => clearInterval(cooldownTimer))
+onUnmounted(() => {
+  clearInterval(cooldownTimer)
+  const socket = getSocket()
+  if (socket) {
+    socket.off('new_message_notification')
+  }
+})
 
 const fetchMatches = async () => {
   try {
@@ -147,6 +158,19 @@ onMounted(async () => {
     navigateTo('/start')
   } finally {
     isLoading.value = false
+  }
+
+  await fetchUnreadCounts()
+
+  const socket = getSocket()
+  if (socket) {
+    socket.on('new_message_notification', (data: { matchId: number }) => {
+      const idx = matches.value.findIndex(m => m.matchId === data.matchId)
+      if (idx > 0) {
+        const [match] = matches.value.splice(idx, 1)
+        matches.value.unshift(match!)
+      }
+    })
   }
 })
 

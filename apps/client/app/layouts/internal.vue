@@ -1,6 +1,19 @@
 <script setup lang="ts">
 import { Toaster } from 'vue-sonner';
 import 'vue-sonner/style.css'
+
+const { isAuthenticated } = useAuth()
+const { connect, disconnect } = useSocket()
+
+onMounted(() => {
+  if (isAuthenticated.value) {
+    connect()
+  }
+})
+
+onUnmounted(() => {
+  disconnect()
+})
 </script>
 
 <template>

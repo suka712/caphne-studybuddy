@@ -1,6 +1,7 @@
 import { io, Socket } from 'socket.io-client'
 
 let socket: Socket | null = null
+const isConnected = ref(false)
 
 export const useSocket = () => {
   const { public: { apiBase } } = useRuntimeConfig()
@@ -10,6 +11,18 @@ export const useSocket = () => {
 
     socket = io(apiBase, {
       withCredentials: true,
+      reconnection: true,
+      reconnectionAttempts: Infinity,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+    })
+
+    socket.on('connect', () => {
+      isConnected.value = true
+    })
+
+    socket.on('disconnect', () => {
+      isConnected.value = false
     })
 
     return socket
@@ -17,12 +30,19 @@ export const useSocket = () => {
 
   const disconnect = () => {
     if (socket) {
+      socket.removeAllListeners()
       socket.disconnect()
       socket = null
+      isConnected.value = false
     }
   }
 
   const getSocket = () => socket
 
-  return { connect, disconnect, getSocket }
+  return {
+    connect,
+    disconnect,
+    getSocket,
+    isConnected: readonly(isConnected),
+  }
 }

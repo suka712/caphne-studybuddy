@@ -185,7 +185,7 @@ onMounted(async () => {
     socket.emit('mark_read', matchId)
     clearUnread(matchId)
 
-    socket.on('has_new_message', (msg: ChatMessage) => {
+    socket.on('new_message_from_match', (msg: ChatMessage) => {
       console.log('New message socket ran')
       messages.value.push(msg)
       scrollToBottom()

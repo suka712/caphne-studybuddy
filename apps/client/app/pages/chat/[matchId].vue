@@ -19,14 +19,8 @@
         <!-- Messages -->
         <ScrollArea ref="scrollAreaRef" class="flex-1 min-h-0">
           <div class="p-4 space-y-2">
-            <Button
-              v-if="hasMore"
-              variant="ghost"
-              size="sm"
-              class="w-full text-xs text-muted-foreground"
-              :disabled="isLoadingMore"
-              @click="loadMore"
-            >
+            <Button v-if="hasMore" variant="ghost" size="sm" class="w-full text-xs text-muted-foreground"
+              :disabled="isLoadingMore" @click="loadMore">
               {{ isLoadingMore ? 'Loading...' : 'Load older messages' }}
             </Button>
 
@@ -34,16 +28,12 @@
               No messages yet. Say hi!
             </p>
 
-            <div
-              v-for="msg in messages"
-              :key="msg.id"
-              :class="[
-                'max-w-[80%] rounded-lg px-3 py-2 text-sm wrap-break-word',
-                msg.senderId === currentUserId
-                  ? 'ml-auto bg-primary text-primary-foreground'
-                  : 'mr-auto bg-muted'
-              ]"
-            >
+            <div v-for="msg in messages" :key="msg.id" :class="[
+              'max-w-[80%] rounded-lg px-3 py-2 text-sm wrap-break-word',
+              msg.senderId === currentUserId
+                ? 'ml-auto bg-primary text-primary-foreground'
+                : 'mr-auto bg-muted'
+            ]">
               <p>{{ msg.content }}</p>
               <p class="text-[10px] opacity-60 mt-1">
                 {{ formatTime(msg.createdAt) }}
@@ -55,12 +45,7 @@
         <!-- Input -->
         <div class="p-4 border-t border-border">
           <form @submit.prevent="sendMessage" class="flex gap-2 h-full">
-            <Input
-              v-model="newMessage"
-              placeholder="Type a message..."
-              class="flex-1"
-              :disabled="!isConnected"
-            />
+            <Input v-model="newMessage" placeholder="Type a message..." class="flex-1" :disabled="!isConnected" />
             <Button type="submit" size="sm" class="h-full" :disabled="!canSend">
               <Icon name="mingcute:send-fill" size="18" />
             </Button>
@@ -83,7 +68,8 @@ definePageMeta({
 const route = useRoute()
 const { public: { apiBase } } = useRuntimeConfig()
 const { authUser } = useAuth()
-const { connect, disconnect, getSocket } = useSocket()
+const { getSocket } = useSocket()
+const { clearUnread } = useChatNotifications()
 
 const matchId = Number(route.params.matchId)
 const currentUserId = computed(() => authUser.value?.id)
@@ -94,6 +80,7 @@ interface ChatMessage {
   senderId: number
   content: string
   createdAt: string
+  readAt: string | null
 }
 
 const messages = ref<ChatMessage[]>([])
@@ -164,7 +151,6 @@ const sendMessage = () => {
 
 onMounted(async () => {
   try {
-    // Get match display name from the matches list
     const matchesData = await $fetch<{ matches: any[] }>(
       `${apiBase}/matches`,
       { credentials: 'include' }
@@ -177,18 +163,18 @@ onMounted(async () => {
     }
     matchDisplayName.value = thisMatch.displayName
 
-    // Load initial messages
     const initialMessages = await fetchMessages()
     messages.value = initialMessages
     if (initialMessages.length < PAGE_SIZE) hasMore.value = false
     scrollToBottom()
 
-    // Connect socket and join room
-    const socket = connect()
+    const socket = getSocket()
+    if (!socket) return
 
     socket.on('connect', () => {
       isConnected.value = true
       socket.emit('join', matchId)
+      socket.emit('mark_read', matchId)
     })
 
     if (socket.connected) {
@@ -196,9 +182,15 @@ onMounted(async () => {
       socket.emit('join', matchId)
     }
 
+    socket.emit('mark_read', matchId)
+    clearUnread(matchId)
+
     socket.on('new_message', (msg: ChatMessage) => {
       messages.value.push(msg)
       scrollToBottom()
+      if (msg.senderId !== currentUserId.value) {
+        socket.emit('mark_read', matchId)
+      }
     })
 
     socket.on('error', (err: { message: string }) => {
@@ -208,6 +200,8 @@ onMounted(async () => {
     socket.on('disconnect', () => {
       isConnected.value = false
     })
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
   } catch (e) {
     console.error('Failed to initialize chat:', e)
     toast.error('Failed to load chat')
@@ -217,14 +211,22 @@ onMounted(async () => {
   }
 })
 
+const handleVisibilityChange = () => {
+  if (!document.hidden) {
+    const s = getSocket()
+    if (s) s.emit('mark_read', matchId)
+  }
+}
+
 onUnmounted(() => {
   const socket = getSocket()
   if (socket) {
+    socket.emit('leave', matchId)
     socket.off('new_message')
     socket.off('error')
     socket.off('connect')
     socket.off('disconnect')
   }
-  disconnect()
+  document.removeEventListener('visibilitychange', handleVisibilityChange)
 })
 </script>

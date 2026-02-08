@@ -18,12 +18,12 @@
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|------------|
+| Layer    | Technology                              |
+| -------- | --------------------------------------- |
 | Frontend | Nuxt 3, Vue 3, shadcn-vue, Tailwind CSS |
-| Backend | Express.js, Socket.io |
-| Database | PostgreSQL, Drizzle ORM |
-| Auth | Email (Resend), OAuth (Passport.js) |
+| Backend  | Express.js, Socket.io                   |
+| Database | PostgreSQL, Drizzle ORM                 |
+| Auth     | Email (Resend), OAuth (Passport.js)     |
 
 ## Our Super Contributors
 
@@ -42,4 +42,5 @@ Fork the repo, create a feature branch (prefixed with `f/`, e.g. `f/your-feature
 📧 All questions, feature request or anything else: khiem@sukaseven.com or anh.tranduy1156@gmail.com
 
 ---
+
 MIT License

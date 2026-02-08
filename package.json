@@ -3,13 +3,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "dev:client": "turbo run dev --filter=client",
-    "dev:server": "turbo run dev --filter=server",
-    "lint": "turbo run lint",
+    "build": "pnpm -r run build",
+    "dev": "pnpm --filter=client --filter=server run dev",
+    "dev:client": "pnpm --filter=client run dev",
+    "dev:server": "pnpm --filter=server run dev",
+    "lint": "pnpm -r run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "turbo run check-types"
+    "check-types": "pnpm -r run check-types"
   },
   "devDependencies": {
     "prettier": "^3.7.4",
@@ -18,7 +18,7 @@
   },
   "packageManager": "pnpm@9.0.0",
   "engines": {
-    "node": ">=18"
+    "node": ">=24"
   },
   "pnpm": {
     "neverBuiltDependencies": ["unrs-resolver"]

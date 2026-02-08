@@ -1,5 +1,3 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # Dependencies
 node_modules
 .pnp
@@ -24,17 +22,21 @@ coverage
 
 # Build Outputs
 .next/
+.nuxt
 out/
 build
 dist
-
 
 # Debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+logs
+*.log
 
 # Misc
 .DS_Store
 .vscode
 *.pem
+.fleet
+.idea

@@ -1,29 +1,45 @@
 # Caphne StudyBuddy
-✨ Caphne is buddy finder app. **Basically Tinder for friends who love to study, build and grow together**. 
-Our application is in development stage and is open to contribution.
 
-🔗 See Caphne live: [caphne.co](https://caphne.co) - (Pronounced `Caff-nee`)
+☕️ Tinder, but for finding study buddies. (pronounced `caff-nee`)
 
-## Development - Open to contribution
-Our backend is `NodeJS` (Express), frontend `Nuxt` (Vue), database `PostgreSQL`
-### Requirements
-- NodeJS 24
-- pnpm 9.0+ (npm 11.0+ is fine too)
-### To run the app:
-Clone and install dependencies:
-```bash
-git clone https://github.com/suka712/caphne-studybuddy.git
-cd caphne-studybuddy
-pnpm install
-pnpm dev # to run both client and server
-```
-or, to run separate services
-```bash
-pnpm dev:client 
-pnpm dev:server
-```
-### To contribute
-- Fork this repository, create a feature branch `f/super-feature` starting in `f/`
-- Then submit a pull request and you'll be added as contributor. 
+**Live at [caphne.co](https://caphne.co)** - 300+ users across FPT University campuses and counting!
+
+## Features
+
+- **🧐 Smart Matching** — Fill in your preferences and get matched with compatible study partners. Don't vibe with your matches? Reroll and try again!
+
+- **💭 Sharing Ideas** — Share your thoughts, interests, and projects with the community. Find your next study buddy or tech co-founder.
+
+- **🎙️ Real-time Chat** — WebSocket-powered messaging with browser push notifications. Never miss a message.
+
+- **🎉 More coming soon...**
+
+👉 You can Sign up with your own Email, or via Google, GitHub: [caphne.co](https://caphne.co)
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Frontend | Nuxt 3, Vue 3, shadcn-vue, Tailwind CSS |
+| Backend | Express.js, Socket.io |
+| Database | PostgreSQL, Drizzle ORM |
+| Auth | Email (Resend), OAuth (Passport.js) |
+
+## Our Super Contributors
+
+<a href="https://github.com/suka712/caphne-studybuddy/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=suka712/caphne-studybuddy" />
+</a>
+
+## To Contribute:
+
+We're open to contributions! See [DEVELOPMENT.md](./DEVELOPMENT.md) for setup instructions.
+
+Fork the repo, create a feature branch (prefixed with `f/`, e.g. `f/your-feature`), and submit a pull request.
+
+## Contact Us
+
+For questions, feature request or anything else: khiem@sukaseven.com or anh.tranduy1156@gmail.com
+
 ---
-📧 All feature request or questions to khiem@sukaseven.com or anh.tranduy1156@gmail.com
+MIT License

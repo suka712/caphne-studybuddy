@@ -39,7 +39,7 @@ Fork the repo, create a feature branch (prefixed with `f/`, e.g. `f/your-feature
 
 ## Contact Us
 
-📧 For questions, feature request or anything else: khiem@sukaseven.com or anh.tranduy1156@gmail.com
+📧 All questions, feature request or anything else: khiem@sukaseven.com or anh.tranduy1156@gmail.com
 
 ---
 MIT License

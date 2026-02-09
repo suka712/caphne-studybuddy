@@ -102,7 +102,7 @@ const removeCustomTag = (tag: string) => {
   selectedInterests.value = selectedInterests.value.filter(i => i !== tag)
 }
 
-const photoUrl = ref('') // DEBUG: UPDATE THIS
+const photoUrl = ref('')
 const bio = ref('')
 const bioMaxLength = 200
 const bioLength = computed(() => bio.value.length)
@@ -179,13 +179,13 @@ const submitProfile = async () => {
 const canProceedCurrentScreen = computed(() => {
   switch (currentQuestion.value) {
     case 1:
-      return true // DEBUG: TEMP
+      return canProceedScreen1.value
     case 2:
-      return true // DEBUG: TEMP
+      return canProceedScreen2.value
     case 3:
-      return true // DEBUG: TEMP
+      return canProceedScreen3.value
     case 4:
-      return true // DEBUG: TEMP
+      return canProceedScreen4.value
     default:
       return true
   }
@@ -230,8 +230,7 @@ const { authUser, fetchUser } = useAuth()
 
 
 onMounted(async () => {
-  await fetchUser();
-  console.log('Auth users profile pic link:', authUser.value?.oauthPhotoUrl) // DEBUG
+  await fetchUser()
 })
 
 </script>

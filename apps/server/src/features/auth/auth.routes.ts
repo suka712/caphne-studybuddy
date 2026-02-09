@@ -47,7 +47,7 @@ authRouter.get('/me', requireAuth, (req, res) => {
       email: user.email,
       oauthPhotoUrl: user.oauthPhotoUrl
     }
-  }) // DEBUG: RETURNED
+  })
 })
 
 authRouter.post('/logout', (req, res) => {

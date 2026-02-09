@@ -12,7 +12,7 @@ export const googleStrategy = new GoogleStrategy(
     clientSecret: env.googleClientSecret,
     callbackURL: CALLBACK_URL,
   },
-  async (accessToken, refreshToken, profile, done) => {
+  async (_accessToken, _refreshToken, profile, done) => {
     try {
       const user = await findOrCreateUser(profile, 'google')
       done(null, user)
@@ -25,6 +25,7 @@ export const googleStrategy = new GoogleStrategy(
 async function findOrCreateUser(profile: Profile, provider: 'google' | 'github') {
   const providerId = profile.id
   const email = profile.emails?.[0]?.value
+  const photoUrl = profile.photos?.[0]?.value
 
   if (!email) {
     throw new Error('Email not provided by OAuth provider')

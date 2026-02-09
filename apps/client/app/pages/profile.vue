@@ -7,8 +7,9 @@
     <Card v-else-if="profile" class="w-full max-w-xs">
       <CardContent>
         <div class="flex items-center gap-3 mb-6">
-          <div class="size-15 rounded-xl bg-muted flex items-center justify-center">
-            <Icon name="material-symbols:person-heart-rounded" size="32" />
+          <div class="size-15 rounded-full bg-muted flex items-center justify-center overflow-hidden border-2 border-accent">
+            <img v-if="profile?.photoUrl" :src="profile?.photoUrl" class="w-full h-full object-cover">
+            <Icon v-else name="material-symbols:person-heart-rounded" size="32" />
           </div>
           <div class="overflow-hidden">
             <h1 class="text-xl font-bold">{{ profile.displayName }}</h1>

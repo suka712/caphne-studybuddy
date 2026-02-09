@@ -9,8 +9,9 @@
         <!-- Header -->
         <div class="flex items-center p-4 justify-between border-b border-border">
           <div class="flex items-center gap-3 min-w-0">
-            <div class="size-10 rounded-xl bg-muted flex items-center justify-center shrink-0">
-              <Icon name="material-symbols:person-heart-rounded" size="24" />
+            <div class="size-15 rounded-full bg-muted flex items-center justify-center overflow-hidden border-2 border-accent shrink-0">
+              <img v-if="profile?.photoUrl" :src="profile?.photoUrl" class="w-full h-full object-cover">
+              <Icon v-else name="material-symbols:person-heart-rounded" size="32" />
             </div>
             <h1 class="text-lg font-bold truncate">{{ profile.displayName }}</h1>
           </div>

@@ -65,7 +65,7 @@ export const findOrCreateUser = async (profile: Profile, provider: 'google' | 'g
     .values({
       email: email,
       ...(provider === 'google' ? { googleId: providerId } : { githubId: providerId }),
-      oauthUserPhoto: photoUrl // DEBUG: INSERTED TO DB
+      oauthPhotoUrl: photoUrl // DEBUG: INSERTED TO DB
     })
     .returning()
 

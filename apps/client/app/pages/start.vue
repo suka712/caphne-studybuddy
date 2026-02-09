@@ -161,7 +161,7 @@ const submitProfile = async () => {
         birthday,
         year: selectedYear.value,
         major: selectedMajor.value,
-        bio: bio.value.trim || '',
+        bio: bio.value.trim() || '',
         photoUrl: photoUrl.value.trim() || authUser.value?.oauthPhotoUrl,
         isPublic: showPublicProfile.value,
         goals: selectedGoals.value,

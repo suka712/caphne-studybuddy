@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD COLUMN "oauth_user_photo" text;

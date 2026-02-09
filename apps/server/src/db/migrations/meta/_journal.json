@@ -71,6 +71,13 @@
       "when": 1770398573043,
       "tag": "0009_green_shen",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1770617040268,
+      "tag": "0010_green_magneto",
+      "breakpoints": true
     }
   ]
 }

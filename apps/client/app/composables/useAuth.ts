@@ -1,6 +1,7 @@
 interface AuthUser {
   id: number
   email: string
+  oauthUserPhoto: string
 }
 
 const user = ref<AuthUser | null>(null)

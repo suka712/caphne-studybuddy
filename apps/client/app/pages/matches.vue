@@ -4,7 +4,7 @@
       <Icon name="svg-spinners:ring-resize" size="40" class="text-primary" />
     </div>
 
-    <Card v-else class="w-full max-w-xs flex flex-col py-0" style="height: 40vh;">
+    <Card v-else class="w-full max-w-xs flex flex-col p-2 h-[42vh]">
       <CardContent class="flex flex-col h-full p-0">
         <!-- Header -->
         <div class="flex items-center p-4 justify-between border-b border-border">
@@ -32,7 +32,7 @@
             </p>
 
             <NuxtLink v-for="match in matches" :key="match.matchId" :to="`/chat/${match.matchId}`"
-              class="flex items-center gap-3 p-3 rounded-lg bg-muted hover:bg-muted/80 transition-colors cursor-pointer">
+              class="flex items-center gap-3 rounded-lg bg-muted hover:bg-muted/80 transition-colors cursor-pointer">
               <div class="size-10 rounded-xl bg-background flex items-center justify-center shrink-0">
                 <img v-if="match.photoUrl" :src="match.photoUrl" class="size-10 rounded-xl object-cover" />
                 <Icon v-else name="mdi:account" size="24" />

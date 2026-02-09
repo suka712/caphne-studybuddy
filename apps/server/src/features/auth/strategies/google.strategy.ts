@@ -22,7 +22,7 @@ export const googleStrategy = new GoogleStrategy(
   }
 )
 
-async function findOrCreateUser(profile: Profile, provider: 'google' | 'github') {
+export const findOrCreateUser = async (profile: Profile, provider: 'google' | 'github') => {
   const providerId = profile.id
   const email = profile.emails?.[0]?.value
   const photoUrl = profile.photos?.[0]?.value
@@ -70,5 +70,3 @@ async function findOrCreateUser(profile: Profile, provider: 'google' | 'github')
 
   return newUser
 }
-
-export { findOrCreateUser }

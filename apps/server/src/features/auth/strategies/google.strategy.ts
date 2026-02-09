@@ -63,8 +63,9 @@ export const findOrCreateUser = async (profile: Profile, provider: 'google' | 'g
   const [newUser] = await db
     .insert(users)
     .values({
-      email,
+      email: email,
       ...(provider === 'google' ? { googleId: providerId } : { githubId: providerId }),
+      oauthUserPhoto: photoUrl
     })
     .returning()
 

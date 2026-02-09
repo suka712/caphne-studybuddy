@@ -45,7 +45,7 @@ authRouter.get('/me', requireAuth, (req, res) => {
     user: {
       id: user.id,
       email: user.email,
-      oauthUserPhoto: user.oauthUserPhoto
+      oauthPhotoUrl: user.oauthPhotoUrl
     }
   }) // DEBUG: RETURNED
 })

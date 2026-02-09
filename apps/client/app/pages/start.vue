@@ -36,6 +36,7 @@ import {
   CardContent,
 } from '@/components/ui/card'
 import { goalOptions, interestCategories, majorOptions, vibeOptions, yearOptions } from '~/data/startOptions'
+import { toast } from 'vue-sonner'
 
 definePageMeta({ layout: "internal", middleware: "auth" })
 
@@ -120,6 +121,31 @@ const canProceedScreen3 = computed(() =>
 )
 const canProceedScreen4 = computed(() => selectedInterests.value.length > 0)
 
+const validatePhotoUrl = async (enteredUrl: string) => {
+  if (!enteredUrl.trim()) {
+    return true
+  }
+
+  try {
+    new URL(enteredUrl)
+  } catch {
+    return false
+  }
+
+  const img = new Image()
+  const isValid = await new Promise((resolve) => {
+    img.onload = () => resolve(true)
+    img.onerror = () => resolve(false)
+    img.src = enteredUrl
+  })
+
+  if (!isValid) {
+    return false
+  }
+
+  return true
+}
+
 const { public: { apiBase } } = useRuntimeConfig()
 
 const submitProfile = async () => {
@@ -135,8 +161,8 @@ const submitProfile = async () => {
         birthday,
         year: selectedYear.value,
         major: selectedMajor.value,
-        bio: bio.value || '',
-        photoUrl: null,
+        bio: bio.value.trim || '',
+        photoUrl: photoUrl.value.trim() || authUser.value?.oauthPhotoUrl,
         isPublic: showPublicProfile.value,
         goals: selectedGoals.value,
         vibes: selectedVibes.value,
@@ -172,6 +198,15 @@ const onNext = async () => {
   if (!canProceedCurrentScreen.value) {
     return
   }
+
+  if (currentQuestion.value === 5) {
+    const isValid = await validatePhotoUrl(photoUrl.value)
+    if (!isValid) {
+      photoUrl.value = ''
+      toast.error('Could not load image from this URL')
+    }
+  }
+
   if (currentQuestion.value === totalQuestion) {
     isLoading.value = true
     await submitProfile()
@@ -193,10 +228,10 @@ const onPrevious = () => {
 
 const { authUser, fetchUser } = useAuth()
 
-console.log('Auth users profile pic link:', authUser.value?.oauthUserPhoto)
 
-onMounted(() => {
-  fetchUser();
+onMounted(async () => {
+  await fetchUser();
+  console.log('Auth users profile pic link:', authUser.value?.oauthPhotoUrl) // DEBUG
 })
 
 </script>
@@ -412,13 +447,13 @@ onMounted(() => {
       <!-- Profile Photo -->
       <div class="w-full mb-8">
         <div class="flex justify-center items-center">
-          <div class="size-20 rounded-full mb-3 overflow-hidden">
-            <img v-if="authUser?.oauthUserPhoto" :src="authUser.oauthUserPhoto" class="w-full h-full object-cover">
+          <div class="size-20 rounded-full mb-5 overflow-hidden">
+            <img v-if="authUser?.oauthPhotoUrl" :src="authUser.oauthPhotoUrl" class="w-full h-full object-cover">
             <Icon v-else name="material-symbols:person-heart" size="40" class="text-muted-foreground" />
           </div>
         </div>
         <Label class="text-sm text-muted-foreground mb-3">Link to your profile picture</Label>
-        <Textarea class="min-w-xs w-xs" placeholder="https://my.profile/aBCDeXe123" />
+        <Textarea v-model="photoUrl" class="min-w-xs w-xs" placeholder="https://my.profile/aBCDeXe123" />
       </div>
 
       <!-- Bio -->

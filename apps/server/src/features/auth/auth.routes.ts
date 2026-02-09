@@ -41,7 +41,13 @@ authRouter.get(
 
 authRouter.get('/me', requireAuth, (req, res) => {
   const user = req.user as User
-  res.json({ user: { id: user.id, email: user.email } })
+  res.json({
+    user: {
+      id: user.id,
+      email: user.email,
+      oauthUserPhoto: user.oauthUserPhoto
+    }
+  }) // DEBUG: RETURNED
 })
 
 authRouter.post('/logout', (req, res) => {

@@ -78,6 +78,13 @@
       "when": 1770617040268,
       "tag": "0010_green_magneto",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1770828336698,
+      "tag": "0011_productive_proteus",
+      "breakpoints": true
     }
   ]
 }

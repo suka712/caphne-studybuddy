@@ -7,7 +7,8 @@ export const users = pgTable('users', {
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   googleId: text('google_id').unique(),
   githubId: text('github_id').unique(),
-  oauthPhotoUrl: text('oauth_user_photo')
+  oauthPhotoUrl: text('oauth_user_photo'),
+  lastActiveAt: timestamp('last_active_at', { withTimezone: true}),
 });
 
 export type User = typeof users.$inferSelect

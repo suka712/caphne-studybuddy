@@ -50,6 +50,7 @@ Match-finding machanism number 2 - social media style
 - [ ] Send/receive messages
 - [ ] Real-time updates
 - [ ] Icebreaker prompt
+- [ ] Active indicator
 
 ## Settings `/settings`
 

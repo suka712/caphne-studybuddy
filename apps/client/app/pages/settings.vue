@@ -1,8 +1,39 @@
-<script>
+<script setup lang="ts">
 definePageMeta({
   middleware: 'auth',
   layout: "internal"
 })
+
+const { public: { apiBase } } = useRuntimeConfig()
+const { authUser, logout } = useAuth()
+
+const profile = ref<any>(null)
+const isLoading = ref<boolean>(true)
+
+onMounted(async () => {
+  try {
+    const data = await $fetch<{ profile: any }>(`${apiBase}/profile`, {
+      credentials: 'include',
+    })
+
+    if (!data.profile) {
+      navigateTo('/start')
+      return
+    }
+
+    profile.value = data.profile
+  } catch (e) {
+    console.error('Failed to fetch profile:', e)
+    navigateTo('/start')
+  } finally {
+    isLoading.value = false
+  }
+})
+
+const handleLogout = async () => {
+  await logout()
+  navigateTo('/')
+}
 </script>
 
 <template>
@@ -20,42 +51,22 @@ definePageMeta({
             <p class="text-muted-foreground text-sm overflow-hidden">{{ authUser?.email }}</p>
           </div>
         </div>
-        <div class="p-4 rounded-lg bg-muted space-y-3">
-          <div>
-            <label class="text-sm text-muted-foreground/80">Display Name</label>
-            <div v-if="!isEditing" class="flex items-center justify-between">
-              <p class="text-base overflow-hidden">{{ profile.displayName }}</p>
-              <Button variant="outline" class="size-7 p-0" @click="startEditing" title="Edit name">
-                <Icon name="mdi:pencil" size="18" />
-              </Button>
-            </div>
-            <div v-else class="flex gap-1">
-              <Input v-model="editingName" type="text" placeholder="Enter new name"
-                class="flex-1 h-7 border-input rounded-md bg-background" @keyup.enter="saveName"
-                @keyup.escape="cancelEditing" />
-              <Button variant="default" size="sm" @click="saveName" class="size-7 p-0" title="Save">
-                <Icon name="mdi:check" size="16" />
-              </Button>
-              <Button variant="outline" size="sm" @click="cancelEditing" class="size-7 p-0" title="Cancel">
-                <Icon name="mdi:close" size="16" />
-              </Button>
-            </div>
-          </div>
 
-          <div>
-            <label class="text-sm text-muted-foreground/80">Major</label>
-            <p class="text-base">{{ profile.major }}</p>
-          </div>
 
-          <div>
-            <label class="text-sm text-muted-foreground/80">Year</label>
-            <p class="text-base">{{ profile.year }}</p>
-          </div>
 
-          <div v-if="profile.bio">
-            <label class="text-sm text-muted-foreground/80">Bio</label>
-            <p class="text-base">{{ profile.bio }}</p>
-          </div>
+        <div>
+          <label class="text-sm text-muted-foreground/80">Major</label>
+          <p class="text-base">{{ profile.major }}</p>
+        </div>
+
+        <div>
+          <label class="text-sm text-muted-foreground/80">Year</label>
+          <p class="text-base">{{ profile.year }}</p>
+        </div>
+
+        <div v-if="profile.bio">
+          <label class="text-sm text-muted-foreground/80">Bio</label>
+          <p class="text-base">{{ profile.bio }}</p>
         </div>
       </div>
 

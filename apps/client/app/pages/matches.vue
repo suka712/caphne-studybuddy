@@ -33,26 +33,22 @@
 
             <NuxtLink v-for="match in matches" :key="match.matchId" :to="`/chat/${match.matchId}`"
               class="flex items-center gap-3 rounded-lg bg-muted hover:bg-muted/80 transition-colors cursor-pointer">
-              <!-- CHANGED: Wrap avatar in relative div for green dot -->
               <div class="relative shrink-0">
                 <div class="size-10 rounded-xl bg-background flex items-center justify-center overflow-hidden">
                   <img v-if="match.photoUrl" :src="match.photoUrl" class="size-10 rounded-xl object-cover" />
                   <Icon v-else name="mdi:account" size="24" />
                 </div>
-                <!-- NEW: Green dot when online -->
                 <span v-if="match.isOnline"
                   class="absolute -bottom-0.5 -right-0.5 size-3 bg-green-500 rounded-full border-2 border-muted" />
               </div>
               <div class="overflow-hidden flex-1">
                 <p class="text-sm font-semibold truncate">{{ match.displayName }}</p>
                 <p class="text-xs text-muted-foreground truncate">{{ match.major }} · {{ match.year }}</p>
-                <!-- NEW: Status line -->
                 <p v-if="match.isOnline" class="text-[11px] text-green-500">Online</p>
                 <p v-else-if="match.lastActiveAt" class="text-[11px] text-muted-foreground">
                   Active {{ timeAgo(match.lastActiveAt) }}
                 </p>
               </div>
-              <!-- Unread count badge -->
               <Badge v-if="getUnreadCount(match.matchId) > 0"
                 class="size-5 p-0 text-[10px] flex items-center justify-center shrink-0">
                 {{ getUnreadCount(match.matchId) }}

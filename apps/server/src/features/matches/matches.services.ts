@@ -2,7 +2,7 @@ import { matchConfig } from "../../config/matching.js"
 import { db } from "../../db/db.js"
 import { matches, users, profiles } from "../../db/schema.js"
 import { and, desc, eq, gte, ne, notInArray, sql } from 'drizzle-orm'
-import { isUserOnline } from '../chat/socket.js'  // NEW
+import { userIsOnline } from '../chat/socket.js'
 
 const getAdminId = async () => {
   const [admin] = await db
@@ -136,15 +136,9 @@ export const getAllMatches = async (userId: number) => {
       return true
     })
 
-  const enrichedMatches = userMatches.map(m => ({
-    matchId: m.matchId,
-    displayName: m.displayName,
-    major: m.major,
-    year: m.year,
-    photoUrl: m.photoUrl,
-    matchedAt: m.matchedAt,
-    isOnline: isUserOnline(m.matchedUserId),
-    lastActiveAt: m.lastActiveAt,
+  const enrichedMatches = userMatches.map(({ matchedUserId, ...rest }) => ({
+    ...rest,
+    isOnline: userIsOnline(matchedUserId),
   }))
 
   const adminId = await getAdminId()

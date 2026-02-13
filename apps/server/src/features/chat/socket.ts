@@ -12,7 +12,7 @@ let ioInstance: SocketIOServer | null = null
 
 const onlineUsers = new Map<number, Set<string>>()
 
-export function isUserOnline(userId: number): boolean {
+export function userIsOnline(userId: number) {
   const sockets = onlineUsers.get(userId)
   return sockets ? sockets.size > 0 : false
 }

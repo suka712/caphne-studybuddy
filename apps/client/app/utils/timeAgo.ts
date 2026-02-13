@@ -2,7 +2,6 @@ export function timeAgo(date: string | Date | null): string {
     if (!date) return ''
 
     const seconds = Math.floor((Date.now() - new Date(date).getTime()) / 1000)
-
     if (seconds < 60) return 'just now'
 
     const minutes = Math.floor(seconds / 60)

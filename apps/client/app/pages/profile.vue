@@ -4,7 +4,7 @@
       <Icon name="svg-spinners:ring-resize" size="40" class="text-primary" />
     </div>
 
-    <Card v-else-if="profile" class="w-full max-w-xs flex flex-col p-2 h-[42vh]">
+    <Card v-else-if="profile" class="w-full max-w-xs flex flex-col p-2">
       <CardContent class="flex flex-col h-full p-0">
         <div class="flex-1 p-4">
           <div class="flex items-center gap-3 mb-6">

@@ -13,7 +13,14 @@
               <Icon name="mdi:arrow-left" size="20" />
             </Button>
           </NuxtLink>
-          <p class="text-sm font-semibold truncate">{{ matchDisplayName }}</p>
+          <!-- Wrapped name in div, added status line -->
+          <div class="min-w-0">
+            <p class="text-sm font-semibold truncate">{{ matchDisplayName }}</p>
+            <p v-if="isMatchOnline" class="text-[11px] text-green-500">Online</p>
+            <p v-else-if="matchLastActiveAt" class="text-[11px] text-muted-foreground">
+              Active {{ timeAgo(matchLastActiveAt) }}
+            </p>
+          </div>
         </div>
 
         <!-- Messages -->
@@ -91,6 +98,8 @@ const isLoadingMore = ref(false)
 const isConnected = ref(false)
 const hasMore = ref(true)
 const scrollAreaRef = ref<InstanceType<typeof ScrollArea> | null>(null)
+const isMatchOnline = ref(false)
+const matchLastActiveAt = ref<string | null>(null)
 
 const canSend = computed(() =>
   isConnected.value && newMessage.value.trim().length > 0
@@ -162,6 +171,8 @@ onMounted(async () => {
       return
     }
     matchDisplayName.value = thisMatch.displayName
+    isMatchOnline.value = thisMatch.isOnline
+    matchLastActiveAt.value = thisMatch.lastActiveAt
 
     const initialMessages = await fetchMessages()
     messages.value = initialMessages

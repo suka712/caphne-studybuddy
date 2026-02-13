@@ -38,15 +38,13 @@
                   <img v-if="match.photoUrl" :src="match.photoUrl" class="size-10 rounded-xl object-cover" />
                   <Icon v-else name="mdi:account" size="24" />
                 </div>
-                <span v-if="match.isOnline"
-                  class="absolute -bottom-0.5 -right-0.5 size-3 bg-green-500 rounded-full border-2 border-muted" />
+                <span
+                  class="absolute -bottom-0.5 -right-0.5 size-3 rounded-full border-2 border-muted"
+                  :class="match.isOnline ? 'bg-green-500' : 'bg-yellow-500'" />
               </div>
               <div class="overflow-hidden flex-1">
                 <p class="text-sm font-semibold truncate">{{ match.displayName }}</p>
                 <p class="text-xs text-muted-foreground truncate">{{ match.major }} · {{ match.year }}</p>
-                <p v-if="!match.isOnline && match.lastActiveAt" class="text-[11px] text-muted-foreground">
-                  Active {{ timeAgo(match.lastActiveAt) }}
-                </p>
               </div>
               <Badge v-if="getUnreadCount(match.matchId) > 0"
                 class="size-5 p-0 text-[10px] flex items-center justify-center shrink-0">

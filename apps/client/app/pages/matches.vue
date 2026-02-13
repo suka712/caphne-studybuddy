@@ -40,7 +40,7 @@
                 </div>
                 <span
                   class="absolute -bottom-0.5 -right-0.5 size-3 rounded-full border-2 border-muted"
-                  :class="match.isOnline ? 'bg-green-500' : 'bg-yellow-500'" />
+                  :class="match.isOnline ? 'bg-green-500' : 'bg-slate-500'" />
               </div>
               <div class="overflow-hidden flex-1">
                 <p class="text-sm font-semibold truncate">{{ match.displayName }}</p>

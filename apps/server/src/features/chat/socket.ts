@@ -10,6 +10,7 @@ import { eq } from 'drizzle-orm'
 
 let ioInstance: SocketIOServer | null = null
 
+// Maps userId to Set of socket IDs for online tracking
 const onlineUsers = new Map<number, Set<string>>()
 
 export function userIsOnline(userId: number) {

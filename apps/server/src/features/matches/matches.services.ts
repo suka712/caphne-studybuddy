@@ -135,11 +135,10 @@ export const getAllMatches = async (userId: number) => {
       seen.add(m.matchId)
       return true
     })
-
-  const enrichedMatches = userMatches.map(({ matchedUserId, ...rest }) => ({
-    ...rest,
-    isOnline: userIsOnline(matchedUserId),
-  }))
+    .map(({ matchedUserId, ...rest }) => ({
+      ...rest,
+      isOnline: userIsOnline(matchedUserId)
+    }))
 
   const adminId = await getAdminId()
   const now = Date.now()
@@ -161,5 +160,5 @@ export const getAllMatches = async (userId: number) => {
     }
   }
 
-  return { matches: enrichedMatches, nextMatchAt, remainingMatches: Math.max(0, remainingMatches) }
+  return { matches: userMatches, nextMatchAt, remainingMatches: Math.max(0, remainingMatches) }
 }

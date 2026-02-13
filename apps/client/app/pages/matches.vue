@@ -44,8 +44,7 @@
               <div class="overflow-hidden flex-1">
                 <p class="text-sm font-semibold truncate">{{ match.displayName }}</p>
                 <p class="text-xs text-muted-foreground truncate">{{ match.major }} · {{ match.year }}</p>
-                <p v-if="match.isOnline" class="text-[11px] text-green-500">Online</p>
-                <p v-else-if="match.lastActiveAt" class="text-[11px] text-muted-foreground">
+                <p v-if="!match.isOnline && match.lastActiveAt" class="text-[11px] text-muted-foreground">
                   Active {{ timeAgo(match.lastActiveAt) }}
                 </p>
               </div>

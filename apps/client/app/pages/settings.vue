@@ -190,9 +190,9 @@ const handleLogout = async () => {
           </div>
 
           <!-- Public Profile Toggle -->
-          <div class="flex items-center justify-between pt-2 border-t">
+          <div class="flex items-center justify-between pt-4 border-t">
             <div>
-              <label class="text-sm text-muted-foreground/80">Public Profile</label>
+              <label class="text-sm text-muted-foreground/80">Show profile publicly</label>
             </div>
             <Switch :checked="profile.isPublic" @update:checked="togglePublic" />
           </div>

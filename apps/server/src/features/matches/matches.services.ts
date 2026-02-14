@@ -1,7 +1,7 @@
 import { matchConfig } from "../../config/matching.js"
 import { db } from "../../db/db.js"
-import { matches, users, profiles } from "../../db/schema.js"
-import { and, desc, eq, gte, ne, notInArray, sql } from 'drizzle-orm'
+import { matches, messages, users, profiles } from "../../db/schema.js"
+import { and, count, desc, eq, gte, isNull, ne, notInArray, sql } from 'drizzle-orm'
 import { userIsOnline } from '../chat/socket.js'
 
 const getAdminId = async () => {
@@ -94,49 +94,63 @@ export const generateMatches = async (userId: number) => {
 export const getAllMatches = async (userId: number) => {
   await ensureAdminMatch(userId)
 
-  // Matches the user initiated (join the other person's profile)
-  const initiated = await db
+  const unreadSq = db
     .select({
-      matchId: matches.id,
-      matchedUserId: users.id,
-      displayName: profiles.displayName,
-      major: profiles.major,
-      year: profiles.year,
-      photoUrl: profiles.photoUrl,
-      matchedAt: matches.createdAt,
-      lastActiveAt: users.lastActiveAt,
+      matchId: messages.matchId,
+      unreadCount: count(messages.id).as('unread_count'),
     })
+    .from(messages)
+    .where(and(
+      ne(messages.senderId, userId),
+      isNull(messages.readAt)
+    ))
+    .groupBy(messages.matchId)
+    .as('unread_sq')
+
+  const selectFields = {
+    matchId: matches.id,
+    matchedUserId: users.id,
+    displayName: profiles.displayName,
+    major: profiles.major,
+    year: profiles.year,
+    photoUrl: profiles.photoUrl,
+    matchedAt: matches.createdAt,
+    lastActiveAt: users.lastActiveAt,
+    unreadCount: sql<number>`coalesce(${unreadSq.unreadCount}, 0)`.as('unread_count'),
+  }
+
+  const initiated = await db
+    .select(selectFields)
     .from(matches)
     .innerJoin(users, eq(matches.matchedUserId, users.id))
     .innerJoin(profiles, eq(profiles.userId, users.id))
+    .leftJoin(unreadSq, eq(unreadSq.matchId, matches.id))
     .where(eq(matches.userId, userId))
 
   const received = await db
-    .select({
-      matchId: matches.id,
-      matchedUserId: users.id,
-      displayName: profiles.displayName,
-      major: profiles.major,
-      year: profiles.year,
-      photoUrl: profiles.photoUrl,
-      matchedAt: matches.createdAt,
-      lastActiveAt: users.lastActiveAt,
-    })
+    .select(selectFields)
     .from(matches)
     .innerJoin(users, eq(matches.userId, users.id))
     .innerJoin(profiles, eq(profiles.userId, users.id))
+    .leftJoin(unreadSq, eq(unreadSq.matchId, matches.id))
     .where(eq(matches.matchedUserId, userId))
 
   const seen = new Set<number>()
   const userMatches = [...initiated, ...received]
-    .sort((a, b) => new Date(b.matchedAt).getTime() - new Date(a.matchedAt).getTime())
+    .sort((a, b) => {
+      const aHasUnread = Number(a.unreadCount) > 0 ? 1 : 0
+      const bHasUnread = Number(b.unreadCount) > 0 ? 1 : 0
+      if (aHasUnread !== bHasUnread) return bHasUnread - aHasUnread
+      return new Date(b.matchedAt).getTime() - new Date(a.matchedAt).getTime()
+    })
     .filter(m => {
       if (seen.has(m.matchId)) return false
       seen.add(m.matchId)
       return true
     })
-    .map(({ matchedUserId, ...rest }) => ({
+    .map(({ matchedUserId, unreadCount, ...rest }) => ({
       ...rest,
+      unreadCount: Number(unreadCount),
       isOnline: userIsOnline(matchedUserId)
     }))
 

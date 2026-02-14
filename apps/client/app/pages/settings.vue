@@ -98,7 +98,7 @@ const handleLogout = async () => {
       <Icon name="svg-spinners:ring-resize" size="40" class="text-primary" />
     </div>
 
-    <Card v-else-if="profile" class="w-full max-w-xs flex flex-col p-2 min-h-80">
+    <Card v-else-if="profile" class="w-full max-w-xs flex flex-col p-2 h-[42vh] min-h-80">
       <CardContent class="flex flex-col h-full p-0">
         <!-- Header -->
         <div class="flex items-center gap-3 p-4 border-b border-border">
@@ -114,7 +114,7 @@ const handleLogout = async () => {
         </div>
 
         <!-- Editable Fields -->
-        <div class="flex-1 p-4 space-y-4">
+        <div class="flex-1 min-h-0 overflow-y-auto p-4 space-y-4">
           <!-- Display Name -->
           <div>
             <label class="text-sm text-muted-foreground/80">Display Name</label>

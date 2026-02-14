@@ -1,10 +1,6 @@
 <template>
   <div class="flex justify-center items-center min-h-screen">
-    <div v-if="isLoading" class="flex flex-col items-center">
-      <Icon name="svg-spinners:ring-resize" size="40" class="text-primary" />
-    </div>
-
-    <Card v-else class="w-full max-w-xs flex flex-col h-[45vh] min-h-96 p-2">
+    <Card class="w-full max-w-xs flex flex-col h-[45vh] min-h-96 p-2">
       <CardContent class="flex flex-col h-full p-0">
         <!-- Header -->
         <div class="flex items-center gap-2 border-b border-border py-2 pl-2">
@@ -24,7 +20,10 @@
         </div>
 
         <!-- Messages -->
-        <ScrollArea ref="scrollAreaRef" class="flex-1 min-h-0">
+        <div v-if="isLoading" class="flex items-center justify-center h-full">
+          <Icon name="svg-spinners:ring-resize" size="40" class="text-primary" />
+        </div>
+        <ScrollArea v-else ref="scrollAreaRef" class="flex-1 min-h-0">
           <div class="p-4 space-y-2">
             <Button v-if="hasMore" variant="ghost" size="sm" class="w-full text-xs text-muted-foreground"
               :disabled="isLoadingMore" @click="loadMore">
@@ -177,6 +176,7 @@ onMounted(async () => {
     const initialMessages = await fetchMessages()
     messages.value = initialMessages
     if (initialMessages.length < PAGE_SIZE) hasMore.value = false
+    isLoading.value = false
     scrollToBottom()
 
     const socket = getSocket()

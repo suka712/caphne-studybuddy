@@ -7,8 +7,6 @@ definePageMeta({
 const { authUser, logout } = useAuth()
 const { isCheckingProfile, profile, fetchProfile } = useProfile()
 
-console.log('Is checking profile 1:', isCheckingProfile.value)
-
 onMounted(() => {
   fetchProfile()
 })
@@ -17,7 +15,6 @@ const handleLogout = async () => {
   await logout()
   navigateTo('/')
 }
-console.log('Is checking profile 2:', isCheckingProfile.value)
 
 </script>
 

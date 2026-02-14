@@ -22,12 +22,11 @@
         </div>
 
         <!-- Matches List -->
-        <ScrollArea class="flex-1 min-h-0">
-          <div v-if="isLoading" class="flex flex-col items-center mt-25">
-            <Icon name="svg-spinners:ring-resize" size="40" class="text-primary" />
-          </div>
-
-          <div v-else class="p-4 space-y-3">
+        <div v-if="isLoading" class="flex items-center justify-center h-full">
+          <Icon name="svg-spinners:ring-resize" size="40" class="text-primary" />
+        </div>
+        <ScrollArea v-else class="flex-1 min-h-0">
+          <div class="p-4 space-y-3">
             <p v-if="matches.length === 0" class="text-muted-foreground text-sm text-center py-4">
               No matches yet...
             </p>

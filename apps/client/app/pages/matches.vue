@@ -13,7 +13,7 @@
               <img v-if="profile?.photoUrl" :src="profile?.photoUrl" class="w-full h-full object-cover">
               <Icon v-else name="material-symbols:person-heart-rounded" size="32" />
             </div>
-            <h1 class="text-lg font-bold truncate">{{ profile.displayName }}</h1>
+            <h1 class="text-lg font-bold truncate">{{ profile?.displayName }}</h1>
           </div>
           <Button variant="outline" class="h-7 text-xs shrink-0" :disabled="!canGenerate || isGenerating"
             @click="handleGenerate">
@@ -82,6 +82,7 @@ const { getSocket } = useSocket()
 const { fetchUnreadCounts, getUnreadCount } = useChatNotifications()
 
 const { public: { apiBase } } = useRuntimeConfig()
+const { profile, fetchProfile } = useProfile()
 
 interface MatchCard {
   matchId: number
@@ -98,9 +99,6 @@ const matches = ref<MatchCard[]>([])
 const nextMatchAt = ref<Date | null>(null)
 const isLoading = ref(true)
 const isGenerating = ref(false)
-const profile = ref<any>(null)
-
-
 const canGenerate = computed(() => {
   if (!nextMatchAt.value) return true
   return new Date(nextMatchAt.value).getTime() <= Date.now()
@@ -146,16 +144,6 @@ const fetchMatches = async () => {
 onMounted(async () => {
   try {
     await fetchMatches()
-    const data = await $fetch<{ profile: any }>(`${apiBase}/profile`, {
-      credentials: 'include',
-    })
-
-    if (!data.profile) {
-      navigateTo('/start')
-      return
-    }
-
-    profile.value = data.profile
   } catch (e) {
     console.error('Failed to fetch profile:', e)
     navigateTo('/start')

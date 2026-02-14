@@ -78,7 +78,7 @@ definePageMeta({
 })
 
 const { getSocket } = useSocket()
-const { fetchUnreadCounts, getUnreadCount } = useChatNotifications()
+const { getUnreadCount, initUnreadCounts } = useChatNotifications()
 
 const { public: { apiBase } } = useRuntimeConfig()
 const { profile, fetchProfile } = useProfile()
@@ -90,6 +90,7 @@ interface MatchCard {
   year: string
   photoUrl: string | null
   matchedAt: string
+  unreadCount: number
   isOnline: boolean
   lastActiveAt: string | null
 }
@@ -142,9 +143,8 @@ const fetchMatches = async () => {
 
 onMounted(async () => {
   await Promise.all([fetchMatches(), fetchProfile()])
+  initUnreadCounts(matches.value)
   isLoading.value = false
-
-  await fetchUnreadCounts()
 
   const socket = getSocket()
   if (socket) {

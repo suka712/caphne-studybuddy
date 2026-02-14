@@ -16,20 +16,13 @@ export const useChatNotifications = () => {
   const { getSocket } = useSocket();
   const route = useRoute();
 
-  const fetchUnreadCounts = async () => {
-    try {
-      const data = await $fetch<{
-        unreadCounts: { matchId: number; count: number }[];
-      }>(`${apiBase}/chat/unread-counts`, { credentials: "include" });
-      const map = new Map<number, number>();
-      for (const row of data.unreadCounts) {
-        map.set(row.matchId, row.count);
-      }
-      unreadCounts.value = map;
-    } catch (e) {
-      console.error("Failed to fetch unread counts:", e);
+  const initUnreadCounts = ((matches: { matchId: number; unreadCount: number }[]) => {
+    const map = new Map<number, number>()
+    for (const m of matches) {
+      if (m.unreadCount > 0) map.set(m.matchId, m.unreadCount)
     }
-  };
+    unreadCounts.value = map
+  })
 
   const showBrowserNotification = (title: string, body: string) => {
     new Notification(title, { body, icon: "/favicon.ico" });
@@ -73,7 +66,6 @@ export const useChatNotifications = () => {
           showBrowserNotification("New message", messageData.content);
         }
 
-
         const current = unreadCounts.value.get(messageData.matchId) || 0;
         unreadCounts.value.set(messageData.matchId, current + 1);
         unreadCounts.value = new Map(unreadCounts.value);
@@ -93,10 +85,10 @@ export const useChatNotifications = () => {
   };
 
   return {
-    fetchUnreadCounts,
     attachListeners,
     requestBrowserPermission,
     clearUnread,
+    initUnreadCounts,
     getUnreadCount,
     unreadCounts: readonly(unreadCounts),
   };

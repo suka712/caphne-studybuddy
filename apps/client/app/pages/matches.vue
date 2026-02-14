@@ -26,7 +26,7 @@
           <Icon name="svg-spinners:ring-resize" size="40" class="text-primary" />
         </div>
         <ScrollArea v-else class="flex-1 min-h-0">
-          <div class="p-4 space-y-3">
+          <div class="p-3 space-y-3">
             <p v-if="matches.length === 0" class="text-muted-foreground text-sm text-center py-4">
               No matches yet...
             </p>
@@ -46,7 +46,7 @@
                 <p class="text-xs text-muted-foreground truncate">{{ match.major }} · {{ match.year }}</p>
               </div>
               <Badge v-if="getUnreadCount(match.matchId) > 0"
-                class="size-5 p-0 text-[10px] flex items-center justify-center shrink-0">
+                class="size-6 p-0 text-[10px] flex items-center justify-center shrink-0">
                 {{ getUnreadCount(match.matchId) }}
               </Badge>
             </NuxtLink>

@@ -1,0 +1,1 @@
+ALTER TABLE "matches" ADD COLUMN "last_message_at" timestamp with time zone;

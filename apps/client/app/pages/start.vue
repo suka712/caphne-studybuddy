@@ -121,31 +121,6 @@ const canProceedScreen3 = computed(() =>
 )
 const canProceedScreen4 = computed(() => selectedInterests.value.length > 0)
 
-const validatePhotoUrl = async (enteredUrl: string) => {
-  if (!enteredUrl.trim()) {
-    return true
-  }
-
-  try {
-    new URL(enteredUrl)
-  } catch {
-    return false
-  }
-
-  const img = new Image()
-  const isValid = await new Promise((resolve) => {
-    img.onload = () => resolve(true)
-    img.onerror = () => resolve(false)
-    img.src = enteredUrl
-  })
-
-  if (!isValid) {
-    return false
-  }
-
-  return true
-}
-
 const { public: { apiBase } } = useRuntimeConfig()
 
 const submitProfile = async () => {

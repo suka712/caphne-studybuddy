@@ -19,27 +19,6 @@
           </div>
           <div class="p-4 rounded-lg bg-muted space-y-3">
             <div>
-              <label class="text-sm text-muted-foreground/80">Display Name</label>
-              <div v-if="!isEditing" class="flex items-center justify-between">
-                <p class="text-base overflow-hidden">{{ profile.displayName }}</p>
-                <Button variant="outline" class="size-7 p-0" @click="startEditing" title="Edit name">
-                  <Icon name="mdi:pencil" size="18" />
-                </Button>
-              </div>
-              <div v-else class="flex gap-1">
-                <Input v-model="editingName" type="text" placeholder="Enter new name"
-                  class="flex-1 h-7 border-input rounded-md bg-background" @keyup.enter="saveName"
-                  @keyup.escape="cancelEditing" />
-                <Button variant="default" size="sm" @click="saveName" class="size-7 p-0" title="Save">
-                  <Icon name="mdi:check" size="16" />
-                </Button>
-                <Button variant="outline" size="sm" @click="cancelEditing" class="size-7 p-0" title="Cancel">
-                  <Icon name="mdi:close" size="16" />
-                </Button>
-              </div>
-            </div>
-
-            <div>
               <label class="text-sm text-muted-foreground/80">Major</label>
               <p class="text-base">{{ profile.major }}</p>
             </div>
@@ -77,53 +56,15 @@
 </template>
 
 <script setup lang="ts">
-import { toast } from 'vue-sonner'
-
 definePageMeta({
   middleware: 'auth',
   layout: "internal"
 })
 
-const { authUser, logout } = useAuth()
-const { profile, fetchProfile, updateProfile, isCheckingProfile } = useProfile() 
-
-const isEditing = ref(false)
-const editingName = ref('')
+const { authUser } = useAuth()
+const { profile, fetchProfile, isCheckingProfile } = useProfile()
 
 onMounted(() => {
   fetchProfile()
 })
-
-const startEditing = () => {
-  editingName.value = profile.value?.displayName || ''
-  isEditing.value = true
-}
-
-const saveName = async () => {
-  const trimmed = editingName.value.trim()
-  if (!trimmed || trimmed.length < 2) {
-    toast.error('Name must be at least 2 characters')
-    return
-  }
-
-  try {
-    await updateProfile({ displayName: trimmed})
-    editingName.value = ''
-    toast.success('Name updated')
-  } catch (e) {
-    toast.error('Failed to update name')
-  } finally {
-    isEditing.value = false
-  }
-}
-
-const cancelEditing = () => {
-  isEditing.value = false
-  editingName.value = ''
-}
-
-const handleLogout = async () => {
-  await logout()
-  navigateTo('/')
-}
 </script>

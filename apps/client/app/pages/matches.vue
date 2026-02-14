@@ -82,7 +82,7 @@ const { getSocket } = useSocket()
 const { fetchUnreadCounts, getUnreadCount } = useChatNotifications()
 
 const { public: { apiBase } } = useRuntimeConfig()
-const { profile, fetchProfile } = useProfile()
+const { profile } = useProfile()
 
 interface MatchCard {
   matchId: number

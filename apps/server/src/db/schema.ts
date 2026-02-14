@@ -42,6 +42,7 @@ export const matches = pgTable('matches', {
   userId: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   matchedUserId: integer('matched_user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  lastMessageAt: timestamp('last_message_at', { withTimezone: true }),
 });
 
 export const messages = pgTable('messages', {

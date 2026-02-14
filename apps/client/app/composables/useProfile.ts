@@ -28,10 +28,14 @@ export const useProfile = () => {
       const data = await $fetch<Profile>(`${apiBase}/profile`, {
         credentials: 'include',
       })
+      if (!data) {
+        navigateTo('/start')
+        return
+      }
       profile.value = data
     } catch (e) {
       console.log('Failed to fetch profile:', e)
-      profile.value = null
+      navigateTo('/start')
     } finally {
       isCheckingProfile.value = false
     }

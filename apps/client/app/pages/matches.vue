@@ -82,7 +82,7 @@ const { getSocket } = useSocket()
 const { fetchUnreadCounts, getUnreadCount } = useChatNotifications()
 
 const { public: { apiBase } } = useRuntimeConfig()
-const { profile } = useProfile()
+const { profile, fetchProfile } = useProfile()
 
 interface MatchCard {
   matchId: number
@@ -142,14 +142,9 @@ const fetchMatches = async () => {
 }
 
 onMounted(async () => {
-  try {
-    await fetchMatches()
-  } catch (e) {
-    console.error('Failed to fetch profile:', e)
-    navigateTo('/start')
-  } finally {
-    isLoading.value = false
-  }
+  await fetchProfile()
+  await fetchMatches()
+  isLoading.value = false
 
   await fetchUnreadCounts()
 

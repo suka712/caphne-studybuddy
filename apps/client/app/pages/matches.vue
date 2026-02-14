@@ -32,10 +32,10 @@
             </p>
 
             <NuxtLink v-for="match in matches" :key="match.matchId" :to="`/chat/${match.matchId}`"
-              class="flex items-center gap-3 rounded-lg bg-muted hover:bg-muted/80 transition-colors cursor-pointer">
+              class="flex items-center gap-3 rounded-full bg-muted hover:bg-muted/80 transition-colors cursor-pointer p-2">
               <div class="relative shrink-0">
-                <div class="size-10 rounded-xl bg-background flex items-center justify-center overflow-hidden">
-                  <img v-if="match.photoUrl" :src="match.photoUrl" class="size-10 rounded-xl object-cover" />
+                <div class="size-10 rounded-full bg-background flex items-center justify-center overflow-hidden">
+                  <img v-if="match.photoUrl" :src="match.photoUrl" class="size-10 object-cover" />
                   <Icon v-else name="mdi:account" size="24" />
                 </div>
                 <span

@@ -1,6 +1,6 @@
 <template>
   <div class="flex justify-center items-center min-h-screen">
-    <div v-if="isLoading" class="flex flex-col items-center">
+    <div v-if="isCheckingProfile" class="flex flex-col items-center">
       <Icon name="svg-spinners:ring-resize" size="40" class="text-primary" />
     </div>
 
@@ -82,32 +82,18 @@ definePageMeta({
   layout: "internal"
 })
 
-const { public: { apiBase } } = useRuntimeConfig()
 const { authUser, logout } = useAuth()
-
-const isLoading = ref(true)
-const profile = ref<any>(null)
+const { profile, fetchProfile, updateProfile, isCheckingProfile } = useProfile() 
 
 const isEditing = ref(false)
 const editingName = ref('')
 
 onMounted(async () => {
   try {
-    const data = await $fetch<{ profile: any }>(`${apiBase}/profile`, {
-      credentials: 'include',
-    })
-
-    if (!data.profile) {
-      navigateTo('/start')
-      return
-    }
-
-    profile.value = data.profile
+    await fetchProfile()
+    console.log('Profile:', profile.value)
   } catch (e) {
-    console.error('Failed to fetch profile:', e)
-    navigateTo('/start')
-  } finally {
-    isLoading.value = false
+    console.log('failed')
   }
 })
 
@@ -124,17 +110,13 @@ const saveName = async () => {
   }
 
   try {
-    const data = await $fetch<{ profile: any }>(`${apiBase}/profile`, {
-      method: 'PUT',
-      credentials: 'include',
-      body: { displayName: trimmed }
-    })
-    profile.value = data.profile
-    isEditing.value = false
+    await updateProfile({ displayName: trimmed})
     editingName.value = ''
     toast.success('Name updated')
   } catch (e) {
     toast.error('Failed to update name')
+  } finally {
+    isEditing.value = false
   }
 }
 

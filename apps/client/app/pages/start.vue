@@ -228,7 +228,6 @@ const onPrevious = () => {
 
 const { authUser, fetchUser } = useAuth()
 
-
 onMounted(async () => {
   await fetchUser()
 })

@@ -25,7 +25,7 @@ profileRouter.get('/', requireAuth, async (req, res) => {
   }
 
   console.log(`User with ID ${authUser.id} fetched profile`)
-  return res.json({ profile: profile || null })
+  return res.json(profile || null)
 })
 
 const createProfileSchema = Type.Object({
@@ -97,5 +97,5 @@ profileRouter.put('/', requireAuth, validateBody(updateProfileSchema), async (re
   }
 
   console.log(`User with ID ${authUser.id} updated profile`)
-  return res.json({ profile: updated[0] })
+  return res.json(updated[0])
 })

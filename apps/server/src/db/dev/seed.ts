@@ -2,6 +2,7 @@ import 'dotenv/config'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { Pool } from 'pg'
 import { users, profiles } from '../schema.js'
+import { env } from '../../config/env.js'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 const db = drizzle(pool)
@@ -52,6 +53,10 @@ const pickN = <T>(arr: T[], min: number, max: number): T[] => {
 const SEED_COUNT = 50
 
 async function seed() {
+  if (env.nodeEnv !== "DEVELOPMENT") {
+    throw new Error('CAN ONLY SEED DEV')
+  }
+
   console.log(`Seeding ${SEED_COUNT} users...`)
 
   for (let i = 0; i < SEED_COUNT; i++) {

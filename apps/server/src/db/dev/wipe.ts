@@ -3,11 +3,17 @@ import { drizzle } from 'drizzle-orm/node-postgres'
 import { Pool } from 'pg'
 import { sql } from 'drizzle-orm'
 import { matches, profiles, emailCollection, users } from '../schema.js'
+import { env } from '../../config/env.js'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 const db = drizzle(pool)
 
 async function wipe() {
+  if (env.nodeEnv !== "DEVELOPMENT") {
+    console.error('CAN ONLY WIPE DEV')
+    throw new Error('CAN ONLY WIPE DEV')
+  }
+  
   console.log('Wiping all data...')
 
   await db.delete(matches)

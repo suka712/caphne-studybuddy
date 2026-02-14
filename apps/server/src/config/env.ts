@@ -17,4 +17,5 @@ export const env = {
   googleClientSecret: requireEnv('GOOGLE_CLIENT_SECRET'),
   githubClientId: requireEnv('GITHUB_CLIENT_ID'),
   githubClientSecret: requireEnv('GITHUB_CLIENT_SECRET'),
+  nodeEnv: requireEnv('NODE_ENV'),
 } as const

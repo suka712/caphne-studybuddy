@@ -1,15 +1,12 @@
 <template>
   <div class="flex justify-center items-center min-h-screen">
-    <div v-if="isLoading" class="flex flex-col items-center">
-      <Icon name="svg-spinners:ring-resize" size="40" class="text-primary" />
-    </div>
-
-    <Card v-else class="w-full max-w-xs flex flex-col p-2 h-[45vh] min-h-80">
+    <Card class="w-full max-w-xs flex flex-col p-2 h-[45vh] min-h-80">
       <CardContent class="flex flex-col h-full p-0">
         <!-- Header -->
         <div class="flex items-center p-4 justify-between border-b border-border">
           <div class="flex items-center gap-3 min-w-0">
-            <div class="size-15 rounded-full bg-muted flex items-center justify-center overflow-hidden border-2 border-accent shrink-0">
+            <div
+              class="size-15 rounded-full bg-muted flex items-center justify-center overflow-hidden border-2 border-accent shrink-0">
               <img v-if="profile?.photoUrl" :src="profile?.photoUrl" class="w-full h-full object-cover">
               <Icon v-else name="material-symbols:person-heart-rounded" size="32" />
             </div>
@@ -26,7 +23,11 @@
 
         <!-- Matches List -->
         <ScrollArea class="flex-1 min-h-0">
-          <div class="p-4 space-y-3">
+          <div v-if="isLoading" class="flex flex-col items-center mt-25">
+            <Icon name="svg-spinners:ring-resize" size="40" class="text-primary" />
+          </div>
+
+          <div v-else class="p-4 space-y-3">
             <p v-if="matches.length === 0" class="text-muted-foreground text-sm text-center py-4">
               No matches yet...
             </p>
@@ -38,8 +39,7 @@
                   <img v-if="match.photoUrl" :src="match.photoUrl" class="size-10 object-cover" />
                   <Icon v-else name="mdi:account" size="24" />
                 </div>
-                <span
-                  class="absolute -bottom-0.5 -right-0.5 size-3 rounded-full border-2 border-muted"
+                <span class="absolute -bottom-0.5 -right-0.5 size-3 rounded-full border-2 border-muted"
                   :class="match.isOnline ? 'bg-green-500' : 'bg-slate-500'" />
               </div>
               <div class="overflow-hidden flex-1">
@@ -142,8 +142,7 @@ const fetchMatches = async () => {
 }
 
 onMounted(async () => {
-  await fetchProfile()
-  await fetchMatches()
+  await Promise.all([fetchMatches(), fetchProfile()])
   isLoading.value = false
 
   await fetchUnreadCounts()

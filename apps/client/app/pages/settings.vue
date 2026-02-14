@@ -13,7 +13,6 @@ onMounted(() => {
   fetchProfile()
 })
 
-// Editing state — tracks which field is being edited
 const editingField = ref<'displayName' | 'photoUrl' | 'bio' | null>(null)
 const editingValue = ref('')
 
@@ -191,7 +190,7 @@ const handleLogout = async () => {
           </div>
 
           <!-- Public Profile Toggle -->
-          <div class="flex items-center justify-between pt-2">
+          <div class="flex items-center justify-between pt-2 border-t">
             <div>
               <label class="text-sm text-muted-foreground/80">Public Profile</label>
             </div>

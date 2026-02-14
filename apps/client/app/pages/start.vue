@@ -121,28 +121,24 @@ const canProceedScreen3 = computed(() =>
 )
 const canProceedScreen4 = computed(() => selectedInterests.value.length > 0)
 
-const { public: { apiBase } } = useRuntimeConfig()
+const { createProfile } = useProfile()
 
 const submitProfile = async () => {
   try {
     const birthday = date.value ? `${date.value.year}-${String(date.value.month).padStart(2, '0')}-${String(date.value.day).padStart(2, '0')}` : null
 
-    await $fetch(`${apiBase}/profile`, {
-      method: 'POST',
-      credentials: 'include',
-      body: {
-        displayName: displayName.value,
-        gender: selectedGender.value,
-        birthday,
-        year: selectedYear.value,
-        major: selectedMajor.value,
-        bio: bio.value.trim() || '',
-        photoUrl: photoUrl.value.trim() || authUser.value?.oauthPhotoUrl,
-        isPublic: showPublicProfile.value,
-        goals: selectedGoals.value,
-        vibes: selectedVibes.value,
-        interests: selectedInterests.value,
-      }
+    await createProfile({
+      displayName: displayName.value,
+      gender: selectedGender.value!,
+      birthday,
+      year: selectedYear.value,
+      major: selectedMajor.value,
+      bio: bio.value.trim() || '',
+      photoUrl: photoUrl.value.trim() || authUser.value?.oauthPhotoUrl || null,
+      isPublic: showPublicProfile.value,
+      goals: selectedGoals.value,
+      vibes: selectedVibes.value,
+      interests: selectedInterests.value,
     })
     navigateTo('/profile')
   } catch (e) {

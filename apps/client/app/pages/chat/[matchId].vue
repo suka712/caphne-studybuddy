@@ -4,16 +4,16 @@
       <Icon name="svg-spinners:ring-resize" size="40" class="text-primary" />
     </div>
 
-    <Card v-else class="w-full max-w-xs flex flex-col py-0 h-[45vh] min-h-96">
-      <CardContent class="flex flex-col h-full p-0">
+    <Card v-else class="w-full max-w-xs flex flex-col h-[45vh] min-h-96">
+      <CardContent class="flex flex-col h-full">
         <!-- Header -->
-        <div class="flex items-center gap-2 p-3 border-b border-border">
+        <div class="flex items-center gap-2 border-b border-border pb-2">
           <NuxtLink to="/matches">
             <Button variant="ghost" size="sm" class="size-8 p-0">
               <Icon name="mdi:arrow-left" size="20" />
             </Button>
           </NuxtLink>
-          <!-- Wrapped name in div, added status line -->
+          <!-- Status line -->
           <div class="min-w-0">
             <p class="text-sm font-semibold truncate">{{ matchDisplayName }}</p>
             <p v-if="isMatchOnline" class="text-[11px] text-green-500">Online</p>
@@ -50,7 +50,7 @@
         </ScrollArea>
 
         <!-- Input -->
-        <div class="p-4 border-t border-border">
+        <div class="pt-4 border-t border-border">
           <form @submit.prevent="sendMessage" class="flex gap-2 h-full">
             <Input v-model="newMessage" placeholder="Type a message..." class="flex-1" :disabled="!isConnected" />
             <Button type="submit" size="sm" class="h-full" :disabled="!canSend">

@@ -4,41 +4,26 @@ definePageMeta({
   layout: "internal"
 })
 
-const { public: { apiBase } } = useRuntimeConfig()
 const { authUser, logout } = useAuth()
+const { isCheckingProfile, profile, fetchProfile } = useProfile()
 
-const profile = ref<any>(null)
-const isLoading = ref<boolean>(true)
+console.log('Is checking profile 1:', isCheckingProfile.value)
 
-onMounted(async () => {
-  try {
-    const data = await $fetch<{ profile: any }>(`${apiBase}/profile`, {
-      credentials: 'include',
-    })
-
-    if (!data.profile) {
-      navigateTo('/start')
-      return
-    }
-
-    profile.value = data.profile
-  } catch (e) {
-    console.error('Failed to fetch profile:', e)
-    navigateTo('/start')
-  } finally {
-    isLoading.value = false
-  }
+onMounted(() => {
+  fetchProfile()
 })
 
 const handleLogout = async () => {
   await logout()
   navigateTo('/')
 }
+console.log('Is checking profile 2:', isCheckingProfile.value)
+
 </script>
 
 <template>
   <div class="flex justify-center items-center min-h-screen">
-    <div v-if="isLoading" class="flex flex-col items-center">
+    <div v-if="isCheckingProfile" class="flex flex-col items-center">
       <Icon name="svg-spinners:ring-resize" size="40" class="text-primary" />
     </div>
     <Card v-else-if="profile" class="w-full max-w-xs flex flex-col p-2 h-[42vh]">

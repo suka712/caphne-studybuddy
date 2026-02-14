@@ -20,6 +20,10 @@ export const useProfile = () => {
   const { public: { apiBase } } = useRuntimeConfig()
 
   const fetchProfile = async () => {
+    if (profile.value) {
+      return
+    }
+    
     try {
       const data = await $fetch<Profile>(`${apiBase}/profile`, {
         credentials: 'include',

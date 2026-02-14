@@ -88,13 +88,8 @@ const { profile, fetchProfile, updateProfile, isCheckingProfile } = useProfile()
 const isEditing = ref(false)
 const editingName = ref('')
 
-onMounted(async () => {
-  try {
-    await fetchProfile()
-    console.log('Profile:', profile.value)
-  } catch (e) {
-    console.log('failed')
-  }
+onMounted(() => {
+  fetchProfile()
 })
 
 const startEditing = () => {

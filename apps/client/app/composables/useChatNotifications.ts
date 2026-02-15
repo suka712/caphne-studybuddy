@@ -52,7 +52,7 @@ export const useChatNotifications = () => {
     const socket = getSocket();
     if (!socket) return;
 
-    socket.on(SocketEvents.HAS_NEW_MESSAGE,
+    socket.on(SocketEvents.USER_HAS_NEW_MESSAGE,
       (messageData: MessageData) => {
         if (route.path !== `/chat/${messageData.matchId}`) {
           showToast(messageData)

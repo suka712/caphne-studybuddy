@@ -149,7 +149,7 @@ onMounted(async () => {
 
   const socket = getSocket()
   if (socket) {
-    socket.on(SocketEvents.HAS_NEW_MESSAGE, (data: { matchId: number }) => {
+    socket.on(SocketEvents.USER_HAS_NEW_MESSAGE, (data: { matchId: number }) => {
       const idx = matches.value.findIndex(m => m.matchId === data.matchId)
       if (idx > 0) {
         const [match] = matches.value.splice(idx, 1)

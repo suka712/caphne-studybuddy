@@ -16,22 +16,22 @@ export const useChatSocket = (
     if (!socket) return
 
     socket.on('connect', () => {
-      socket.emit(SocketEvents.JOIN, matchId)
-      socket.emit(SocketEvents.MARK_READ, matchId)
+      socket.emit(SocketEvents.USER_JOINS_MATCH_ROOM, matchId)
+      socket.emit(SocketEvents.USER_MARKS_READ, matchId)
     })
 
     if (socket.connected) {
-      socket.emit(SocketEvents.JOIN, matchId)
+      socket.emit(SocketEvents.USER_JOINS_MATCH_ROOM, matchId)
     }
 
-    socket.emit(SocketEvents.MARK_READ, matchId)
+    socket.emit(SocketEvents.USER_MARKS_READ, matchId)
     clearUnread(matchId)
 
-    socket.on(SocketEvents.NEW_MESSAGE_FROM_MATCH, (msg: ChatMessage) => {
+    socket.on(SocketEvents.MATCH_ROOM_HAS_NEW_MESSAGE, (msg: ChatMessage) => {
       messages.value.push(msg)
       scrollToBottom()
       if (msg.senderId !== currentUserId.value) {
-        socket.emit(SocketEvents.MARK_READ, matchId)
+        socket.emit(SocketEvents.USER_MARKS_READ, matchId)
       }
     })
 
@@ -45,21 +45,21 @@ export const useChatSocket = (
   const sendMessage = (content: string) => {
     const socket = getSocket()
     if (!socket) return
-    socket.emit(SocketEvents.SEND_MESSAGE, { matchId, content })
+    socket.emit(SocketEvents.USER_SENDS_MESSAGE, { matchId, content })
   }
 
   const handleVisibilityChange = () => {
     if (!document.hidden) {
       const s = getSocket()
-      if (s) s.emit(SocketEvents.MARK_READ, matchId)
+      if (s) s.emit(SocketEvents.USER_MARKS_READ, matchId)
     }
   }
 
   const cleanup = () => {
     const socket = getSocket()
     if (socket) {
-      socket.emit(SocketEvents.LEAVE, matchId)
-      socket.off(SocketEvents.NEW_MESSAGE_FROM_MATCH)
+      socket.emit(SocketEvents.USER_LEAVES_MATCH_ROOM, matchId)
+      socket.off(SocketEvents.MATCH_ROOM_HAS_NEW_MESSAGE)
       socket.off(SocketEvents.ERROR)
       socket.off('connect')
     }

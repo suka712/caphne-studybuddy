@@ -50,7 +50,7 @@
 
         <!-- Input -->
         <div class="p-4 border-t border-border">
-          <form @submit.prevent="sendMessage" class="flex gap-2 h-full">
+          <form @submit.prevent="handleSend" class="flex gap-2 h-full">
             <Input v-model="newMessage" placeholder="Type a message..." class="flex-1" :disabled="!isConnected" />
             <Button type="submit" size="sm" class="h-full" :disabled="!canSend">
               <Icon name="mingcute:send-fill" size="18" />
@@ -65,7 +65,6 @@
 <script setup lang="ts">
 import { toast } from 'vue-sonner'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { SocketEvents } from '~/constants/socketEvents'
 
 definePageMeta({
   middleware: 'auth',
@@ -75,8 +74,6 @@ definePageMeta({
 const route = useRoute()
 const { public: { apiBase } } = useRuntimeConfig()
 const { authUser } = useAuth()
-const { getSocket } = useSocket()
-const { clearUnread } = useChatNotifications()
 
 const matchId = Number(route.params.matchId)
 const currentUserId = computed(() => authUser.value?.id)
@@ -95,20 +92,10 @@ const matchDisplayName = ref('')
 const newMessage = ref('')
 const isLoading = ref(true)
 const isLoadingMore = ref(false)
-const isConnected = ref(false)
 const hasMore = ref(true)
 const scrollAreaRef = ref<InstanceType<typeof ScrollArea> | null>(null)
 const isMatchOnline = ref(false)
 const matchLastActiveAt = ref<string | null>(null)
-
-const canSend = computed(() =>
-  isConnected.value && newMessage.value.trim().length > 0
-)
-
-const formatTime = (dateStr: string) => {
-  const d = new Date(dateStr)
-  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-}
 
 const scrollToBottom = () => {
   nextTick(() => {
@@ -117,6 +104,19 @@ const scrollToBottom = () => {
       viewport.scrollTop = viewport.scrollHeight
     }
   })
+}
+
+const { isConnected, setupListeners, sendMessage, cleanup } = useChatSocket(
+  matchId, messages, currentUserId, scrollToBottom,
+)
+
+const canSend = computed(() =>
+  isConnected.value && newMessage.value.trim().length > 0
+)
+
+const formatTime = (dateStr: string) => {
+  const d = new Date(dateStr)
+  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 }
 
 const PAGE_SIZE = 50
@@ -147,14 +147,10 @@ const loadMore = async () => {
   }
 }
 
-const sendMessage = () => {
+const handleSend = () => {
   const content = newMessage.value.trim()
   if (!content) return
-
-  const socket = getSocket()
-  if (!socket) return
-
-  socket.emit(SocketEvents.SEND_MESSAGE, { matchId, content })
+  sendMessage(content)
   newMessage.value = ''
 }
 
@@ -180,40 +176,7 @@ onMounted(async () => {
     isLoading.value = false
     scrollToBottom()
 
-    const socket = getSocket()
-    if (!socket) return
-
-    socket.on('connect', () => {
-      isConnected.value = true
-      socket.emit(SocketEvents.JOIN, matchId)
-      socket.emit(SocketEvents.MARK_READ, matchId)
-    })
-
-    if (socket.connected) {
-      isConnected.value = true
-      socket.emit(SocketEvents.JOIN, matchId)
-    }
-
-    socket.emit(SocketEvents.MARK_READ, matchId)
-    clearUnread(matchId)
-
-    socket.on(SocketEvents.NEW_MESSAGE_FROM_MATCH, (msg: ChatMessage) => {
-      messages.value.push(msg)
-      scrollToBottom()
-      if (msg.senderId !== currentUserId.value) {
-        socket.emit(SocketEvents.MARK_READ, matchId)
-      }
-    })
-
-    socket.on(SocketEvents.ERROR, (err: { message: string }) => {
-      toast.error(err.message)
-    })
-
-    socket.on('disconnect', () => {
-      isConnected.value = false
-    })
-
-    document.addEventListener('visibilitychange', handleVisibilityChange)
+    setupListeners()
   } catch (e) {
     console.error('Failed to initialize chat:', e)
     toast.error('Failed to load chat')
@@ -223,21 +186,7 @@ onMounted(async () => {
   }
 })
 
-const handleVisibilityChange = () => {
-  if (!document.hidden) {
-    const s = getSocket()
-    if (s) s.emit(SocketEvents.MARK_READ, matchId)
-  }
-}
-
 onUnmounted(() => {
-  const socket = getSocket()
-  if (socket) {
-    socket.emit(SocketEvents.LEAVE, matchId)
-    socket.off(SocketEvents.NEW_MESSAGE_FROM_MATCH)
-    socket.off(SocketEvents.ERROR)
-    socket.off('connect')
-    socket.off('disconnect')
-  }
+  cleanup()
 })
 </script>

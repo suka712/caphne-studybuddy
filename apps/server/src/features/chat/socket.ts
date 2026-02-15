@@ -7,7 +7,7 @@ import { env } from '../../config/env.js'
 import { db } from '../../db/db.js'
 import { users } from '../../db/schema.js'
 import { eq } from 'drizzle-orm'
-import { SocketEvents } from '../../constants/socketEvents.js'
+import { SocketEvents } from '@caphne/shared/socket-events'
 
 let ioInstance: SocketIOServer | null = null
 

@@ -1,5 +1,5 @@
 import { toast } from 'vue-sonner'
-import { SocketEvents } from '~/constants/socketEvents'
+import { SocketEvents } from '@caphne/shared/socket-events'
 import type { ChatMessage } from '~/types/chat'
 
 export const useChatSocket = (

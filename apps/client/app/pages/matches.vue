@@ -71,7 +71,7 @@
 import { toast } from 'vue-sonner'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from '~/components/ui/badge'
-import { SocketEvents } from '~/constants/socketEvents'
+import { SocketEvents } from '@caphne/shared/socket-events'
 
 definePageMeta({
   middleware: 'auth',

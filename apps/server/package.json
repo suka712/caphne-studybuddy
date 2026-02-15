@@ -13,6 +13,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@caphne/shared": "workspace:^",
     "cookie": "^1.1.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",

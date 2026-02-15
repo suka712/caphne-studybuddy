@@ -65,6 +65,7 @@
 <script setup lang="ts">
 import { toast } from 'vue-sonner'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { SocketEvents } from '~/constants/socketEvents'
 
 definePageMeta({
   middleware: 'auth',
@@ -153,7 +154,7 @@ const sendMessage = () => {
   const socket = getSocket()
   if (!socket) return
 
-  socket.emit('send_message', { matchId, content })
+  socket.emit(SocketEvents.SEND_MESSAGE, { matchId, content })
   newMessage.value = ''
 }
 
@@ -184,27 +185,27 @@ onMounted(async () => {
 
     socket.on('connect', () => {
       isConnected.value = true
-      socket.emit('join', matchId)
-      socket.emit('mark_read', matchId)
+      socket.emit(SocketEvents.JOIN, matchId)
+      socket.emit(SocketEvents.MARK_READ, matchId)
     })
 
     if (socket.connected) {
       isConnected.value = true
-      socket.emit('join', matchId)
+      socket.emit(SocketEvents.JOIN, matchId)
     }
 
-    socket.emit('mark_read', matchId)
+    socket.emit(SocketEvents.MARK_READ, matchId)
     clearUnread(matchId)
 
-    socket.on('new_message_from_match', (msg: ChatMessage) => {
+    socket.on(SocketEvents.NEW_MESSAGE_FROM_MATCH, (msg: ChatMessage) => {
       messages.value.push(msg)
       scrollToBottom()
       if (msg.senderId !== currentUserId.value) {
-        socket.emit('mark_read', matchId)
+        socket.emit(SocketEvents.MARK_READ, matchId)
       }
     })
 
-    socket.on('error', (err: { message: string }) => {
+    socket.on(SocketEvents.ERROR, (err: { message: string }) => {
       toast.error(err.message)
     })
 
@@ -225,16 +226,16 @@ onMounted(async () => {
 const handleVisibilityChange = () => {
   if (!document.hidden) {
     const s = getSocket()
-    if (s) s.emit('mark_read', matchId)
+    if (s) s.emit(SocketEvents.MARK_READ, matchId)
   }
 }
 
 onUnmounted(() => {
   const socket = getSocket()
   if (socket) {
-    socket.emit('leave', matchId)
-    socket.off('new_message_from_match')
-    socket.off('error')
+    socket.emit(SocketEvents.LEAVE, matchId)
+    socket.off(SocketEvents.NEW_MESSAGE_FROM_MATCH)
+    socket.off(SocketEvents.ERROR)
     socket.off('connect')
     socket.off('disconnect')
   }

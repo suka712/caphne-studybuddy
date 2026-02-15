@@ -71,6 +71,7 @@
 import { toast } from 'vue-sonner'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from '~/components/ui/badge'
+import { SocketEvents } from '~/constants/socketEvents'
 
 definePageMeta({
   middleware: 'auth',
@@ -148,7 +149,7 @@ onMounted(async () => {
 
   const socket = getSocket()
   if (socket) {
-    socket.on('has_new_message', (data: { matchId: number }) => {
+    socket.on(SocketEvents.HAS_NEW_MESSAGE, (data: { matchId: number }) => {
       const idx = matches.value.findIndex(m => m.matchId === data.matchId)
       if (idx > 0) {
         const [match] = matches.value.splice(idx, 1)

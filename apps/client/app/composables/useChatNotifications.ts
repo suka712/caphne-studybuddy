@@ -1,4 +1,5 @@
 import { toast } from "vue-sonner";
+import { SocketEvents } from "~/constants/socketEvents";
 
 
 type MessageData = {
@@ -52,7 +53,7 @@ export const useChatNotifications = () => {
     const socket = getSocket();
     if (!socket) return;
 
-    socket.on("has_new_message",
+    socket.on(SocketEvents.HAS_NEW_MESSAGE,
       (messageData: MessageData) => {
         if (route.path !== `/chat/${messageData.matchId}`) {
           showToast(messageData)

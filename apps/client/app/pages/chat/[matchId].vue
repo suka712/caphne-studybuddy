@@ -65,6 +65,7 @@
 <script setup lang="ts">
 import { toast } from 'vue-sonner'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import type { ChatMessage } from '~/types/chat'
 
 definePageMeta({
   middleware: 'auth',
@@ -77,15 +78,6 @@ const { authUser } = useAuth()
 
 const matchId = Number(route.params.matchId)
 const currentUserId = computed(() => authUser.value?.id)
-
-interface ChatMessage {
-  id: number
-  matchId: number
-  senderId: number
-  content: string
-  createdAt: string
-  readAt: string | null
-}
 
 const messages = ref<ChatMessage[]>([])
 const matchDisplayName = ref('')

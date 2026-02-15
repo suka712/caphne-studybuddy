@@ -13,7 +13,6 @@ const unreadCounts = ref<Map<number, number>>(new Map());
 let listenerAttached = false;
 
 export const useChatNotifications = () => {
-  const { public: { apiBase } } = useRuntimeConfig();
   const { getSocket } = useSocket();
   const route = useRoute();
 

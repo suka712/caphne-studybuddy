@@ -1,14 +1,6 @@
 import { toast } from 'vue-sonner'
 import { SocketEvents } from '~/constants/socketEvents'
-
-interface ChatMessage {
-  id: number
-  matchId: number
-  senderId: number
-  content: string
-  createdAt: string
-  readAt: string | null
-}
+import type { ChatMessage } from '~/types/chat'
 
 export const useChatSocket = (
   matchId: number,
@@ -75,7 +67,7 @@ export const useChatSocket = (
   }
 
   return {
-    isConnected: readonly(isConnected),
+    isConnected,
     setupListeners,
     sendMessage,
     cleanup,

@@ -117,6 +117,7 @@ export const getAllMatches = async (userId: number) => {
     matchedAt: matches.createdAt,
     lastActiveAt: users.lastActiveAt,
     unreadCount: sql<number>`coalesce(${unreadSq.unreadCount}, 0)`.as('unread_count'),
+    lastMessageAt: matches.lastMessageAt,
   }
 
   const initiated = await db
@@ -138,10 +139,9 @@ export const getAllMatches = async (userId: number) => {
   const seen = new Set<number>()
   const userMatches = [...initiated, ...received]
     .sort((a, b) => {
-      const aHasUnread = Number(a.unreadCount) > 0 ? 1 : 0
-      const bHasUnread = Number(b.unreadCount) > 0 ? 1 : 0
-      if (aHasUnread !== bHasUnread) return bHasUnread - aHasUnread
-      return new Date(b.matchedAt).getTime() - new Date(a.matchedAt).getTime()
+      const aTime = a.lastMessageAt ? new Date(a.lastMessageAt).getTime() : new Date(a.matchedAt).getTime()
+      const bTime = b.lastMessageAt ? new Date(b.lastMessageAt).getTime() : new Date(b.matchedAt).getTime()
+      return bTime - aTime
     })
     .filter(m => {
       if (seen.has(m.matchId)) return false

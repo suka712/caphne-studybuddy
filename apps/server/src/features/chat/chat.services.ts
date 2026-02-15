@@ -49,7 +49,11 @@ export const createMessage = async (matchId: number, senderId: number, content: 
     .values({ matchId, senderId, content })
     .returning()
 
-  return msg!
+  await db.update(matches)
+    .set({ lastMessageAt: new Date() })
+    .where(eq(matches.id, matchId))
+
+  return msg
 }
 
 export const markMessagesRead = async (matchId: number, recipientId: number) => {

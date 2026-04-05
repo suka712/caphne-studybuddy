@@ -80,17 +80,12 @@ const tags = [
     style="background-color: oklch(0.11 0.005 280);"
   >
     <!-- Color blooms behind everything -->
-    <div class="fixed inset-0 pointer-events-none" style="
-      background:
-        radial-gradient(ellipse 70% 60% at 5% 35%, oklch(0.18 0.045 285 / 50%) 0%, transparent 100%),
-        radial-gradient(ellipse 50% 50% at 95% 75%, oklch(0.16 0.035 170 / 35%) 0%, transparent 100%);
-    " />
 
     <div class="relative">
       <NavBar />
 
       <!-- ── HERO ─────────────────────────────────────────────── -->
-      <section class="flex items-center justify-center px-4 pt-40 pb-40">
+      <section class="flex items-center justify-center px-4 pt-50 pb-80">
         <div class="relative">
 
           <Card class="relative w-full max-w-xs p-3">
@@ -148,7 +143,7 @@ const tags = [
       <!-- ── MISSION ──────────────────────────────────────────── -->
       <section
         ref="missionRef"
-        class="max-w-4xl mx-auto px-4 pb-40 text-center transition-all duration-700 ease-out"
+        class="max-w-4xl mx-auto px-6 pb-60 text-center transition-all duration-700 ease-out"
         :class="revealed.mission ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'"
       >
         <p class="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground mb-6">
@@ -169,7 +164,7 @@ const tags = [
       </section>
 
       <!-- ── FEATURES ─────────────────────────────────────────── -->
-      <section ref="featuresRef" class="max-w-3xl mx-auto px-4 pb-40">
+      <section ref="featuresRef" class="max-w-3xl mx-auto px-4 pb-60">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
           <!-- Studydate -->
@@ -257,7 +252,7 @@ const tags = [
       <!-- ── INTERESTS ────────────────────────────────────────── -->
       <section
         ref="interestsRef"
-        class="max-w-3xl mx-auto px-4 pb-40 transition-all duration-700 ease-out"
+        class="max-w-3xl mx-auto px-4 pb-60 transition-all duration-700 ease-out"
         :class="revealed.interests ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'"
       >
         <div>
@@ -285,16 +280,11 @@ const tags = [
       <section
         id="signup"
         ref="signupRef"
-        class="flex justify-center px-4 pb-40 transition-all duration-700 ease-out"
+        class="flex justify-center px-4 pb-60 transition-all duration-700 ease-out"
         :class="revealed.signup ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'"
       >
         <div class="relative">
-          <div
-            class="absolute -inset-16 rounded-full blur-3xl pointer-events-none glow-pulse"
-            style="background: radial-gradient(circle, oklch(0.45 0.12 170), transparent);"
-          />
-
-          <Card class="relative w-full max-w-xs card-glow">
+          <Card class="relative w-full max-w-xs">
             <CardContent class="p-8">
               <p class="text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground mb-3">
                 <Icon name="streamline-pixel:interface-essential-information-circle-1" size="14" class="inline mr-1.5 align-middle" />
@@ -355,16 +345,8 @@ const tags = [
 <style scoped>
 /* Subtle dot grid across the entire page */
 .dot-grid {
-  background-image: radial-gradient(circle, oklch(1 0 0 / 0.04) 1px, transparent 1px);
+  background-image: radial-gradient(circle, oklch(1 0 0 / 0.02) 4px, transparent 3px);
   background-size: 20px 20px;
-}
-
-/* Soft outer glow on cards to lift them off the background */
-.card-glow {
-  box-shadow:
-    0 0 0 1px oklch(1 0 0 / 0.06),
-    0 0 20px -4px oklch(1 0 0 / 0.06),
-    0 0 50px -8px oklch(0.5 0.12 285 / 0.08);
 }
 
 .hero-stagger {

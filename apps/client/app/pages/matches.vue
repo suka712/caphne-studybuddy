@@ -12,12 +12,10 @@
             </div>
             <h1 class="text-lg font-bold truncate">{{ profile?.displayName }}</h1>
           </div>
-          <Button variant="outline" class="h-7 text-xs shrink-0" :disabled="!canGenerate || isGenerating"
+          <Button variant="outline" class="h-7 text-xs shrink-0" :disabled="!canGenerate"
             @click="handleGenerate">
             <Icon v-if="isGenerating" name="svg-spinners:ring-resize" size="14" class="mr-1" />
-            <span v-if="canGenerate && !isGenerating">New Match</span>
-            <span v-else-if="isGenerating">Loading...</span>
-            <span v-else>{{ cooldownText }}</span>
+            <span>{{ isGenerating ? 'Loading...' : 'New Match' }}</span>
           </Button>
         </div>
 
@@ -97,45 +95,17 @@ interface MatchCard {
 }
 
 const matches = ref<MatchCard[]>([])
-const nextMatchAt = ref<Date | null>(null)
 const isLoading = ref(true)
 const isGenerating = ref(false)
-const canGenerate = computed(() => {
-  if (!nextMatchAt.value) return true
-  return new Date(nextMatchAt.value).getTime() <= Date.now()
-})
-
-const cooldownText = computed(() => {
-  if (!nextMatchAt.value) return ''
-  const diff = new Date(nextMatchAt.value).getTime() - Date.now()
-  if (diff <= 0) return ''
-  const hours = Math.floor(diff / (1000 * 60 * 60))
-  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
-  const seconds = Math.floor((diff % (1000 * 60)) / 1000)
-  if (hours > 0) return `${hours}h ${minutes}m`
-  if (minutes > 0) return `${minutes}m ${seconds}s`
-  return `${seconds}s`
-})
-
-let cooldownTimer: ReturnType<typeof setInterval>
-onMounted(() => {
-  cooldownTimer = setInterval(() => {
-    if (nextMatchAt.value) {
-      nextMatchAt.value = new Date(nextMatchAt.value)
-    }
-  }, 1_000)
-})
-onUnmounted(() => {
-  clearInterval(cooldownTimer)
-})
+const onCooldown = ref(false)
+const canGenerate = computed(() => !onCooldown.value && !isGenerating.value)
 
 const fetchMatches = async () => {
   try {
-    const data = await $fetch<{ matches: MatchCard[]; nextMatchAt: string | null }>(`${apiBase}/matches`, {
+    const data = await $fetch<{ matches: MatchCard[] }>(`${apiBase}/matches`, {
       credentials: 'include',
     })
     matches.value = data.matches
-    nextMatchAt.value = data.nextMatchAt ? new Date(data.nextMatchAt) : null
   } catch (e) {
     console.error('Failed to fetch matches:', e)
     toast.error('Failed to load matches')
@@ -172,13 +142,11 @@ const handleGenerate = async () => {
     } else {
       toast.info('No more matches available right now')
     }
+    onCooldown.value = true
+    setTimeout(() => { onCooldown.value = false }, 2_000)
   } catch (e: any) {
     if (e?.response?.status === 429) {
-      const body = e.response._data
-      if (body?.nextMatchAt) {
-        nextMatchAt.value = new Date(body.nextMatchAt)
-      }
-      toast.error('Please wait before generating new matches')
+      toast.error('You have reached your match limit for today')
     } else {
       toast.error('Failed to generate matches')
     }

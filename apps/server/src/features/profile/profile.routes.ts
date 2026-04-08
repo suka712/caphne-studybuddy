@@ -6,6 +6,8 @@ import { eq } from "drizzle-orm";
 import type { User } from "../../db/schema.js";
 import { validateBody } from "../../middleware/validateBody.js"
 import { Static, Type } from "typebox";
+import { generateMatches } from "../matches/matches.services.js";
+import { matchConfig } from "../../config/matchConfig.js";
 
 export const profileRouter = Router()
 
@@ -72,6 +74,12 @@ profileRouter.post('/', requireAuth, validateBody(createProfileSchema), async (r
   }
 
   console.log(`User with ID ${authUser.id} added profile`)
+
+  // Three initial matches 
+  for (let i = 0; i < matchConfig.initialMatch; i++) {
+    await generateMatches(authUser.id)
+  }
+
   return res.status(201).json(created)
 })
 

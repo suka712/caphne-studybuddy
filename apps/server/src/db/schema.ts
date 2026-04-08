@@ -53,18 +53,3 @@ export const messages = pgTable('messages', {
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   readAt: timestamp('read_at', { withTimezone: true }),
 });
-
-// export const matchInteractions = pgTable('match_interactions', {
-//   id: serial('id').primaryKey(),
-//   userId: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
-//   matchedUserId: integer('matched_user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
-//   action: text('action').notNull(), // 'accepted' | 'rejected' | 'messaged' | 'unmatched'
-//   createdAt: timestamp('created_at').defaultNow(),
-// });
-
-// export const matchQuota = pgTable('match_quota', {
-//   id: serial('id').primaryKey(),
-//   userId: integer('user_id').notNull().unique().references(() => users.id, { onDelete: 'cascade' }),
-//   matchesGivenToday: integer('matches_given_today').default(0),
-//   lastResetAt: timestamp('last_reset_at').defaultNow(),
-// });

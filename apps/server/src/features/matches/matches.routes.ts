@@ -23,10 +23,7 @@ matchesRouter.post('/', requireAuth, async (req, res) => {
   try {
     const result = await generateMatches(user.id)
 
-    if ('error' in result) {
-      res.status(429).json({ error: result.error, nextMatchAt: result.nextMatchAt })
-      return
-    }
+    // Rate limit lives here I think
 
     res.json({ match: result.match })
   } catch (e) {

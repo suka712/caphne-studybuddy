@@ -111,6 +111,11 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+.dot-grid {
+  background-image: radial-gradient(circle, oklch(1 0 0 / 0.03) 1.5px, transparent 1px);
+  background-size: 10px 10px;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

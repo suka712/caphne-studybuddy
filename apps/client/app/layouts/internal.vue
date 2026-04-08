@@ -20,7 +20,8 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="dark h-screen bg-background text-foreground">
+  <div class="dark h-screen bg-background text-foreground dot-grid"
+    style="background-color: oklch(0.11 0.005 280);">
     <main class="mx-auto">
       <slot />
     </main>

@@ -341,12 +341,6 @@ const tags = [
 </template>
 
 <style scoped>
-/* Subtle dot grid across the entire page */
-.dot-grid {
-  background-image: radial-gradient(circle, oklch(1 0 0 / 0.02) 4px, transparent 3px);
-  background-size: 20px 20px;
-}
-
 .hero-stagger {
   opacity: 0;
   animation: fadeInUp 0.6s ease-out forwards;

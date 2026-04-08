@@ -100,10 +100,10 @@ const tags = [
               </div>
 
               <div class="hero-stagger" style="--i: 1">
-                <h1 class="text-4xl font-extrabold leading-[1.06] tracking-tight mb-5">
+                <h1 class="text-4xl font-extrabold leading-tight tracking-tight mb-5">
                   Find your<br>
                   <span class="text-accent">perfect</span><br>
-                  studymate.
+                  Studybuddy.
                 </h1>
               </div>
 
@@ -146,11 +146,11 @@ const tags = [
         class="max-w-4xl mx-auto px-6 pb-60 text-center transition-all duration-700 ease-out"
         :class="revealed.mission ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'"
       >
-        <p class="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground mb-6">
-          <Icon name="streamline-pixel:food-drink-desert-cake" size="14" class="inline mr-1.5 align-middle" />
-          Our belief
+        <p class="text-xs font-bold uppercase tracking-[0.3em] text-muted-foreground mb-6">
+          <Icon name="streamline-pixel:food-drink-desert-cake" size="18" class="inline mr-1.5 align-middle" />
+          BECAUSE WE BELIEVE
         </p>
-        <h2 class="text-5xl md:text-7xl font-black leading-[1.0] tracking-tight mb-8">
+        <h2 class="text-5xl md:text-7xl font-black leading-none tracking-tight mb-8">
           The friends you make<br>
           <span class="text-accent">should feel intentional.</span>
         </h2>
@@ -178,13 +178,10 @@ const tags = [
                 src="/placeholder-4.png"
                 class="w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700 ease-out"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-card via-card/30 to-transparent" />
-              <span class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-blue-500/20 border border-blue-500/25 text-[10px] font-bold text-blue-400 uppercase tracking-widest">
-                Study Dates
-              </span>
+              <div class="absolute inset-0 bg-linear-to-t from-card via-card/30 to-transparent" />
             </div>
             <CardContent class="p-6 -mt-2">
-              <h3 class="text-xl font-extrabold mb-2">Find your Studydate</h3>
+              <h3 class="text-xl font-extrabold mb-2">Find your <span class="text-accent">Studydate</span></h3>
               <p class="text-sm text-muted-foreground leading-relaxed mb-5">
                 Get help, give help, or just make the grind less lonely.
               </p>
@@ -217,13 +214,10 @@ const tags = [
                 class="w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700 ease-out"
               />
               <div class="absolute inset-0 bg-linear-to-t from-card via-card/30 to-transparent" />
-              <span class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-amber-500/20 border border-amber-500/25 text-[10px] font-bold text-amber-400 uppercase tracking-widest">
-                Builder Friends
-              </span>
             </div>
             <CardContent class="p-6 -mt-2">
               <h3 class="text-xl font-extrabold mb-2">
-                Find your BFF
+                Find your <span class="text-pink-400">BFF</span>
                 <span class="text-muted-foreground text-sm font-normal"> (Builder Friend Forever)</span>
               </h3>
               <p class="text-sm text-muted-foreground leading-relaxed mb-5">
@@ -256,12 +250,16 @@ const tags = [
         :class="revealed.interests ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'"
       >
         <div>
-          <p class="text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground mb-3">
-            <Icon name="streamline-pixel:interface-essential-star-2" size="14" class="inline mr-1.5 align-middle" />
-            Shared interests
+          <p class="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground mb-3 flex items-center">
+            <Icon name="pixel:angellist" size="18" class="inline mr-1 align-middle" />
+            Find shared interests
           </p>
-          <h3 class="text-3xl font-extrabold leading-tight mb-2">Start the conversation.</h3>
-          <p class="text-sm text-muted-foreground mb-8">Bond online. Continue in person.</p>
+          <h3 class="text-3xl font-extrabold leading-tight mb-2">Start online. Continue in person.</h3>
+          <p class="text-sm text-muted-foreground mb-8">
+            We will connect you with like-minded individuals in your area.
+            <br>
+            Sip coffee and chat with people who share your passions.
+          </p>
           <div class="flex flex-wrap gap-2.5">
             <button
               v-for="tag in tags"
@@ -284,14 +282,14 @@ const tags = [
         :class="revealed.signup ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'"
       >
         <div class="relative">
-          <Card class="relative w-full max-w-xs">
+          <Card class="relative w-full max-w-xs p-0">
             <CardContent class="p-8">
-              <p class="text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground mb-3">
-                <Icon name="streamline-pixel:interface-essential-information-circle-1" size="14" class="inline mr-1.5 align-middle" />
+              <p class="text-xs font-bold uppercase tracking-[0.25em] text-muted-foreground mb-3 flex items-center">
+                <Icon name="streamline-pixel:interface-essential-information-circle-1" size="18" class="inline mr-1 align-middle" />
                 Stay in the loop
               </p>
               <h3 class="text-2xl font-extrabold leading-tight mb-2">Get email updates.</h3>
-              <p class="text-sm text-muted-foreground leading-relaxed mb-8">New features, events, and stories — no spam.</p>
+              <p class="text-sm text-muted-foreground leading-relaxed mb-4">We will shoot you emails about features, meetups here in Saigon.</p>
               <form class="flex flex-col gap-3" @submit.prevent="submitEmail">
                 <input
                   v-model="email"
@@ -316,7 +314,7 @@ const tags = [
       <!-- ── FOOTER ───────────────────────────────────────────── -->
       <footer class="pb-10 px-4">
         <div class="max-w-3xl mx-auto">
-          <div class="h-px bg-gradient-to-r from-transparent via-border to-transparent mb-8" />
+          <div class="h-px bg-linear-to-r from-transparent via-border to-transparent mb-8" />
           <div class="flex items-center justify-between text-xs text-muted-foreground">
             <div class="flex items-center gap-2">
               <div class="w-5 h-5 rounded-lg bg-foreground/10 flex items-center justify-center">
@@ -366,12 +364,4 @@ const tags = [
   }
 }
 
-.glow-pulse {
-  animation: glowPulse 4s ease-in-out infinite;
-}
-
-@keyframes glowPulse {
-  0%, 100% { opacity: 0.2; }
-  50% { opacity: 0.3; }
-}
 </style>

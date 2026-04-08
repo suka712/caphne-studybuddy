@@ -12,7 +12,7 @@ declare global {
   }
 }
 
-export async function requireAuth(req: Request, res: Response, next: NextFunction) {
+export const requireAuth = async (req: Request, res: Response, next: NextFunction) => {
   const token = req.cookies?.token
 
   if (!token) {

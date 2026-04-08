@@ -4,7 +4,7 @@ import { matches, messages, users, profiles } from "../../db/schema.js"
 import { and, count, desc, eq, gte, isNull, ne, notInArray, sql } from 'drizzle-orm'
 import { userIsOnline } from '../chat/socket.js'
 
-export const generateMatches = async (userId: number) => {
+export const generateMatch = async (userId: number) => {
   const existingMatches = await db
     .select({ matchedUserId: matches.matchedUserId })
     .from(matches)
@@ -23,12 +23,12 @@ export const generateMatches = async (userId: number) => {
     return { match: null }
   }
 
-  const [newRow] = await db
+  const [newMatch] = await db
     .insert(matches)
     .values({ userId, matchedUserId: candidate.id })
     .returning()
 
-  return { match: newRow }
+  return newMatch
 }
 
 export const getAllMatches = async (userId: number) => {

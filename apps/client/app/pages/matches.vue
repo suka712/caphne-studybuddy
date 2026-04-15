@@ -3,48 +3,95 @@
     <Card class="w-full max-w-xs flex flex-col p-2 h-[45vh] min-h-80">
       <CardContent class="flex flex-col h-full p-0">
         <!-- Header -->
-        <div class="flex items-center p-4 justify-between border-b border-border">
+        <div
+          class="flex items-center p-4 justify-between border-b border-border"
+        >
           <div class="flex items-center gap-3 min-w-0">
             <div
-              class="size-15 rounded-full bg-muted flex items-center justify-center overflow-hidden border-2 border-accent shrink-0">
-              <img v-if="profile?.photoUrl" :src="profile?.photoUrl" class="w-full h-full object-cover">
-              <Icon v-else name="material-symbols:person-heart-rounded" size="32" />
+              class="size-15 rounded-full bg-muted flex items-center justify-center overflow-hidden border-2 border-accent shrink-0"
+            >
+              <img
+                v-if="profile?.photoUrl"
+                :src="profile?.photoUrl"
+                class="w-full h-full object-cover"
+              />
+              <Icon
+                v-else
+                name="material-symbols:person-heart-rounded"
+                size="32"
+              />
             </div>
-            <h1 class="text-lg font-bold truncate">{{ profile?.displayName }}</h1>
+            <h1 class="text-lg font-bold truncate">
+              {{ profile?.displayName }}
+            </h1>
           </div>
-          <Button variant="outline" class="h-7 text-xs shrink-0" :disabled="!canGenerate"
-            @click="handleGenerate">
-            <Icon v-if="isGenerating" name="svg-spinners:ring-resize" size="14" class="mr-1" />
-            <span>{{ isGenerating ? 'Loading...' : 'New Match' }}</span>
+          <Button
+            variant="outline"
+            class="h-7 text-xs shrink-0"
+            :disabled="!canGenerate"
+            @click="handleGenerate"
+          >
+            <Icon
+              v-if="isGenerating"
+              name="svg-spinners:ring-resize"
+              size="14"
+              class="mr-1"
+            />
+            <span>{{ isGenerating ? "Loading..." : "New Match" }}</span>
           </Button>
         </div>
 
         <!-- Matches List -->
         <div v-if="isLoading" class="flex items-center justify-center h-full">
-          <Icon name="svg-spinners:ring-resize" size="40" class="text-primary" />
+          <Icon
+            name="svg-spinners:ring-resize"
+            size="40"
+            class="text-primary"
+          />
         </div>
         <ScrollArea v-else class="flex-1 min-h-0">
           <div class="p-3 space-y-3">
-            <p v-if="matches.length === 0" class="text-muted-foreground text-sm text-center py-4">
+            <p
+              v-if="matches.length === 0"
+              class="text-muted-foreground text-sm text-center py-4"
+            >
               No matches yet...
             </p>
 
-            <NuxtLink v-for="match in matches" :key="match.matchId" :to="`/chat/${match.matchId}`"
-              class="flex items-center gap-3 rounded-full bg-muted hover:bg-muted/80 transition-colors cursor-pointer p-2">
+            <NuxtLink
+              v-for="match in matches"
+              :key="match.matchId"
+              :to="`/chat/${match.matchId}`"
+              class="flex items-center gap-3 rounded-full bg-muted hover:bg-muted/80 transition-colors cursor-pointer p-2"
+            >
               <div class="relative shrink-0">
-                <div class="size-10 rounded-full bg-background flex items-center justify-center overflow-hidden">
-                  <img v-if="match.photoUrl" :src="match.photoUrl" class="size-10 object-cover" />
+                <div
+                  class="size-10 rounded-full bg-background flex items-center justify-center overflow-hidden"
+                >
+                  <img
+                    v-if="match.photoUrl"
+                    :src="match.photoUrl"
+                    class="size-10 object-cover"
+                  />
                   <Icon v-else name="mdi:account" size="24" />
                 </div>
-                <span class="absolute -bottom-0.5 -right-0.5 size-3 rounded-full border-2 border-muted"
-                  :class="match.isOnline ? 'bg-green-500' : 'bg-slate-500'" />
+                <span
+                  class="absolute -bottom-0.5 -right-0.5 size-3 rounded-full border-2 border-muted"
+                  :class="match.isOnline ? 'bg-green-500' : 'bg-slate-500'"
+                />
               </div>
               <div class="overflow-hidden flex-1">
-                <p class="text-sm font-semibold truncate">{{ match.displayName }}</p>
-                <p class="text-xs text-muted-foreground truncate">{{ match.major }} · {{ match.year }}</p>
+                <p class="text-sm font-semibold truncate">
+                  {{ match.displayName }}
+                </p>
+                <p class="text-xs text-muted-foreground truncate">
+                  {{ match.major }} · {{ match.year }}
+                </p>
               </div>
-              <Badge v-if="getUnreadCount(match.matchId) > 0"
-                class="size-6 p-0 text-[10px] flex items-center justify-center shrink-0">
+              <Badge
+                v-if="getUnreadCount(match.matchId) > 0"
+                class="size-6 p-0 text-[10px] flex items-center justify-center shrink-0"
+              >
                 {{ getUnreadCount(match.matchId) }}
               </Badge>
             </NuxtLink>
@@ -66,92 +113,99 @@
 </template>
 
 <script setup lang="ts">
-import { toast } from 'vue-sonner'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Badge } from '~/components/ui/badge'
-import { SocketEvents } from '@caphne/shared/socket-events'
+import { toast } from "vue-sonner";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "~/components/ui/badge";
+import { SocketEvents } from "@caphne/shared/socket-events";
 
 definePageMeta({
-  middleware: 'auth',
-  layout: 'internal',
-})
+  middleware: "auth",
+  layout: "internal",
+});
 
-const { getSocket } = useSocket()
-const { getUnreadCount, initUnreadCounts } = useChatNotifications()
+const { getSocket } = useSocket();
+const { getUnreadCount, initUnreadCounts } = useChatNotifications();
 
-const { public: { apiBase } } = useRuntimeConfig()
-const { profile, fetchProfile } = useProfile()
+const {
+  public: { apiBase },
+} = useRuntimeConfig();
+const { profile, fetchProfile } = useProfile();
 
 interface MatchCard {
-  matchId: number
-  displayName: string
-  major: string
-  year: string
-  photoUrl: string | null
-  matchedAt: string
-  unreadCount: number
-  isOnline: boolean
-  lastActiveAt: string | null
+  matchId: number;
+  displayName: string;
+  major: string;
+  year: string;
+  photoUrl: string | null;
+  matchedAt: string;
+  unreadCount: number;
+  isOnline: boolean;
+  lastActiveAt: string | null;
 }
 
-const matches = ref<MatchCard[]>([])
-const isLoading = ref(true)
-const isGenerating = ref(false)
-const onCooldown = ref(false)
-const canGenerate = computed(() => !onCooldown.value && !isGenerating.value)
+const matches = ref<MatchCard[]>([]);
+const isLoading = ref(true);
+const isGenerating = ref(false);
+const onCooldown = ref(false);
+const canGenerate = computed(() => !onCooldown.value && !isGenerating.value);
 
 const fetchMatches = async () => {
   try {
     const data = await $fetch<{ matches: MatchCard[] }>(`${apiBase}/matches`, {
-      credentials: 'include',
-    })
-    matches.value = data.matches
+      credentials: "include",
+    });
+    matches.value = data.matches;
   } catch (e) {
-    console.error('Failed to fetch matches:', e)
-    toast.error('Failed to load matches')
+    console.error("Failed to fetch matches:", e);
+    toast.error("Failed to load matches");
   }
-}
+};
 
 onMounted(async () => {
-  await Promise.all([fetchMatches(), fetchProfile()])
-  initUnreadCounts(matches.value)
-  isLoading.value = false
+  await Promise.all([fetchMatches(), fetchProfile()]);
+  initUnreadCounts(matches.value);
+  isLoading.value = false;
 
-  const socket = getSocket()
+  const socket = getSocket();
   if (socket) {
-    socket.on(SocketEvents.USER_HAS_NEW_MESSAGE, (data: { matchId: number }) => {
-      const idx = matches.value.findIndex(m => m.matchId === data.matchId)
-      if (idx > 0) {
-        const [match] = matches.value.splice(idx, 1)
-        matches.value.unshift(match!)
-      }
-    })
+    socket.on(
+      SocketEvents.USER_HAS_NEW_MESSAGE,
+      (data: { matchId: number }) => {
+        const idx = matches.value.findIndex((m) => m.matchId === data.matchId);
+        if (idx > 0) {
+          const [match] = matches.value.splice(idx, 1);
+          matches.value.unshift(match!);
+        }
+      },
+    );
   }
-})
+});
 
 const handleGenerate = async () => {
-  isGenerating.value = true
+  isGenerating.value = true;
   try {
     const result = await $fetch<{ match: any }>(`${apiBase}/matches`, {
-      method: 'POST',
-      credentials: 'include',
-    })
-    await fetchMatches()
+      method: "POST",
+      credentials: "include",
+    });
+    await fetchMatches();
     if (result.match) {
-      toast.success('New match found!')
+      toast.success("New match found!");
     } else {
-      toast.info('No more matches available right now')
+      toast.info("No more matches available right now");
     }
-    onCooldown.value = true
-    setTimeout(() => { onCooldown.value = false }, 2_000)
+    onCooldown.value = true;
+    setTimeout(() => {
+      onCooldown.value = false;
+    }, 2_000);
   } catch (e: any) {
     if (e?.response?.status === 429) {
-      toast.error('You have reached your match limit for today')
+      toast.error("You have reached your match limit for today");
     } else {
-      toast.error('Failed to generate matches')
+      toast.error("Failed to generate matches");
     }
   } finally {
-    isGenerating.value = false
+    isGenerating.value = false;
   }
-}
+};
 </script>

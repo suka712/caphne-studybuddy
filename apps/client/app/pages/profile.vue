@@ -4,18 +4,32 @@
       <Icon name="svg-spinners:ring-resize" size="40" class="text-primary" />
     </div>
 
-    <Card v-else-if="profile" class="w-full max-w-xs flex flex-col p-2 h-[45vh] min-h-80">
+    <Card
+      v-else-if="profile"
+      class="w-full max-w-xs flex flex-col p-2 h-[45vh] min-h-80"
+    >
       <CardContent class="flex flex-col h-full p-0">
         <!-- Header -->
         <div class="flex items-center gap-3 p-4 border-b border-border">
           <div
-            class="size-15 rounded-full bg-muted flex items-center justify-center overflow-hidden border-2 border-accent shrink-0">
-            <img v-if="profile?.photoUrl" :src="profile?.photoUrl" class="w-full h-full object-cover">
-            <Icon v-else name="material-symbols:person-heart-rounded" size="32" />
+            class="size-15 rounded-full bg-muted flex items-center justify-center overflow-hidden border-2 border-accent shrink-0"
+          >
+            <img
+              v-if="profile?.photoUrl"
+              :src="profile?.photoUrl"
+              class="w-full h-full object-cover"
+            />
+            <Icon
+              v-else
+              name="material-symbols:person-heart-rounded"
+              size="32"
+            />
           </div>
           <div class="overflow-hidden">
             <h1 class="text-lg font-bold">{{ profile.displayName }}</h1>
-            <p class="text-muted-foreground text-sm overflow-hidden">{{ authUser?.email }}</p>
+            <p class="text-muted-foreground text-sm overflow-hidden">
+              {{ authUser?.email }}
+            </p>
           </div>
         </div>
 
@@ -50,7 +64,10 @@
             </NuxtLink>
             <NuxtLink to="/settings">
               <Button variant="outline" class="hover:text-foreground flex">
-                <Icon name="material-symbols:settings-suggest-rounded" size="16" />
+                <Icon
+                  name="material-symbols:settings-suggest-rounded"
+                  size="16"
+                />
               </Button>
             </NuxtLink>
           </div>
@@ -62,14 +79,14 @@
 
 <script setup lang="ts">
 definePageMeta({
-  middleware: 'auth',
-  layout: "internal"
-})
+  middleware: "auth",
+  layout: "internal",
+});
 
-const { authUser } = useAuth()
-const { profile, fetchProfile, isCheckingProfile } = useProfile()
+const { authUser } = useAuth();
+const { profile, fetchProfile, isCheckingProfile } = useProfile();
 
 onMounted(() => {
-  fetchProfile()
-})
+  fetchProfile();
+});
 </script>

@@ -1,29 +1,33 @@
-import { db } from '../../db/db.js'
-import { matches, messages } from '../../db/schema.js'
-import { and, eq, or, desc, lt, ne, isNull, count } from 'drizzle-orm'
+import { db } from "../../db/db.js";
+import { matches, messages } from "../../db/schema.js";
+import { and, eq, or, desc, lt, ne, isNull, count } from "drizzle-orm";
 
-export const verifyMatchParticipant = async (matchId: number, userId: number) => {
+export const verifyMatchParticipant = async (
+  matchId: number,
+  userId: number,
+) => {
   const [match] = await db
     .select()
     .from(matches)
     .where(
       and(
         eq(matches.id, matchId),
-        or(
-          eq(matches.userId, userId),
-          eq(matches.matchedUserId, userId)
-        )
-      )
+        or(eq(matches.userId, userId), eq(matches.matchedUserId, userId)),
+      ),
     )
-    .limit(1)
+    .limit(1);
 
-  return match ?? null
-}
+  return match ?? null;
+};
 
-export const getMessages = async (matchId: number, limit = 50, beforeId?: number) => {
-  const conditions = [eq(messages.matchId, matchId)]
+export const getMessages = async (
+  matchId: number,
+  limit = 50,
+  beforeId?: number,
+) => {
+  const conditions = [eq(messages.matchId, matchId)];
   if (beforeId) {
-    conditions.push(lt(messages.id, beforeId))
+    conditions.push(lt(messages.id, beforeId));
   }
 
   const rows = await db
@@ -38,25 +42,33 @@ export const getMessages = async (matchId: number, limit = 50, beforeId?: number
     .from(messages)
     .where(and(...conditions))
     .orderBy(desc(messages.id))
-    .limit(limit)
+    .limit(limit);
 
-  return rows.reverse()
-}
+  return rows.reverse();
+};
 
-export const createMessage = async (matchId: number, senderId: number, content: string) => {
+export const createMessage = async (
+  matchId: number,
+  senderId: number,
+  content: string,
+) => {
   const [msg] = await db
     .insert(messages)
     .values({ matchId, senderId, content })
-    .returning()
+    .returning();
 
-  await db.update(matches)
+  await db
+    .update(matches)
     .set({ lastMessageAt: new Date() })
-    .where(eq(matches.id, matchId))
+    .where(eq(matches.id, matchId));
 
-  return msg
-}
+  return msg;
+};
 
-export const markMessagesRead = async (matchId: number, recipientId: number) => {
+export const markMessagesRead = async (
+  matchId: number,
+  recipientId: number,
+) => {
   const result = await db
     .update(messages)
     .set({ readAt: new Date() })
@@ -64,13 +76,13 @@ export const markMessagesRead = async (matchId: number, recipientId: number) => 
       and(
         eq(messages.matchId, matchId),
         ne(messages.senderId, recipientId),
-        isNull(messages.readAt)
-      )
+        isNull(messages.readAt),
+      ),
     )
-    .returning({ id: messages.id })
+    .returning({ id: messages.id });
 
-  return result.length
-}
+  return result.length;
+};
 
 export const getUnreadCounts = async (userId: number) => {
   const rows = await db
@@ -82,15 +94,12 @@ export const getUnreadCounts = async (userId: number) => {
     .innerJoin(matches, eq(messages.matchId, matches.id))
     .where(
       and(
-        or(
-          eq(matches.userId, userId),
-          eq(matches.matchedUserId, userId)
-        ),
+        or(eq(matches.userId, userId), eq(matches.matchedUserId, userId)),
         ne(messages.senderId, userId),
-        isNull(messages.readAt)
-      )
+        isNull(messages.readAt),
+      ),
     )
-    .groupBy(messages.matchId)
+    .groupBy(messages.matchId);
 
-  return rows // { "unreadCounts": [{ "matchId": 5, "count": 3 }, { "matchId": 12, "count": 1 }] }
-}
+  return rows; // { "unreadCounts": [{ "matchId": 5, "count": 3 }, { "matchId": 12, "count": 1 }] }
+};

@@ -1,30 +1,32 @@
 <script setup lang="ts">
-import { Toaster } from 'vue-sonner';
-import 'vue-sonner/style.css'
+import { Toaster } from "vue-sonner";
+import "vue-sonner/style.css";
 
-const { isAuthenticated } = useAuth()
-const { internalConnect, internalDisconnect } = useSocket()
-const { attachListeners, requestBrowserPermission } = useChatNotifications()
+const { isAuthenticated } = useAuth();
+const { internalConnect, internalDisconnect } = useSocket();
+const { attachListeners, requestBrowserPermission } = useChatNotifications();
 
 onMounted(() => {
   if (isAuthenticated.value) {
-    internalConnect()
-    attachListeners()
-    requestBrowserPermission()
+    internalConnect();
+    attachListeners();
+    requestBrowserPermission();
   }
-})
+});
 
 onUnmounted(() => {
-  internalDisconnect()
-})
+  internalDisconnect();
+});
 </script>
 
 <template>
-  <div class="dark h-screen bg-background text-foreground dot-grid"
-    style="background-color: oklch(0.11 0.005 280);">
+  <div
+    class="dark h-screen bg-background text-foreground dot-grid"
+    style="background-color: oklch(0.11 0.005 280)"
+  >
     <main class="mx-auto">
       <slot />
     </main>
-    <Toaster position="top-center"/>
+    <Toaster position="top-center" />
   </div>
 </template>

@@ -1,10 +1,10 @@
-import { Strategy as GoogleStrategy, Profile } from 'passport-google-oauth20'
-import { eq } from 'drizzle-orm'
-import { db } from '../../../db/db.js'
-import { users } from '../../../db/schema.js'
-import { env } from '../../../config/env.js'
+import { Strategy as GoogleStrategy, Profile } from "passport-google-oauth20";
+import { eq } from "drizzle-orm";
+import { db } from "../../../db/db.js";
+import { users } from "../../../db/schema.js";
+import { env } from "../../../config/env.js";
 
-const CALLBACK_URL = `${env.serverUrl}/auth/google/callback`
+const CALLBACK_URL = `${env.serverUrl}/auth/google/callback`;
 
 export const googleStrategy = new GoogleStrategy(
   {
@@ -14,60 +14,69 @@ export const googleStrategy = new GoogleStrategy(
   },
   async (_accessToken, _refreshToken, profile, done) => {
     try {
-      const user = await findOrCreateUser(profile, 'google')
-      done(null, user)
+      const user = await findOrCreateUser(profile, "google");
+      done(null, user);
     } catch (error) {
-      done(error as Error)
+      done(error as Error);
     }
-  }
-)
+  },
+);
 
-export const findOrCreateUser = async (profile: Profile, provider: 'google' | 'github') => {
-  const providerId = profile.id
-  const email = profile.emails?.[0]?.value
-  const photoUrl = profile.photos?.[0]?.value
+export const findOrCreateUser = async (
+  profile: Profile,
+  provider: "google" | "github",
+) => {
+  const providerId = profile.id;
+  const email = profile.emails?.[0]?.value;
+  const photoUrl = profile.photos?.[0]?.value;
 
   if (!email) {
-    throw new Error('Email not provided by OAuth provider')
+    throw new Error("Email not provided by OAuth provider");
   }
 
   const [existingByProvider] = await db
     .select()
     .from(users)
     .where(
-      provider === 'google'
+      provider === "google"
         ? eq(users.googleId, providerId)
-        : eq(users.githubId, providerId)
+        : eq(users.githubId, providerId),
     )
-    .limit(1)
+    .limit(1);
 
   if (existingByProvider) {
-    return existingByProvider
+    return existingByProvider;
   }
 
   const [existingByEmail] = await db
     .select()
     .from(users)
     .where(eq(users.email, email))
-    .limit(1)
+    .limit(1);
 
   if (existingByEmail) {
     const [updated] = await db
       .update(users)
-      .set(provider === 'google' ? { googleId: providerId } : { githubId: providerId })
+      .set(
+        provider === "google"
+          ? { googleId: providerId }
+          : { githubId: providerId },
+      )
       .where(eq(users.id, existingByEmail.id))
-      .returning()
-    return updated
+      .returning();
+    return updated;
   }
 
   const [newUser] = await db
     .insert(users)
     .values({
       email: email,
-      ...(provider === 'google' ? { googleId: providerId } : { githubId: providerId }),
-      oauthPhotoUrl: photoUrl
+      ...(provider === "google"
+        ? { googleId: providerId }
+        : { githubId: providerId }),
+      oauthPhotoUrl: photoUrl,
     })
-    .returning()
+    .returning();
 
-  return newUser
-}
+  return newUser;
+};

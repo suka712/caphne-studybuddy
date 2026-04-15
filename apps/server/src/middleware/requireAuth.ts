@@ -1,39 +1,43 @@
-import type { Request, Response, NextFunction } from "express"
-import { eq } from "drizzle-orm"
-import { verifyToken } from "../features/auth/jwt.service.js"
-import { db } from "../db/db.js"
-import { users } from "../db/schema.js"
+import type { Request, Response, NextFunction } from "express";
+import { eq } from "drizzle-orm";
+import { verifyToken } from "../features/auth/jwt.service.js";
+import { db } from "../db/db.js";
+import { users } from "../db/schema.js";
 
 declare global {
   namespace Express {
     interface Request {
-      user?: User
+      user?: User;
     }
   }
 }
 
-export const requireAuth = async (req: Request, res: Response, next: NextFunction) => {
-  const token = req.cookies?.token
+export const requireAuth = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const token = req.cookies?.token;
 
   if (!token) {
-    return res.status(401).json({ error: 'Authentication required' })
+    return res.status(401).json({ error: "Authentication required" });
   }
 
-  const payload = verifyToken(token)
+  const payload = verifyToken(token);
   if (!payload) {
-    return res.status(401).json({ error: 'Invalid or expired token' })
+    return res.status(401).json({ error: "Invalid or expired token" });
   }
 
   const [user] = await db
     .select()
     .from(users)
     .where(eq(users.id, payload.userId))
-    .limit(1)
+    .limit(1);
 
   if (!user) {
-    return res.status(401).json({ error: 'User not found' })
+    return res.status(401).json({ error: "User not found" });
   }
 
-  req.user = user
-  next()
-}
+  req.user = user;
+  next();
+};

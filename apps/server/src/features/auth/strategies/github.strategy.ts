@@ -1,8 +1,8 @@
-import { Strategy as GitHubStrategy, Profile } from 'passport-github2'
-import { env } from '../../../config/env.js'
-import { findOrCreateUser } from './google.strategy.js'
+import { Strategy as GitHubStrategy, Profile } from "passport-github2";
+import { env } from "../../../config/env.js";
+import { findOrCreateUser } from "./google.strategy.js";
 
-const CALLBACK_URL = `${env.serverUrl}/auth/github/callback`
+const CALLBACK_URL = `${env.serverUrl}/auth/github/callback`;
 
 export const githubStrategy = new GitHubStrategy(
   {
@@ -14,13 +14,13 @@ export const githubStrategy = new GitHubStrategy(
     accessToken: string,
     refreshToken: string,
     profile: Profile,
-    done: (error: Error | null, user?: Express.User) => void
+    done: (error: Error | null, user?: Express.User) => void,
   ) => {
     try {
-      const user = await findOrCreateUser(profile as any, 'github')
-      done(null, user)
+      const user = await findOrCreateUser(profile as any, "github");
+      done(null, user);
     } catch (error) {
-      done(error as Error)
+      done(error as Error);
     }
-  }
-)
+  },
+);

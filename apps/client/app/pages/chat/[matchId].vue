@@ -12,8 +12,13 @@
           <!-- Status line -->
           <div class="min-w-0">
             <p class="text-sm font-semibold truncate">{{ matchDisplayName }}</p>
-            <p v-if="isMatchOnline" class="text-[11px] text-green-500">Online</p>
-            <p v-else-if="matchLastActiveAt" class="text-[11px] text-muted-foreground">
+            <p v-if="isMatchOnline" class="text-[11px] text-green-500">
+              Online
+            </p>
+            <p
+              v-else-if="matchLastActiveAt"
+              class="text-[11px] text-muted-foreground"
+            >
               Active {{ timeAgo(matchLastActiveAt) }}
             </p>
           </div>
@@ -21,25 +26,42 @@
 
         <!-- Messages -->
         <div v-if="isLoading" class="flex items-center justify-center h-full">
-          <Icon name="svg-spinners:ring-resize" size="40" class="text-primary" />
+          <Icon
+            name="svg-spinners:ring-resize"
+            size="40"
+            class="text-primary"
+          />
         </div>
         <ScrollArea v-else ref="scrollAreaRef" class="flex-1 min-h-0">
           <div class="p-4 space-y-2">
-            <Button v-if="hasMore" variant="ghost" size="sm" class="w-full text-xs text-muted-foreground"
-              :disabled="isLoadingMore" @click="loadMore">
-              {{ isLoadingMore ? 'Loading...' : 'Load older messages' }}
+            <Button
+              v-if="hasMore"
+              variant="ghost"
+              size="sm"
+              class="w-full text-xs text-muted-foreground"
+              :disabled="isLoadingMore"
+              @click="loadMore"
+            >
+              {{ isLoadingMore ? "Loading..." : "Load older messages" }}
             </Button>
 
-            <p v-if="messages.length === 0 && !hasMore" class="text-muted-foreground text-sm text-center py-4">
+            <p
+              v-if="messages.length === 0 && !hasMore"
+              class="text-muted-foreground text-sm text-center py-4"
+            >
               No messages yet. Say hi!
             </p>
 
-            <div v-for="msg in messages" :key="msg.id" :class="[
-              'max-w-[80%] rounded-lg px-3 py-2 text-sm wrap-break-word',
-              msg.senderId === currentUserId
-                ? 'ml-auto bg-primary text-primary-foreground'
-                : 'mr-auto bg-muted'
-            ]">
+            <div
+              v-for="msg in messages"
+              :key="msg.id"
+              :class="[
+                'max-w-[80%] rounded-lg px-3 py-2 text-sm wrap-break-word',
+                msg.senderId === currentUserId
+                  ? 'ml-auto bg-primary text-primary-foreground'
+                  : 'mr-auto bg-muted',
+              ]"
+            >
               <p>{{ msg.content }}</p>
               <p class="text-[10px] opacity-60 mt-1">
                 {{ formatTime(msg.createdAt) }}
@@ -51,7 +73,12 @@
         <!-- Input -->
         <div class="p-4 border-t border-border">
           <form @submit.prevent="handleSend" class="flex gap-2 h-full">
-            <Input v-model="newMessage" placeholder="Type a message..." class="flex-1" :disabled="!isConnected" />
+            <Input
+              v-model="newMessage"
+              placeholder="Type a message..."
+              class="flex-1"
+              :disabled="!isConnected"
+            />
             <Button type="submit" size="sm" class="h-full" :disabled="!canSend">
               <Icon name="mingcute:send-fill" size="18" />
             </Button>
@@ -63,122 +90,130 @@
 </template>
 
 <script setup lang="ts">
-import { toast } from 'vue-sonner'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import type { ChatMessage } from '~/types/chat'
+import { toast } from "vue-sonner";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import type { ChatMessage } from "~/types/chat";
 
 definePageMeta({
-  middleware: 'auth',
-  layout: 'internal',
-})
+  middleware: "auth",
+  layout: "internal",
+});
 
-const route = useRoute()
-const { public: { apiBase } } = useRuntimeConfig()
-const { authUser } = useAuth()
+const route = useRoute();
+const {
+  public: { apiBase },
+} = useRuntimeConfig();
+const { authUser } = useAuth();
 
-const matchId = Number(route.params.matchId)
-const currentUserId = computed(() => authUser.value?.id)
+const matchId = Number(route.params.matchId);
+const currentUserId = computed(() => authUser.value?.id);
 
-const messages = ref<ChatMessage[]>([])
-const matchDisplayName = ref('')
-const newMessage = ref('')
-const isLoading = ref(true)
-const isLoadingMore = ref(false)
-const hasMore = ref(true)
-const scrollAreaRef = ref<InstanceType<typeof ScrollArea> | null>(null)
-const isMatchOnline = ref(false)
-const matchLastActiveAt = ref<string | null>(null)
+const messages = ref<ChatMessage[]>([]);
+const matchDisplayName = ref("");
+const newMessage = ref("");
+const isLoading = ref(true);
+const isLoadingMore = ref(false);
+const hasMore = ref(true);
+const scrollAreaRef = ref<InstanceType<typeof ScrollArea> | null>(null);
+const isMatchOnline = ref(false);
+const matchLastActiveAt = ref<string | null>(null);
 
 const scrollToBottom = () => {
   nextTick(() => {
-    const viewport = scrollAreaRef.value?.$el?.querySelector('[data-slot="scroll-area-viewport"]')
+    const viewport = scrollAreaRef.value?.$el?.querySelector(
+      '[data-slot="scroll-area-viewport"]',
+    );
     if (viewport) {
-      viewport.scrollTop = viewport.scrollHeight
+      viewport.scrollTop = viewport.scrollHeight;
     }
-  })
-}
+  });
+};
 
 const { isConnected, setupListeners, sendMessage, cleanup } = useChatSocket(
-  matchId, messages, currentUserId, scrollToBottom,
-)
+  matchId,
+  messages,
+  currentUserId,
+  scrollToBottom,
+);
 
-const canSend = computed(() =>
-  isConnected.value && newMessage.value.trim().length > 0
-)
+const canSend = computed(
+  () => isConnected.value && newMessage.value.trim().length > 0,
+);
 
 const formatTime = (dateStr: string) => {
-  const d = new Date(dateStr)
-  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-}
+  const d = new Date(dateStr);
+  return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+};
 
-const PAGE_SIZE = 50
+const PAGE_SIZE = 50;
 
 const fetchMessages = async (beforeId?: number) => {
-  const params = new URLSearchParams({ limit: String(PAGE_SIZE) })
-  if (beforeId) params.set('before', String(beforeId))
+  const params = new URLSearchParams({ limit: String(PAGE_SIZE) });
+  if (beforeId) params.set("before", String(beforeId));
 
   const data = await $fetch<{ messages: ChatMessage[] }>(
     `${apiBase}/chat/${matchId}/messages?${params}`,
-    { credentials: 'include' }
-  )
-  return data.messages
-}
+    { credentials: "include" },
+  );
+  return data.messages;
+};
 
 const loadMore = async () => {
-  if (!hasMore.value || messages.value.length === 0) return
-  isLoadingMore.value = true
+  if (!hasMore.value || messages.value.length === 0) return;
+  isLoadingMore.value = true;
   try {
-    const oldestId = messages.value[0]!.id
-    const older = await fetchMessages(oldestId)
-    if (older.length < PAGE_SIZE) hasMore.value = false
-    messages.value = [...older, ...messages.value]
+    const oldestId = messages.value[0]!.id;
+    const older = await fetchMessages(oldestId);
+    if (older.length < PAGE_SIZE) hasMore.value = false;
+    messages.value = [...older, ...messages.value];
   } catch {
-    toast.error('Failed to load older messages')
+    toast.error("Failed to load older messages");
   } finally {
-    isLoadingMore.value = false
+    isLoadingMore.value = false;
   }
-}
+};
 
 const handleSend = () => {
-  const content = newMessage.value.trim()
-  if (!content) return
-  sendMessage(content)
-  newMessage.value = ''
-}
+  const content = newMessage.value.trim();
+  if (!content) return;
+  sendMessage(content);
+  newMessage.value = "";
+};
 
 onMounted(async () => {
   try {
-    const matchesData = await $fetch<{ matches: any[] }>(
-      `${apiBase}/matches`,
-      { credentials: 'include' }
-    )
-    const thisMatch = matchesData.matches.find((m: any) => m.matchId === matchId)
+    const matchesData = await $fetch<{ matches: any[] }>(`${apiBase}/matches`, {
+      credentials: "include",
+    });
+    const thisMatch = matchesData.matches.find(
+      (m: any) => m.matchId === matchId,
+    );
     if (!thisMatch) {
-      toast.error('Match not found')
-      navigateTo('/matches')
-      return
+      toast.error("Match not found");
+      navigateTo("/matches");
+      return;
     }
-    matchDisplayName.value = thisMatch.displayName
-    isMatchOnline.value = thisMatch.isOnline
-    matchLastActiveAt.value = thisMatch.lastActiveAt
+    matchDisplayName.value = thisMatch.displayName;
+    isMatchOnline.value = thisMatch.isOnline;
+    matchLastActiveAt.value = thisMatch.lastActiveAt;
 
-    const initialMessages = await fetchMessages()
-    messages.value = initialMessages
-    if (initialMessages.length < PAGE_SIZE) hasMore.value = false
-    isLoading.value = false
-    scrollToBottom()
+    const initialMessages = await fetchMessages();
+    messages.value = initialMessages;
+    if (initialMessages.length < PAGE_SIZE) hasMore.value = false;
+    isLoading.value = false;
+    scrollToBottom();
 
-    setupListeners()
+    setupListeners();
   } catch (e) {
-    console.error('Failed to initialize chat:', e)
-    toast.error('Failed to load chat')
-    navigateTo('/matches')
+    console.error("Failed to initialize chat:", e);
+    toast.error("Failed to load chat");
+    navigateTo("/matches");
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
-})
+});
 
 onUnmounted(() => {
-  cleanup()
-})
+  cleanup();
+});
 </script>

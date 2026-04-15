@@ -8,7 +8,8 @@
       <CardContent class="flex flex-col h-full p-0">
         <!-- Header -->
         <div class="flex items-center gap-3 p-4 border-b border-border">
-          <div class="size-15 rounded-full bg-muted flex items-center justify-center overflow-hidden border-2 border-accent shrink-0">
+          <div
+            class="size-15 rounded-full bg-muted flex items-center justify-center overflow-hidden border-2 border-accent shrink-0">
             <img v-if="profile?.photoUrl" :src="profile?.photoUrl" class="w-full h-full object-cover">
             <Icon v-else name="material-symbols:person-heart-rounded" size="32" />
           </div>
@@ -49,7 +50,7 @@
             </NuxtLink>
             <NuxtLink to="/settings">
               <Button variant="outline" class="hover:text-foreground flex">
-                <Icon name="material-symbols:settings-suggest-rounded" size="16"/>
+                <Icon name="material-symbols:settings-suggest-rounded" size="16" />
               </Button>
             </NuxtLink>
           </div>

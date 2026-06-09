@@ -20,11 +20,9 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div
-    class="dark h-screen bg-background text-foreground dot-grid"
-    style="background-color: oklch(0.11 0.005 280)"
-  >
-    <main class="mx-auto">
+  <div class="h-screen bg-background text-foreground grain overflow-hidden">
+    <div class="fixed inset-0 -z-10 dot-grid pointer-events-none" />
+    <main class="mx-auto h-full relative">
       <slot />
     </main>
     <Toaster position="top-center" />

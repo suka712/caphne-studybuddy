@@ -3,147 +3,150 @@ import { useScrollNavbar } from "~/lib/utils";
 
 const { showNavbar } = useScrollNavbar();
 const mobileMenuOpen = ref(false);
+
+const navLinks = [
+  { label: 'Stories', to: '/stories' },
+  { label: 'Events', to: '/events' },
+  { label: 'Friends', to: '/friends' },
+  { label: 'Support', to: '/support' },
+];
 </script>
 
 <template>
   <header
-    class="sticky top-0 z-50 transition-[background-color,backdrop-filter] duration-300"
-    :class="
-      showNavbar
-        ? 'bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60'
-        : 'bg-transparent backdrop-blur-0'
-    "
+    class="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
+    :class="[
+      showNavbar 
+        ? 'py-3 translate-y-0' 
+        : 'py-5 -translate-y-2'
+    ]"
   >
     <nav
-      class="flex items-center mx-auto max-w-7xl px-4 py-4 transition-opacity duration-500"
-      :class="showNavbar ? 'opacity-100' : 'opacity-0 pointer-events-none'"
+      class="mx-auto max-w-7xl px-4"
     >
-      <div class="flex flex-1 justify-start">
-        <NuxtLink to="/" class="text-xl font-bold"> Caphne </NuxtLink>
-      </div>
-      <!-- Desktop navigation -->
-      <div class="hidden lg:flex flex-3 gap-2 justify-center">
-        <div>
-          <Button class="rounded-l-3xl rounded-r-none">Stories</Button>
-          <Button class="rounded-none">Events</Button>
-          <Button class="rounded-none">Friends</Button>
-          <Button class="rounded-l-none">Support</Button>
+      <div 
+        class="glass rounded-3xl px-6 py-3 flex items-center justify-between transition-all duration-500"
+        :class="showNavbar ? 'shadow-lg' : 'shadow-none bg-transparent border-transparent'"
+      >
+        <!-- Logo -->
+        <div class="flex items-center gap-2">
+          <NuxtLink to="/" class="group flex items-center gap-2">
+            <div class="size-9 rounded-xl bg-primary flex items-center justify-center transition-transform group-hover:rotate-12">
+              <Icon name="ri:sparkling-2-fill" class="text-accent" size="18" />
+            </div>
+            <span class="text-xl font-black tracking-tight font-serif italic">Caphne</span>
+          </NuxtLink>
         </div>
-        <div class="flex">
-          <Button class="rounded-r-none">Donate</Button>
-          <NavigationMenu>
-            <NavigationMenuList>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger class="rounded-l-none rounded-r-3xl">
-                  Contribute
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <div class="flex gap-2">
-                    <a
-                      href="https://github.com/suka712/caphne-studybuddy"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Button variant="outline" class="size-24">
-                        <Icon name="ci:github" size="30" />
-                      </Button>
-                    </a>
-                    <div>
-                      <a
-                        href="https://github.com/suka712"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Button variant="ghost" class="h-8 w-full justify-start"
-                          >Khiem Nguyen</Button
-                        >
-                      </a>
-                      <a
-                        href="https://github.com/Giaugg"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Button variant="ghost" class="h-8 w-full justify-start"
-                          >Rich Le</Button
-                        >
-                      </a>
-                      <a
-                        href="https://github.com/trnahnh"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Button variant="ghost" class="h-8 w-full justify-start"
-                          >Andrea Tran</Button
-                        >
-                      </a>
-                    </div>
-                  </div>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
+
+        <!-- Desktop Nav -->
+        <div class="hidden md:flex items-center gap-1 bg-primary/5 p-1 rounded-2xl border border-primary/5">
+          <NuxtLink 
+            v-for="link in navLinks" 
+            :key="link.to"
+            :to="link.to"
+          >
+            <Button 
+              variant="ghost" 
+              class="rounded-xl px-4 h-9 text-sm font-bold hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+            >
+              {{ link.label }}
+            </Button>
+          </NuxtLink>
         </div>
-      </div>
-      <!-- Desktop right section -->
-      <div class="hidden lg:flex flex-1 gap-2 justify-end">
-        <NavigationMenu>
-          <NavigationMenuList>
-            <NavigationMenuItem>
-              <NavigationMenuTrigger
-                class="bg-primary/10 text-primary hover:bg-primary/20"
+
+        <!-- Desktop Right -->
+        <div class="hidden md:flex items-center gap-3">
+          <Popover>
+            <PopoverTrigger as-child>
+              <Button 
+                variant="ghost" 
+                size="icon"
+                class="h-10 w-10 rounded-xl bg-primary/10 hover:bg-primary/20 border-none transition-colors flex items-center justify-center"
               >
-                <Icon name="lucide:globe" size="23" />
-              </NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <NavigationMenuLink>English</NavigationMenuLink>
-                <NavigationMenuLink>Vietnamese</NavigationMenuLink>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
-        <NuxtLink to="/start">
-          <Button> Start now </Button>
-        </NuxtLink>
-      </div>
-      <!-- Mobile hamburger button -->
-      <div class="flex lg:hidden">
-        <Button
-          variant="ghost"
-          size="icon"
-          @click="mobileMenuOpen = !mobileMenuOpen"
-        >
-          <Icon v-if="mobileMenuOpen" name="lucide:x" size="24" />
-          <Icon v-else name="lucide:menu" size="24" />
-        </Button>
+                <Icon name="lucide:globe" size="18" class="text-primary" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent class="p-2 w-[160px] rounded-2xl glass mt-2" align="end">
+              <div class="flex flex-col gap-1">
+                <Button variant="ghost" class="justify-between h-10 rounded-lg px-3 font-bold">
+                  English
+                  <Icon name="lucide:check" size="14" class="text-accent" />
+                </Button>
+                <Button variant="ghost" class="justify-start h-10 rounded-lg px-3 font-bold opacity-60">
+                  Vietnamese
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
+          
+          <NuxtLink to="/start">
+            <Button class="rounded-xl px-6 h-10 font-bold shadow-md shadow-primary/10">
+              Start Now
+            </Button>
+          </NuxtLink>
+        </div>
+
+        <!-- Mobile Toggle -->
+        <div class="flex md:hidden">
+          <Button
+            variant="ghost"
+            size="icon"
+            class="rounded-xl bg-primary/5"
+            @click="mobileMenuOpen = !mobileMenuOpen"
+          >
+            <Icon v-if="mobileMenuOpen" name="lucide:x" size="24" />
+            <Icon v-else name="lucide:menu" size="24" />
+          </Button>
+        </div>
       </div>
     </nav>
-    <!-- Mobile menu -->
-    <div v-if="mobileMenuOpen" class="lg:hidden border-t">
-      <div class="flex flex-col gap-2 px-4 py-4">
-        <Button variant="ghost" class="justify-start">Stories</Button>
-        <Button variant="ghost" class="justify-start">Events</Button>
-        <Button variant="ghost" class="justify-start">Friends</Button>
-        <Button variant="ghost" class="justify-start">Support</Button>
-        <Button variant="ghost" class="justify-start">Donate</Button>
-        <div class="border-t my-2"></div>
-        <p class="text-sm text-muted-foreground px-4">Contribute</p>
-        <a
-          href="https://github.com/suka712/caphne-studybuddy"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Button variant="ghost" class="justify-start w-full">
-            <Icon name="ci:github" size="20" class="mr-2" />
-            GitHub Repo
-          </Button>
-        </a>
-        <div class="border-t my-2"></div>
-        <p class="text-sm text-muted-foreground px-4">Language</p>
-        <Button variant="ghost" class="justify-start">English</Button>
-        <Button variant="ghost" class="justify-start">Vietnamese</Button>
-        <div class="border-t my-2"></div>
-        <Button class="w-full">Start now</Button>
+
+    <!-- Mobile Menu Overlay -->
+    <Transition
+      enter-active-class="transition duration-300 ease-out"
+      enter-from-class="opacity-0 translate-y-4"
+      enter-to-class="opacity-100 translate-y-0"
+      leave-active-class="transition duration-200 ease-in"
+      leave-from-class="opacity-100 translate-y-0"
+      leave-to-class="opacity-0 translate-y-4"
+    >
+      <div v-if="mobileMenuOpen" class="md:hidden px-4 mt-2">
+        <div class="glass rounded-[2rem] p-6 flex flex-col gap-2 shadow-2xl">
+          <NuxtLink 
+            v-for="link in navLinks" 
+            :key="link.to"
+            :to="link.to"
+            class="w-full"
+            @click="mobileMenuOpen = false"
+          >
+            <Button variant="ghost" class="w-full justify-start h-14 text-lg font-bold rounded-xl px-6">
+              {{ link.label }}
+            </Button>
+          </NuxtLink>
+          <div class="h-px bg-primary/10 my-4" />
+          <div class="flex items-center justify-between px-6 mb-4">
+            <span class="text-sm font-black uppercase tracking-widest text-muted-foreground">Language</span>
+            <div class="flex gap-2">
+              <Button variant="default" size="sm" class="rounded-lg h-9 font-bold">EN</Button>
+              <Button variant="outline" size="sm" class="rounded-lg h-9 font-bold">VN</Button>
+            </div>
+          </div>
+          <NuxtLink to="/start" @click="mobileMenuOpen = false">
+            <Button class="w-full h-16 rounded-2xl text-lg font-black shadow-xl">
+              Start Now
+            </Button>
+          </NuxtLink>
+        </div>
       </div>
-    </div>
+    </Transition>
   </header>
 </template>
+
+<style scoped>
+.glass {
+  background: color-mix(in oklch, var(--background) 85%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid color-mix(in oklch, var(--foreground) 10%, transparent);
+}
+</style>

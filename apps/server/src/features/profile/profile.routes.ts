@@ -2,7 +2,7 @@ import { Router } from "express";
 import { requireAuth } from "../../middleware/requireAuth.js";
 import { db } from "../../db/db.js";
 import { profiles } from "../../db/schema.js";
-import { count, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import type { User } from "../../db/schema.js";
 import { validateBody } from "../../middleware/validateBody.js";
 import { Static, Type } from "typebox";
@@ -10,16 +10,6 @@ import { generateMatch } from "../matches/matches.services.js";
 import { matchConfig } from "../../config/matchConfig.js";
 
 export const profileRouter = Router();
-
-profileRouter.get("/count", async (_req, res) => {
-  try {
-    const [row] = await db.select({ count: count() }).from(profiles);
-    return res.json({ count: row?.count ?? 0 });
-  } catch (e) {
-    console.error("Error counting profiles:", e);
-    return res.status(500).json({ message: "Something went wrong" });
-  }
-});
 
 profileRouter.get("/", requireAuth, async (req, res) => {
   const authUser = req.user as User;

@@ -278,7 +278,7 @@ onMounted(() => {
         <!-- BFF Card -->
         <div class="group flex flex-col">
           <div
-            class="aspect-[4/3] rounded-[2.5rem] overflow-hidden mb-8 border border-primary/5 shadow-xl transition-transform duration-500 group-hover:-translate-y-2"
+            class="aspect-[4/3] rounded-[2.5rem] overflow-hidden mb-8 shadow-xl transition-transform duration-500 border-8 border-background"
           >
             <img src="/placeholder-1.png" class="w-full h-full object-cover" />
           </div>
@@ -314,7 +314,7 @@ onMounted(() => {
         <!-- Coffee Date Card -->
         <div class="group flex flex-col">
           <div
-            class="aspect-[4/3] rounded-[2.5rem] overflow-hidden mb-8 border border-primary/5 shadow-xl transition-transform duration-500 group-hover:-translate-y-2"
+            class="aspect-[4/3] rounded-[2.5rem] overflow-hidden mb-8 shadow-xl transition-transform duration-500 border-8 border-background"
           >
             <img src="/placeholder-3.png" class="w-full h-full object-cover" />
           </div>

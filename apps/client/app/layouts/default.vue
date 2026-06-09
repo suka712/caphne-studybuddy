@@ -1,10 +1,8 @@
 <template>
-  <div
-    class="dark min-h-screen bg-background text-foreground dot-grid"
-    style="background-color: oklch(0.11 0.005 280)"
-  >
+  <div class="min-h-screen bg-background text-foreground grain">
+    <div class="fixed inset-0 -z-10 dot-grid pointer-events-none" />
     <NavBar />
-    <main class="mx-auto max-w-7xl px-4 py-8">
+    <main class="mx-auto max-w-7xl px-4 py-8 relative">
       <slot />
     </main>
   </div>

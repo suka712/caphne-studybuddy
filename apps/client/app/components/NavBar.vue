@@ -7,7 +7,12 @@ const mobileMenuOpen = ref(false);
 
 <template>
   <header
-    class="sticky top-0 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 z-50"
+    class="sticky top-0 z-50 transition-[background-color,backdrop-filter] duration-300"
+    :class="
+      showNavbar
+        ? 'bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60'
+        : 'bg-transparent backdrop-blur-0'
+    "
   >
     <nav
       class="flex items-center mx-auto max-w-7xl px-4 py-4 transition-opacity duration-500"

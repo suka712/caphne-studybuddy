@@ -382,7 +382,7 @@ onMounted(() => {
       "
     >
       <div
-        class="relative overflow-hidden rounded-[3.5rem] bg-primary p-12 md:p-20 text-center"
+        class="relative overflow-hidden rounded-[3.5rem] bg-secondary/30 p-12 md:p-20 text-center border border-primary/5"
       >
         <div class="absolute inset-0 bg-accent/5 blur-3xl rounded-full" />
 
@@ -394,14 +394,14 @@ onMounted(() => {
             Newsletter
           </span>
           <h2
-            class="text-4xl md:text-5xl font-black text-background mb-6 leading-tight"
+            class="text-4xl md:text-5xl font-black text-primary mb-6 leading-tight"
           >
             Updates, when they
             <span class="text-accent underline decoration-4 underline-offset-8"
               >matter</span
             >.
           </h2>
-          <p class="text-background/70 font-bold mb-10">
+          <p class="text-muted-foreground font-bold mb-10">
             New features and study meetups around Saigon. No spam, just the good
             stuff.
           </p>
@@ -413,12 +413,12 @@ onMounted(() => {
                 type="email"
                 placeholder="your@email.com"
                 required
-                class="flex-1 h-14 px-6 rounded-2xl bg-background/10 border border-background/20 text-background placeholder:text-background/40 focus:ring-2 focus:ring-accent/40 outline-none transition-all font-bold"
+                class="flex-1 h-14 px-6 rounded-2xl bg-background border border-primary/10 text-primary placeholder:text-muted-foreground/40 focus:ring-2 focus:ring-accent/40 outline-none transition-all font-bold"
               />
               <Button
                 type="submit"
                 :disabled="isSubmitting"
-                class="h-14 px-8 rounded-2xl font-black bg-accent text-primary hover:bg-background transition-all"
+                class="h-14 px-8 rounded-2xl font-black bg-primary text-primary-foreground hover:scale-105 transition-all"
               >
                 {{ isSubmitting ? "..." : "Keep me posted" }}
               </Button>

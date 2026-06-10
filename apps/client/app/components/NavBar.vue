@@ -25,16 +25,16 @@ const navLinks = [
       class="mx-auto max-w-7xl px-4"
     >
       <div 
-        class="glass rounded-3xl px-6 py-3 flex items-center justify-between transition-all duration-500"
+        class="glass rounded-full px-6 py-2.5 flex items-center justify-between transition-all duration-500"
         :class="showNavbar ? 'shadow-lg' : 'shadow-none bg-transparent border-transparent'"
       >
         <!-- Logo -->
         <div class="flex items-center gap-2">
           <NuxtLink to="/" class="group flex items-center gap-2">
-            <div class="size-9 rounded-xl bg-primary flex items-center justify-center transition-transform group-hover:rotate-12">
+            <div class="size-9 rounded-xl bg-primary flex items-center justify-center transition-transform group-hover:scale-110 group-hover:rotate-6">
               <Icon name="ri:sparkling-2-fill" class="text-accent" size="18" />
             </div>
-            <span class="text-xl font-black tracking-tight font-serif italic">Caphne</span>
+            <span class="text-xl font-black tracking-tighter">caphne.</span>
           </NuxtLink>
         </div>
 
@@ -47,7 +47,7 @@ const navLinks = [
           >
             <Button 
               variant="ghost" 
-              class="rounded-xl px-4 h-9 text-sm font-bold hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+              class="rounded-xl px-5 h-9 text-sm font-extrabold hover:bg-primary hover:text-primary-foreground transition-all duration-300"
             >
               {{ link.label }}
             </Button>
@@ -61,18 +61,18 @@ const navLinks = [
               <Button 
                 variant="ghost" 
                 size="icon"
-                class="h-10 w-10 rounded-xl bg-primary/10 hover:bg-primary/20 border-none transition-colors flex items-center justify-center"
+                class="h-10 w-10 rounded-xl bg-primary/5 hover:bg-primary/10 border-none transition-colors flex items-center justify-center"
               >
                 <Icon name="lucide:globe" size="18" class="text-primary" />
               </Button>
             </PopoverTrigger>
             <PopoverContent class="p-2 w-[160px] rounded-2xl glass mt-2" align="end">
               <div class="flex flex-col gap-1">
-                <Button variant="ghost" class="justify-between h-10 rounded-lg px-3 font-bold">
+                <Button variant="ghost" class="justify-between h-10 rounded-lg px-3 font-extrabold">
                   English
                   <Icon name="lucide:check" size="14" class="text-accent" />
                 </Button>
-                <Button variant="ghost" class="justify-start h-10 rounded-lg px-3 font-bold opacity-60">
+                <Button variant="ghost" class="justify-start h-10 rounded-lg px-3 font-extrabold opacity-50">
                   Vietnamese
                 </Button>
               </div>
@@ -80,7 +80,7 @@ const navLinks = [
           </Popover>
           
           <NuxtLink to="/start">
-            <Button class="rounded-xl px-6 h-10 font-bold shadow-md shadow-primary/10">
+            <Button class="rounded-xl px-6 h-10 font-black shadow-lg shadow-primary/10 hover:scale-105 transition-transform active:scale-95">
               Start Now
             </Button>
           </NuxtLink>
@@ -91,7 +91,7 @@ const navLinks = [
           <Button
             variant="ghost"
             size="icon"
-            class="rounded-xl bg-primary/5"
+            class="rounded-xl"
             @click="mobileMenuOpen = !mobileMenuOpen"
           >
             <Icon v-if="mobileMenuOpen" name="lucide:x" size="24" />
@@ -111,7 +111,7 @@ const navLinks = [
       leave-to-class="opacity-0 translate-y-4"
     >
       <div v-if="mobileMenuOpen" class="md:hidden px-4 mt-2">
-        <div class="glass rounded-[2rem] p-6 flex flex-col gap-2 shadow-2xl">
+        <div class="glass rounded-[2.5rem] p-6 flex flex-col gap-2 shadow-2xl">
           <NuxtLink 
             v-for="link in navLinks" 
             :key="link.to"
@@ -119,7 +119,7 @@ const navLinks = [
             class="w-full"
             @click="mobileMenuOpen = false"
           >
-            <Button variant="ghost" class="w-full justify-start h-14 text-lg font-bold rounded-xl px-6">
+            <Button variant="ghost" class="w-full justify-start h-14 text-lg font-black rounded-xl px-6">
               {{ link.label }}
             </Button>
           </NuxtLink>
@@ -127,8 +127,8 @@ const navLinks = [
           <div class="flex items-center justify-between px-6 mb-4">
             <span class="text-sm font-black uppercase tracking-widest text-muted-foreground">Language</span>
             <div class="flex gap-2">
-              <Button variant="default" size="sm" class="rounded-lg h-9 font-bold">EN</Button>
-              <Button variant="outline" size="sm" class="rounded-lg h-9 font-bold">VN</Button>
+              <Button variant="default" size="sm" class="rounded-lg h-9 font-black">EN</Button>
+              <Button variant="outline" size="sm" class="rounded-lg h-9 font-black">VN</Button>
             </div>
           </div>
           <NuxtLink to="/start" @click="mobileMenuOpen = false">
@@ -144,7 +144,7 @@ const navLinks = [
 
 <style scoped>
 .glass {
-  background: color-mix(in oklch, var(--background) 85%, transparent);
+  background: color-mix(in oklch, var(--background) 90%, transparent);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid color-mix(in oklch, var(--foreground) 10%, transparent);

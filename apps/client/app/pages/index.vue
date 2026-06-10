@@ -78,36 +78,36 @@ onMounted(() => {
         <div class="space-y-8">
           <div class="animate-in fade-in slide-in-from-bottom-4 duration-700">
             <span
-              class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/10 border border-accent/20 text-accent text-[11px] font-bold uppercase tracking-[0.2em]"
+              class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/20 border border-accent/30 text-primary text-[11px] font-black uppercase tracking-[0.2em]"
             >
-              <Icon name="lucide:map-pin" size="12" />
+              <Icon name="lucide:map-pin" size="12" class="text-accent" />
               Ho Chi Minh City
             </span>
           </div>
 
           <h1
-            class="text-6xl md:text-8xl font-black leading-[0.9] tracking-tight text-primary animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-100"
+            class="text-6xl md:text-8xl font-black leading-[0.9] tracking-tighter text-primary animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-100"
           >
-            Where <span class="font-serif italic text-accent">ambition</span
-            ><br />
-            meets <span class="font-serif italic text-accent">matcha</span>.
+            Where <span class="text-accent">ambition</span><br />
+            meets <span class="text-accent">matcha</span>.
           </h1>
 
           <p
-            class="text-xl text-muted-foreground leading-relaxed max-w-md animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-200"
+            class="text-xl font-medium text-muted-foreground leading-relaxed max-w-md animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-200"
           >
             A studybuddy app for students in Saigon. Cram for midterms, crack
             problem sets, and survive group projects together.
           </p>
 
-          <div
-            class="flex items-center gap-4 animate-in fade-in slide-in-from-bottom-16 duration-1000 delay-300"
+          <button
+            @click="loginWithGoogle"
+            class="flex items-center gap-4 animate-in fade-in slide-in-from-bottom-16 duration-1000 delay-300 hover:opacity-80 transition-opacity cursor-pointer group/social"
           >
             <div class="flex -space-x-3">
               <div
                 v-for="i in 3"
                 :key="i"
-                class="size-9 rounded-full border-2 border-background overflow-hidden bg-secondary"
+                class="size-9 rounded-full border-2 border-background overflow-hidden bg-secondary transition-transform group-hover/social:scale-110"
               >
                 <img
                   :src="`/placeholder-${i}.png`"
@@ -116,28 +116,30 @@ onMounted(() => {
                 />
               </div>
             </div>
-            <p class="text-sm font-semibold text-muted-foreground">
-              <span class="text-primary font-bold">300+ students</span> already
-              matched
+            <p class="text-sm font-bold text-muted-foreground text-left">
+              <span
+                class="text-primary underline decoration-accent/30 decoration-2 underline-offset-4"
+                >300+ students</span
+              >
+              already matched
             </p>
-          </div>
+          </button>
         </div>
 
-        <!-- The App Hero Card (The Centerpiece) -->
+        <!-- The App Hero Card -->
         <div
           class="flex justify-center lg:justify-end animate-in fade-in zoom-in-95 duration-1000 delay-300"
         >
           <div
-            class="w-full max-w-sm glass rounded-[2.5rem] p-8 shadow-2xl border-primary/10 relative overflow-hidden"
+            class="w-full max-w-sm glass rounded-[3rem] p-8 shadow-2xl border-primary/5 relative overflow-hidden"
           >
-            <!-- Decorative Accent -->
             <div
               class="absolute -top-10 -right-10 size-32 bg-accent/20 blur-3xl rounded-full"
             />
 
             <div class="flex items-center gap-3 mb-8">
               <div
-                class="size-10 rounded-xl bg-primary flex items-center justify-center"
+                class="size-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20"
               >
                 <Icon
                   name="ri:sparkling-2-fill"
@@ -145,16 +147,16 @@ onMounted(() => {
                   size="18"
                 />
               </div>
-              <span class="font-black text-lg tracking-tight font-serif italic"
-                >Caphne</span
-              >
+              <span class="font-black text-xl tracking-tighter">caphne.</span>
             </div>
 
             <h2 class="text-3xl font-black leading-tight mb-3">
               Find your<br />
-              <span class="font-serif italic text-accent">studybuddy</span>.
+              <span class="text-accent">studybuddy</span>.
             </h2>
-            <p class="text-sm text-muted-foreground leading-relaxed mb-8">
+            <p
+              class="text-sm font-medium text-muted-foreground leading-relaxed mb-8"
+            >
               Sign in to start matching with students near you based on your
               major and goals.
             </p>
@@ -163,7 +165,7 @@ onMounted(() => {
               <Button
                 @click="loginWithGoogle"
                 size="lg"
-                class="w-full h-14 rounded-2xl font-bold gap-2 shadow-lg shadow-primary/10"
+                class="w-full h-14 rounded-2xl font-black gap-2 shadow-xl shadow-primary/10 hover:scale-[1.02] transition-transform active:scale-95"
               >
                 <Icon
                   name="ri:sparkling-2-fill"
@@ -176,14 +178,14 @@ onMounted(() => {
                 <Button
                   @click="loginWithGoogle"
                   variant="outline"
-                  class="h-12 rounded-xl text-xs font-bold gap-2"
+                  class="h-12 rounded-xl text-xs font-black gap-2 border-primary/10 hover:bg-primary/5"
                 >
                   <Icon name="ci:google" size="14" /> Google
                 </Button>
                 <Button
                   @click="loginWithGitHub"
                   variant="outline"
-                  class="h-12 rounded-xl text-xs font-bold gap-2"
+                  class="h-12 rounded-xl text-xs font-black gap-2 border-primary/10 hover:bg-primary/5"
                 >
                   <Icon name="ci:github" size="14" /> GitHub
                 </Button>
@@ -192,24 +194,29 @@ onMounted(() => {
 
             <div v-else class="space-y-4">
               <div class="p-4 bg-accent/10 rounded-2xl border border-accent/20">
-                <p class="text-sm font-bold text-primary">Welcome back.</p>
-                <p class="text-xs text-muted-foreground">
+                <p class="text-sm font-black text-primary">Welcome back!</p>
+                <p class="text-xs font-bold text-muted-foreground">
                   You have new matches waiting.
                 </p>
               </div>
               <NuxtLink to="/profile">
-                <Button class="w-full h-14 rounded-2xl font-bold"
+                <Button
+                  class="w-full h-14 rounded-2xl font-black hover:scale-[1.02] transition-transform"
                   >Go to Profile</Button
                 >
               </NuxtLink>
             </div>
 
             <div
-              class="mt-8 pt-6 border-t border-dashed border-primary/10 flex items-center justify-between text-[11px] font-bold uppercase tracking-widest text-muted-foreground/60"
+              class="mt-8 pt-6 border-t border-dashed border-primary/10 flex items-center justify-between text-[11px] font-black uppercase tracking-widest text-muted-foreground/50"
             >
               <span>Free to join</span>
               <span class="flex items-center gap-1.5">
-                <Icon name="lucide:shield-check" size="12" />
+                <Icon
+                  name="lucide:shield-check"
+                  size="12"
+                  class="text-accent"
+                />
                 .edu verified
               </span>
             </div>
@@ -229,12 +236,12 @@ onMounted(() => {
       <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
         <div class="order-2 md:order-1 relative">
           <div
-            class="relative aspect-[4/5] rounded-[3rem] overflow-hidden shadow-2xl border-8 border-background"
+            class="relative aspect-[4/5] rounded-[3.5rem] overflow-hidden shadow-2xl border-8 border-background"
           >
             <img src="/placeholder-4.png" class="w-full h-full object-cover" />
           </div>
           <div
-            class="absolute -bottom-8 -right-8 w-1/2 aspect-square rounded-[2rem] overflow-hidden shadow-2xl border-8 border-background"
+            class="absolute -bottom-8 -right-8 w-1/2 aspect-square rounded-[2.5rem] overflow-hidden shadow-2xl border-8 border-background"
           >
             <img src="/placeholder-2.png" class="w-full h-full object-cover" />
           </div>
@@ -243,10 +250,10 @@ onMounted(() => {
         <div class="order-1 md:order-2">
           <h2 class="text-5xl md:text-6xl font-black leading-[1.05] mb-8">
             Better with<br />
-            <span class="font-serif italic text-accent">someone</span> there.
+            <span class="text-accent">someone</span> there.
           </h2>
           <p
-            class="text-lg text-muted-foreground leading-relaxed mb-10 max-w-md"
+            class="text-lg font-medium text-muted-foreground leading-relaxed mb-10 max-w-md"
           >
             Caphne is for the late library nights, the assignments due tomorrow,
             and the cafes that stay open past midnight. Don't study alone when
@@ -255,7 +262,7 @@ onMounted(() => {
           <Button
             @click="loginWithGoogle"
             size="lg"
-            class="h-14 px-8 rounded-2xl font-bold gap-2"
+            class="h-14 px-8 rounded-2xl font-black gap-2 shadow-xl shadow-primary/5 hover:scale-105 transition-transform"
           >
             Find a studybuddy
             <Icon name="lucide:arrow-right" size="16" />
@@ -264,7 +271,7 @@ onMounted(() => {
       </div>
     </section>
 
-    <!-- ── PAIRS (THE UTILITY) ──────────────────────────────── -->
+    <!-- ── PAIRS ────────────────────────────────────────────── -->
     <section
       ref="pairsRef"
       class="max-w-7xl mx-auto px-4 mb-32 md:mb-48 transition-all duration-1000"
@@ -276,11 +283,16 @@ onMounted(() => {
     >
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
         <!-- BFF Card -->
-        <div class="group flex flex-col">
+        <div
+          class="group flex flex-col p-8 rounded-[3rem] bg-secondary/30 border border-primary/5 hover:bg-secondary/50 transition-colors duration-500"
+        >
           <div
-            class="aspect-[4/3] rounded-[2.5rem] overflow-hidden mb-8 shadow-xl transition-transform duration-500 border-8 border-background"
+            class="aspect-[4/3] rounded-[2.5rem] overflow-hidden mb-8 border-4 border-background shadow-xl"
           >
-            <img src="/placeholder-1.png" class="w-full h-full object-cover" />
+            <img
+              src="/placeholder-1.png"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+            />
           </div>
           <span
             class="inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-accent mb-3"
@@ -289,17 +301,19 @@ onMounted(() => {
             Builder Friend Forever
           </span>
           <h3 class="text-3xl font-black mb-4">
-            Find your <span class="font-serif italic text-accent">BFF</span>.
+            Find your <span class="text-accent">BFF</span>.
           </h3>
-          <p class="text-muted-foreground leading-relaxed mb-8 max-w-md">
+          <p
+            class="text-muted-foreground font-medium leading-relaxed mb-8 max-w-md"
+          >
             For side projects, hackathons, and the weekends you'd otherwise
-            spend debugging alone. Match with other developers and designers.
+            spend debugging alone. Match with developers and designers.
           </p>
           <div class="mt-auto">
             <Button
               variant="outline"
               @click="loginWithGoogle"
-              class="h-12 rounded-xl font-bold px-6 group/btn"
+              class="h-12 rounded-xl font-black px-6 border-primary/10 bg-background/50 group/btn hover:bg-primary hover:text-primary-foreground transition-all duration-300"
             >
               Find a builder
               <Icon
@@ -312,11 +326,16 @@ onMounted(() => {
         </div>
 
         <!-- Coffee Date Card -->
-        <div class="group flex flex-col">
+        <div
+          class="group flex flex-col p-8 rounded-[3rem] bg-secondary/30 border border-primary/5 hover:bg-secondary/50 transition-colors duration-500"
+        >
           <div
-            class="aspect-[4/3] rounded-[2.5rem] overflow-hidden mb-8 shadow-xl transition-transform duration-500 border-8 border-background"
+            class="aspect-[4/3] rounded-[2.5rem] overflow-hidden mb-8 border-4 border-background shadow-xl"
           >
-            <img src="/placeholder-3.png" class="w-full h-full object-cover" />
+            <img
+              src="/placeholder-3.png"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+            />
           </div>
           <span
             class="inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-accent mb-3"
@@ -325,10 +344,11 @@ onMounted(() => {
             Coffee Date
           </span>
           <h3 class="text-3xl font-black mb-4">
-            Or just a
-            <span class="font-serif italic text-accent">coffee date</span>.
+            Or just a <span class="text-accent">coffee date</span>.
           </h3>
-          <p class="text-muted-foreground leading-relaxed mb-8 max-w-md">
+          <p
+            class="text-muted-foreground font-medium leading-relaxed mb-8 max-w-md"
+          >
             Sometimes a study session is really just an excuse for cà phê. Find
             someone to share a table with at your favorite local spot.
           </p>
@@ -336,7 +356,7 @@ onMounted(() => {
             <Button
               variant="outline"
               @click="loginWithGoogle"
-              class="h-12 rounded-xl font-bold px-6 group/btn"
+              class="h-12 rounded-xl font-black px-6 border-primary/10 bg-background/50 group/btn hover:bg-primary hover:text-primary-foreground transition-all duration-300"
             >
               Find a coffee buddy
               <Icon
@@ -362,52 +382,51 @@ onMounted(() => {
       "
     >
       <div
-        class="relative overflow-hidden rounded-[3rem] bg-secondary/50 p-8 md:p-16 border border-border/50"
+        class="relative overflow-hidden rounded-[3.5rem] bg-primary p-12 md:p-20 text-center"
       >
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <div>
-            <span
-              class="inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-4"
-            >
-              <Icon name="lucide:mail" size="13" />
-              Newsletter
-            </span>
-            <h2 class="text-4xl font-black mb-4">
-              Updates, when
-              <span class="font-serif italic text-accent">they matter</span>.
-            </h2>
-            <p class="text-muted-foreground leading-relaxed">
-              New features and study meetups around Saigon. No spam, just the
-              good stuff.
-            </p>
-          </div>
+        <div class="absolute inset-0 bg-accent/5 blur-3xl rounded-full" />
+
+        <div class="relative z-10 max-w-xl mx-auto">
+          <span
+            class="inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-accent mb-6"
+          >
+            <Icon name="lucide:mail" size="13" />
+            Newsletter
+          </span>
+          <h2
+            class="text-4xl md:text-5xl font-black text-background mb-6 leading-tight"
+          >
+            Updates, when they
+            <span class="text-accent underline decoration-4 underline-offset-8"
+              >matter</span
+            >.
+          </h2>
+          <p class="text-background/70 font-bold mb-10">
+            New features and study meetups around Saigon. No spam, just the good
+            stuff.
+          </p>
 
           <form @submit.prevent="submitEmail" class="space-y-3">
-            <div class="relative">
-              <Icon
-                name="lucide:mail"
-                class="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
-                size="18"
-              />
+            <div class="flex flex-col sm:flex-row gap-3">
               <input
                 v-model="email"
                 type="email"
                 placeholder="your@email.com"
                 required
-                class="w-full h-14 pl-12 pr-4 rounded-2xl bg-background border border-border focus:ring-2 focus:ring-accent/20 outline-none transition-all"
+                class="flex-1 h-14 px-6 rounded-2xl bg-background/10 border border-background/20 text-background placeholder:text-background/40 focus:ring-2 focus:ring-accent/40 outline-none transition-all font-bold"
               />
+              <Button
+                type="submit"
+                :disabled="isSubmitting"
+                class="h-14 px-8 rounded-2xl font-black bg-accent text-primary hover:bg-background transition-all"
+              >
+                {{ isSubmitting ? "..." : "Keep me posted" }}
+              </Button>
             </div>
-            <Button
-              type="submit"
-              :disabled="isSubmitting"
-              class="w-full h-14 rounded-2xl font-bold"
-            >
-              {{ isSubmitting ? "Joining..." : "Keep me posted" }}
-            </Button>
             <p
               v-if="message"
-              class="text-center text-sm font-bold mt-2"
-              :class="isError ? 'text-destructive' : 'text-emerald-600'"
+              class="text-sm font-black mt-4"
+              :class="isError ? 'text-destructive' : 'text-accent'"
             >
               {{ message }}
             </p>
@@ -418,7 +437,7 @@ onMounted(() => {
 
     <!-- ── FOOTER ───────────────────────────────────────────── -->
     <footer class="pb-20 px-4">
-      <div class="max-w-7xl mx-auto pt-12 border-t border-border/50">
+      <div class="max-w-7xl mx-auto pt-12 border-t border-primary/5">
         <div
           class="flex flex-col md:flex-row justify-between items-center gap-6"
         >
@@ -428,10 +447,10 @@ onMounted(() => {
             >
               <Icon name="ri:sparkling-2-fill" class="text-accent" size="14" />
             </div>
-            <span class="font-black italic font-serif text-lg">Caphne</span>
+            <span class="font-black text-xl tracking-tighter">caphne.</span>
             <span class="text-muted-foreground/30 px-2">|</span>
             <span
-              class="text-xs font-bold text-muted-foreground uppercase tracking-widest"
+              class="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]"
               >Made in HCM City</span
             >
           </div>
@@ -445,7 +464,7 @@ onMounted(() => {
               <Icon name="ci:github" size="20" />
             </a>
             <p
-              class="text-[11px] font-bold text-muted-foreground uppercase tracking-widest"
+              class="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]"
             >
               © {{ new Date().getFullYear() }} Caphne
             </p>
@@ -457,18 +476,14 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.font-serif {
-  font-family: "Cormorant Garamond", serif;
-}
-
 h1,
 h2,
 h3 {
-  letter-spacing: -0.02em;
+  letter-spacing: -0.04em;
 }
 
 .glass {
-  background: color-mix(in oklch, var(--background) 80%, transparent);
+  background: color-mix(in oklch, var(--background) 90%, transparent);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid color-mix(in oklch, var(--foreground) 10%, transparent);

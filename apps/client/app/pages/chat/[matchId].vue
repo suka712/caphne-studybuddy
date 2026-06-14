@@ -1,94 +1,3 @@
-<template>
-  <div class="flex justify-center items-center min-h-screen">
-    <Card class="w-full max-w-xs flex flex-col h-[45vh] min-h-96 p-2">
-      <CardContent class="flex flex-col h-full p-0">
-        <!-- Header -->
-        <div class="flex items-center gap-2 border-b border-border py-2 pl-2">
-          <NuxtLink to="/matches">
-            <Button variant="ghost" size="sm" class="size-8 p-0">
-              <Icon name="mdi:arrow-left" size="20" />
-            </Button>
-          </NuxtLink>
-          <!-- Status line -->
-          <div class="min-w-0">
-            <p class="text-sm font-semibold truncate">{{ matchDisplayName }}</p>
-            <p v-if="isMatchOnline" class="text-[11px] text-green-500">
-              Online
-            </p>
-            <p
-              v-else-if="matchLastActiveAt"
-              class="text-[11px] text-muted-foreground"
-            >
-              Active {{ timeAgo(matchLastActiveAt) }}
-            </p>
-          </div>
-        </div>
-
-        <!-- Messages -->
-        <div v-if="isLoading" class="flex items-center justify-center h-full">
-          <Icon
-            name="svg-spinners:ring-resize"
-            size="40"
-            class="text-primary"
-          />
-        </div>
-        <ScrollArea v-else ref="scrollAreaRef" class="flex-1 min-h-0">
-          <div class="p-4 space-y-2">
-            <Button
-              v-if="hasMore"
-              variant="ghost"
-              size="sm"
-              class="w-full text-xs text-muted-foreground"
-              :disabled="isLoadingMore"
-              @click="loadMore"
-            >
-              {{ isLoadingMore ? "Loading..." : "Load older messages" }}
-            </Button>
-
-            <p
-              v-if="messages.length === 0 && !hasMore"
-              class="text-muted-foreground text-sm text-center py-4"
-            >
-              No messages yet. Say hi!
-            </p>
-
-            <div
-              v-for="msg in messages"
-              :key="msg.id"
-              :class="[
-                'max-w-[80%] rounded-lg px-3 py-2 text-sm wrap-break-word',
-                msg.senderId === currentUserId
-                  ? 'ml-auto bg-primary text-primary-foreground'
-                  : 'mr-auto bg-muted',
-              ]"
-            >
-              <p>{{ msg.content }}</p>
-              <p class="text-[10px] opacity-60 mt-1">
-                {{ formatTime(msg.createdAt) }}
-              </p>
-            </div>
-          </div>
-        </ScrollArea>
-
-        <!-- Input -->
-        <div class="p-4 border-t border-border">
-          <form @submit.prevent="handleSend" class="flex gap-2 h-full">
-            <Input
-              v-model="newMessage"
-              placeholder="Type a message..."
-              class="flex-1"
-              :disabled="!isConnected"
-            />
-            <Button type="submit" size="sm" class="h-full" :disabled="!canSend">
-              <Icon name="mingcute:send-fill" size="18" />
-            </Button>
-          </form>
-        </div>
-      </CardContent>
-    </Card>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { toast } from "vue-sonner";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -217,3 +126,95 @@ onUnmounted(() => {
   cleanup();
 });
 </script>
+
+<template>
+  <div class="h-full">
+    <div v-if="isLoading" class="flex items-center justify-center h-full">
+      <Icon name="svg-spinners:ring-resize" size="40" class="text-accent" />
+    </div>
+
+    <div v-else class="glass h-full rounded-[3rem] overflow-hidden flex flex-col shadow-2xl border-primary/5">
+      <!-- Header -->
+      <div class="p-4 border-b border-primary/5 flex items-center gap-3">
+        <NuxtLink to="/matches">
+          <Button variant="ghost" size="icon" class="size-10 rounded-xl hover:bg-secondary transition-colors">
+            <Icon name="lucide:arrow-left" size="20" />
+          </Button>
+        </NuxtLink>
+        <div class="min-w-0">
+          <p class="text-base font-black text-primary truncate">{{ matchDisplayName }}</p>
+          <div class="flex items-center gap-1.5">
+            <span class="size-2 rounded-full" :class="isMatchOnline ? 'bg-green-500' : 'bg-slate-400'" />
+            <p v-if="isMatchOnline" class="text-[10px] font-bold text-green-600 uppercase tracking-widest">
+              Online
+            </p>
+            <p v-else-if="matchLastActiveAt" class="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+              {{ timeAgo(matchLastActiveAt) }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <ScrollArea ref="scrollAreaRef" class="flex-1">
+        <div class="p-4 space-y-4">
+          <Button
+            v-if="hasMore"
+            variant="ghost"
+            size="sm"
+            class="w-full text-[10px] font-black uppercase tracking-widest text-muted-foreground/50 hover:text-primary transition-colors"
+            :disabled="isLoadingMore"
+            @click="loadMore"
+          >
+            {{ isLoadingMore ? "..." : "Load older messages" }}
+          </Button>
+
+          <p
+            v-if="messages.length === 0 && !hasMore"
+            class="text-muted-foreground text-sm text-center py-12 font-bold italic"
+          >
+            No messages yet. Say hi!
+          </p>
+
+          <div
+            v-for="msg in messages"
+            :key="msg.id"
+            :class="[
+              'max-w-[85%] flex flex-col',
+              msg.senderId === currentUserId ? 'ml-auto items-end' : 'mr-auto items-start',
+            ]"
+          >
+            <div
+              :class="[
+                'px-4 py-3 text-sm font-bold shadow-sm',
+                msg.senderId === currentUserId
+                  ? 'bg-primary text-primary-foreground rounded-2xl rounded-tr-none'
+                  : 'bg-secondary text-primary rounded-2xl rounded-tl-none',
+              ]"
+            >
+              {{ msg.content }}
+            </div>
+            <p class="text-[9px] font-black text-muted-foreground/40 mt-1 uppercase tracking-tighter">
+              {{ formatTime(msg.createdAt) }}
+            </p>
+          </div>
+        </div>
+      </ScrollArea>
+
+      <!-- Input -->
+      <div class="p-4 bg-background/50 border-t border-primary/5">
+        <form @submit.prevent="handleSend" class="flex gap-2">
+          <Input
+            v-model="newMessage"
+            placeholder="Type a message..."
+            class="flex-1 h-12 rounded-xl bg-background border-primary/5 font-bold text-sm focus:ring-accent/20"
+            :disabled="!isConnected"
+          />
+          <Button type="submit" size="icon" class="size-12 rounded-xl shadow-lg shadow-primary/10 active:scale-95 transition-transform" :disabled="!canSend">
+            <Icon name="mingcute:send-fill" size="20" class="text-accent" />
+          </Button>
+        </form>
+      </div>
+    </div>
+  </div>
+</template>

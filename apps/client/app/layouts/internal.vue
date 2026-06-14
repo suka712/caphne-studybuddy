@@ -20,11 +20,27 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="h-screen bg-background text-foreground grain overflow-hidden">
+  <div class="h-screen bg-background text-foreground grain overflow-hidden flex flex-col items-center justify-center p-4">
     <div class="fixed inset-0 -z-10 dot-grid pointer-events-none" />
-    <main class="mx-auto h-full relative">
+    
+    <!-- App Container -->
+    <main class="w-full max-w-sm h-[85vh] max-h-[800px] relative animate-in fade-in zoom-in-95 duration-700">
       <slot />
     </main>
+    
+    <!-- Simple Bottom Navigation for easy access -->
+    <div class="mt-6 glass rounded-full px-6 py-2 flex items-center gap-6 shadow-lg border-primary/5">
+       <NuxtLink to="/matches" class="text-primary/40 hover:text-primary transition-colors" active-class="!text-primary">
+         <Icon name="lucide:message-circle" size="22" />
+       </NuxtLink>
+       <NuxtLink to="/profile" class="text-primary/40 hover:text-primary transition-colors" active-class="!text-primary">
+         <Icon name="lucide:user" size="22" />
+       </NuxtLink>
+       <NuxtLink to="/settings" class="text-primary/40 hover:text-primary transition-colors" active-class="!text-primary">
+         <Icon name="lucide:settings" size="22" />
+       </NuxtLink>
+    </div>
+
     <Toaster position="top-center" />
   </div>
 </template>

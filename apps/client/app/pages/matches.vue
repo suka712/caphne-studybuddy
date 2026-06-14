@@ -15,7 +15,6 @@ const { getUnreadCount, initUnreadCounts } = useChatNotifications();
 const {
   public: { apiBase },
 } = useRuntimeConfig();
-const { profile, fetchProfile } = useProfile();
 
 interface MatchCard {
   matchId: number;
@@ -70,7 +69,7 @@ onMounted(async () => {
 const handleGenerate = async () => {
   isGenerating.value = true;
   try {
-    const result = await $fetch<{ match: any }>(`${apiBase}/matches`, {
+    const result = await $fetch<{ match }>(`${apiBase}/matches`, {
       method: "POST",
       credentials: "include",
     });
@@ -84,7 +83,7 @@ const handleGenerate = async () => {
     setTimeout(() => {
       onCooldown.value = false;
     }, 2_000);
-  } catch (e: any) {
+  } catch (e) {
     if (e?.response?.status === 429) {
       toast.error("You have reached your match limit for today");
     } else {

@@ -1,117 +1,3 @@
-<template>
-  <div class="flex justify-center items-center min-h-screen">
-    <Card class="w-full max-w-xs flex flex-col p-2 h-[45vh] min-h-80">
-      <CardContent class="flex flex-col h-full p-0">
-        <!-- Header -->
-        <div
-          class="flex items-center p-4 justify-between border-b border-border"
-        >
-          <div class="flex items-center gap-3 min-w-0">
-            <div
-              class="size-15 rounded-full bg-muted flex items-center justify-center overflow-hidden border-2 border-accent shrink-0"
-            >
-              <img
-                v-if="profile?.photoUrl"
-                :src="profile?.photoUrl"
-                class="w-full h-full object-cover"
-              />
-              <Icon
-                v-else
-                name="material-symbols:person-heart-rounded"
-                size="32"
-              />
-            </div>
-            <h1 class="text-lg font-bold truncate">
-              {{ profile?.displayName }}
-            </h1>
-          </div>
-          <Button
-            variant="outline"
-            class="h-7 text-xs shrink-0"
-            :disabled="!canGenerate"
-            @click="handleGenerate"
-          >
-            <Icon
-              v-if="isGenerating"
-              name="svg-spinners:ring-resize"
-              size="14"
-              class="mr-1"
-            />
-            <span>{{ isGenerating ? "Loading..." : "New Match" }}</span>
-          </Button>
-        </div>
-
-        <!-- Matches List -->
-        <div v-if="isLoading" class="flex items-center justify-center h-full">
-          <Icon
-            name="svg-spinners:ring-resize"
-            size="40"
-            class="text-primary"
-          />
-        </div>
-        <ScrollArea v-else class="flex-1 min-h-0">
-          <div class="p-3 space-y-3">
-            <p
-              v-if="matches.length === 0"
-              class="text-muted-foreground text-sm text-center py-4"
-            >
-              No matches yet...
-            </p>
-
-            <NuxtLink
-              v-for="match in matches"
-              :key="match.matchId"
-              :to="`/chat/${match.matchId}`"
-              class="flex items-center gap-3 rounded-full bg-muted hover:bg-muted/80 transition-colors cursor-pointer p-2"
-            >
-              <div class="relative shrink-0">
-                <div
-                  class="size-10 rounded-full bg-background flex items-center justify-center overflow-hidden"
-                >
-                  <img
-                    v-if="match.photoUrl"
-                    :src="match.photoUrl"
-                    class="size-10 object-cover"
-                  />
-                  <Icon v-else name="mdi:account" size="24" />
-                </div>
-                <span
-                  class="absolute -bottom-0.5 -right-0.5 size-3 rounded-full border-2 border-muted"
-                  :class="match.isOnline ? 'bg-green-500' : 'bg-slate-500'"
-                />
-              </div>
-              <div class="overflow-hidden flex-1">
-                <p class="text-sm font-semibold truncate">
-                  {{ match.displayName }}
-                </p>
-                <p class="text-xs text-muted-foreground truncate">
-                  {{ match.major }} · {{ match.year }}
-                </p>
-              </div>
-              <Badge
-                v-if="getUnreadCount(match.matchId) > 0"
-                class="size-6 p-0 text-[10px] flex items-center justify-center shrink-0"
-              >
-                {{ getUnreadCount(match.matchId) }}
-              </Badge>
-            </NuxtLink>
-          </div>
-        </ScrollArea>
-
-        <!-- Footer -->
-        <div class="p-4 border-t border-border">
-          <NuxtLink to="/profile">
-            <Button variant="outline" class="hover:text-foreground w-full">
-              <Icon name="material-symbols:person" size="16" />
-              <span class="text-sm">Profile</span>
-            </Button>
-          </NuxtLink>
-        </div>
-      </CardContent>
-    </Card>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { toast } from "vue-sonner";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -209,3 +95,109 @@ const handleGenerate = async () => {
   }
 };
 </script>
+
+<template>
+  <div class="h-full">
+    <div v-if="isLoading" class="flex items-center justify-center h-full">
+      <Icon name="svg-spinners:ring-resize" size="40" class="text-accent" />
+    </div>
+
+    <div
+      v-else
+      class="glass h-full rounded-[3rem] overflow-hidden flex flex-col shadow-2xl border-primary/5"
+    >
+      <!-- Header -->
+      <div
+        class="p-6 border-b border-primary/5 flex items-center justify-between"
+      >
+        <h1 class="text-xl font-black text-primary flex items-center gap-2">
+          Matches
+          <span
+            class="text-xs font-bold px-2 py-0.5 rounded-full bg-secondary text-muted-foreground"
+          >
+            {{ matches.length }}
+          </span>
+        </h1>
+        <Button
+          variant="outline"
+          class="rounded-xl h-9 px-4 font-bold border-primary/10 hover:bg-primary hover:text-primary-foreground transition-all"
+          :disabled="!canGenerate"
+          @click="handleGenerate"
+        >
+          <Icon
+            v-if="isGenerating"
+            name="svg-spinners:ring-resize"
+            size="14"
+            class="mr-2"
+          />
+          <Icon v-else name="lucide:sparkles" size="14" class="mr-2" />
+          New
+        </Button>
+      </div>
+
+      <!-- Matches List -->
+      <ScrollArea class="flex-1">
+        <div class="p-4 space-y-3">
+          <p
+            v-if="matches.length === 0"
+            class="text-muted-foreground text-sm text-center py-12 font-bold italic"
+          >
+            No matches yet. Click "New" to start!
+          </p>
+
+          <NuxtLink
+            v-for="match in matches"
+            :key="match.matchId"
+            :to="`/chat/${match.matchId}`"
+            class="flex items-center gap-4 rounded-3xl bg-secondary/30 hover:bg-secondary/60 transition-all cursor-pointer p-3 border border-transparent hover:border-primary/5 group"
+          >
+            <div class="relative shrink-0">
+              <div
+                class="size-12 rounded-2xl bg-background flex items-center justify-center overflow-hidden border-2 border-background shadow-md"
+              >
+                <img
+                  v-if="match.photoUrl"
+                  :src="match.photoUrl"
+                  class="w-full h-full object-cover"
+                />
+                <Icon
+                  v-else
+                  name="mdi:account"
+                  size="24"
+                  class="text-muted-foreground"
+                />
+              </div>
+              <span
+                class="absolute -bottom-1 -right-1 size-3.5 rounded-full border-2 border-background"
+                :class="match.isOnline ? 'bg-green-500' : 'bg-slate-400'"
+              />
+            </div>
+            <div class="overflow-hidden flex-1">
+              <p
+                class="text-sm font-black text-primary truncate group-hover:text-accent transition-colors"
+              >
+                {{ match.displayName }}
+              </p>
+              <p class="text-[11px] font-bold text-muted-foreground truncate">
+                {{ match.major }}
+              </p>
+            </div>
+            <div class="flex flex-col items-end gap-1 shrink-0">
+              <Badge
+                v-if="getUnreadCount(match.matchId) > 0"
+                class="bg-accent text-primary-foreground font-black animate-bounce"
+              >
+                {{ getUnreadCount(match.matchId) }}
+              </Badge>
+              <Icon
+                name="lucide:chevron-right"
+                size="16"
+                class="text-muted-foreground opacity-20 group-hover:opacity-100 transition-opacity"
+              />
+            </div>
+          </NuxtLink>
+        </div>
+      </ScrollArea>
+    </div>
+  </div>
+</template>

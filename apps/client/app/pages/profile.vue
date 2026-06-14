@@ -1,82 +1,3 @@
-<template>
-  <div class="flex justify-center items-center min-h-screen">
-    <div v-if="isCheckingProfile" class="flex flex-col items-center">
-      <Icon name="svg-spinners:ring-resize" size="40" class="text-primary" />
-    </div>
-
-    <Card
-      v-else-if="profile"
-      class="w-full max-w-xs flex flex-col p-2 h-[45vh] min-h-80"
-    >
-      <CardContent class="flex flex-col h-full p-0">
-        <!-- Header -->
-        <div class="flex items-center gap-3 p-4 border-b border-border">
-          <div
-            class="size-15 rounded-full bg-muted flex items-center justify-center overflow-hidden border-2 border-accent shrink-0"
-          >
-            <img
-              v-if="profile?.photoUrl"
-              :src="profile?.photoUrl"
-              class="w-full h-full object-cover"
-            />
-            <Icon
-              v-else
-              name="material-symbols:person-heart-rounded"
-              size="32"
-            />
-          </div>
-          <div class="overflow-hidden">
-            <h1 class="text-lg font-bold">{{ profile.displayName }}</h1>
-            <p class="text-muted-foreground text-sm overflow-hidden">
-              {{ authUser?.email }}
-            </p>
-          </div>
-        </div>
-
-        <!-- Content -->
-        <div class="flex-1 min-h-0 overflow-y-auto p-4">
-          <div class="p-4 rounded-lg bg-muted space-y-3">
-            <div>
-              <label class="text-sm text-muted-foreground/80">Major</label>
-              <p class="text-base">{{ profile.major }}</p>
-            </div>
-
-            <div>
-              <label class="text-sm text-muted-foreground/80">Year</label>
-              <p class="text-base">{{ profile.year }}</p>
-            </div>
-
-            <div v-if="profile.bio">
-              <label class="text-sm text-muted-foreground/80">Bio</label>
-              <p class="text-base">{{ profile.bio }}</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Footer -->
-        <div class="p-4 border-t border-border">
-          <div class="flex gap-2">
-            <NuxtLink class="flex flex-1" to="/matches">
-              <Button variant="outline" class="hover:text-foreground w-full">
-                <Icon name="material-symbols:heart-smile" size="16" />
-                <span class="text-sm">Matches</span>
-              </Button>
-            </NuxtLink>
-            <NuxtLink to="/settings">
-              <Button variant="outline" class="hover:text-foreground flex">
-                <Icon
-                  name="material-symbols:settings-suggest-rounded"
-                  size="16"
-                />
-              </Button>
-            </NuxtLink>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  </div>
-</template>
-
 <script setup lang="ts">
 definePageMeta({
   middleware: "auth",
@@ -90,3 +11,57 @@ onMounted(() => {
   fetchProfile();
 });
 </script>
+
+<template>
+  <div class="h-full">
+    <div v-if="isCheckingProfile" class="flex items-center justify-center h-full">
+      <Icon name="svg-spinners:ring-resize" size="40" class="text-accent" />
+    </div>
+
+    <div v-else-if="profile" class="glass h-full rounded-[3rem] overflow-hidden flex flex-col shadow-2xl border-primary/5">
+      <!-- Header -->
+      <div class="p-8 pb-6 flex flex-col items-center text-center space-y-4">
+        <div class="size-24 rounded-[2rem] bg-secondary flex items-center justify-center overflow-hidden border-4 border-background shadow-xl">
+          <img v-if="profile?.photoUrl" :src="profile.photoUrl" class="w-full h-full object-cover" />
+          <Icon v-else name="material-symbols:person-heart-rounded" size="48" class="text-primary/20" />
+        </div>
+        <div>
+          <h1 class="text-2xl font-black tracking-tight text-primary">{{ profile.displayName }}</h1>
+          <p class="text-sm font-bold text-muted-foreground">{{ authUser?.email }}</p>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="flex-1 overflow-y-auto px-6 pb-8 space-y-6">
+        <div class="p-6 rounded-[2rem] bg-secondary/30 border border-primary/5 space-y-5">
+          <div class="space-y-1">
+            <label class="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Major</label>
+            <p class="text-lg font-bold text-primary">{{ profile.major }}</p>
+          </div>
+
+          <div class="space-y-1">
+            <label class="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Year</label>
+            <p class="text-lg font-bold text-primary">{{ profile.year }}</p>
+          </div>
+
+          <div v-if="profile.bio" class="space-y-1">
+            <label class="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Bio</label>
+            <p class="text-sm font-medium leading-relaxed text-muted-foreground">{{ profile.bio }}</p>
+          </div>
+        </div>
+        
+        <!-- Social Stats Placeholder -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="p-4 rounded-2xl bg-accent/10 border border-accent/20 text-center">
+            <p class="text-lg font-black text-primary">12</p>
+            <p class="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Matches</p>
+          </div>
+          <div class="p-4 rounded-2xl bg-cafe-matcha/10 border border-cafe-matcha/20 text-center">
+            <p class="text-lg font-black text-primary">4</p>
+            <p class="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Buddies</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

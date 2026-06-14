@@ -35,4 +35,11 @@ export default defineNuxtConfig({
   vite: {
     plugins: [tailwindcss()],
   },
+  typescript: {
+    tsConfig: {
+      compilerOptions: {
+        noImplicitAny: false,
+      },
+    },
+  },
 });

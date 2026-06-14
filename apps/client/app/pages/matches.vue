@@ -11,6 +11,7 @@ definePageMeta({
 
 const { getSocket } = useSocket();
 const { getUnreadCount, initUnreadCounts } = useChatNotifications();
+const { fetchProfile } = useProfile();
 
 const {
   public: { apiBase },
@@ -69,7 +70,7 @@ onMounted(async () => {
 const handleGenerate = async () => {
   isGenerating.value = true;
   try {
-    const result = await $fetch<{ match }>(`${apiBase}/matches`, {
+    const result = await $fetch<{ match: any }>(`${apiBase}/matches`, {
       method: "POST",
       credentials: "include",
     });
@@ -83,7 +84,7 @@ const handleGenerate = async () => {
     setTimeout(() => {
       onCooldown.value = false;
     }, 2_000);
-  } catch (e) {
+  } catch (e: any) {
     if (e?.response?.status === 429) {
       toast.error("You have reached your match limit for today");
     } else {

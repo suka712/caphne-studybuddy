@@ -1,17 +1,6 @@
-import { matchConfig } from "../../config/matchConfig.js";
 import { db } from "../../db/db.js";
 import { matches, messages, users, profiles } from "../../db/schema.js";
-import {
-  and,
-  count,
-  desc,
-  eq,
-  gte,
-  isNull,
-  ne,
-  notInArray,
-  sql,
-} from "drizzle-orm";
+import { and, count, eq, isNull, ne, notInArray, sql } from "drizzle-orm";
 import { userIsOnline } from "../chat/socket.js";
 
 export const generateMatch = async (userId: number) => {

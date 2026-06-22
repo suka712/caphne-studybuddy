@@ -2,13 +2,11 @@ import type { Request, Response, NextFunction } from "express";
 import { eq } from "drizzle-orm";
 import { verifyToken } from "../features/auth/jwt.service.js";
 import { db } from "../db/db.js";
-import { users } from "../db/schema.js";
+import { users, type User } from "../db/schema.js";
 
-declare global {
-  namespace Express {
-    interface Request {
-      user?: User;
-    }
+declare module "express-serve-static-core" {
+  interface Request {
+    user?: User;
   }
 }
 

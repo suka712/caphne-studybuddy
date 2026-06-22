@@ -75,7 +75,7 @@ const handleGenerate = async () => {
       credentials: "include",
     });
     await fetchMatches();
-    if (result.match) {
+    if (result) {
       toast.success("New match found!");
     } else {
       toast.info("No more matches available right now");

@@ -40,9 +40,9 @@ matchesRouter.post("/", requireAuth, async (req, res) => {
       });
     }
 
-    const newMatch = await generateMatch(user.id);
+    const match = await generateMatch(user.id);
 
-    res.json(newMatch);
+    res.json(match);
   } catch (e) {
     console.log(`Error generating new matches: ${e}`);
     res.status(500).json({ error: "Something went wrong" });

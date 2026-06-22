@@ -100,8 +100,8 @@ onMounted(() => {
           </p>
 
           <button
-            @click="loginWithGoogle"
             class="flex items-center gap-4 animate-in fade-in slide-in-from-bottom-16 duration-1000 delay-300 hover:opacity-80 transition-opacity cursor-pointer group/social"
+            @click="loginWithGoogle"
           >
             <div class="flex -space-x-3">
               <div
@@ -131,7 +131,7 @@ onMounted(() => {
           class="flex justify-center lg:justify-end animate-in fade-in zoom-in-95 duration-1000 delay-300"
         >
           <div
-            class="w-full max-w-sm glass rounded-[3rem] p-8 shadow-2xl border-primary/5 relative overflow-hidden"
+            class="w-full max-w-sm p-8 relative overflow-hidden bg-card border shadow-sm rounded-xl"
           >
             <div
               class="absolute -top-10 -right-10 size-32 bg-accent/20 blur-3xl rounded-full"
@@ -163,9 +163,9 @@ onMounted(() => {
 
             <div v-if="!isAuthenticated" class="space-y-3">
               <Button
-                @click="loginWithGoogle"
                 size="lg"
                 class="w-full h-14 rounded-2xl font-black gap-2 shadow-xl shadow-primary/10 hover:scale-[1.02] transition-transform active:scale-95"
+                @click="loginWithGoogle"
               >
                 <Icon
                   name="ri:sparkling-2-fill"
@@ -176,16 +176,16 @@ onMounted(() => {
               </Button>
               <div class="grid grid-cols-2 gap-2">
                 <Button
-                  @click="loginWithGoogle"
                   variant="outline"
                   class="h-12 rounded-xl text-xs font-black gap-2 border-primary/10 hover:bg-primary/5"
+                  @click="loginWithGoogle"
                 >
                   <Icon name="ci:google" size="14" /> Google
                 </Button>
                 <Button
-                  @click="loginWithGitHub"
                   variant="outline"
                   class="h-12 rounded-xl text-xs font-black gap-2 border-primary/10 hover:bg-primary/5"
+                  @click="loginWithGitHub"
                 >
                   <Icon name="ci:github" size="14" /> GitHub
                 </Button>
@@ -260,9 +260,9 @@ onMounted(() => {
             you don't have to.
           </p>
           <Button
-            @click="loginWithGoogle"
             size="lg"
             class="h-14 px-8 rounded-2xl font-black gap-2 shadow-xl shadow-primary/5 hover:scale-105 transition-transform"
+            @click="loginWithGoogle"
           >
             Find a studybuddy
             <Icon name="lucide:arrow-right" size="16" />
@@ -312,8 +312,8 @@ onMounted(() => {
           <div class="mt-auto">
             <Button
               variant="outline"
-              @click="loginWithGoogle"
               class="h-12 rounded-xl font-black px-6 border-primary/10 bg-background/50 group/btn hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+              @click="loginWithGoogle"
             >
               Find a builder
               <Icon
@@ -355,8 +355,8 @@ onMounted(() => {
           <div class="mt-auto">
             <Button
               variant="outline"
-              @click="loginWithGoogle"
               class="h-12 rounded-xl font-black px-6 border-primary/10 bg-background/50 group/btn hover:bg-primary hover:text-primary-foreground transition-all duration-300"
+              @click="loginWithGoogle"
             >
               Find a coffee buddy
               <Icon
@@ -406,7 +406,7 @@ onMounted(() => {
             stuff.
           </p>
 
-          <form @submit.prevent="submitEmail" class="space-y-3">
+          <form class="space-y-3" @submit.prevent="submitEmail">
             <div class="flex flex-col sm:flex-row gap-3">
               <input
                 v-model="email"
@@ -480,12 +480,5 @@ h1,
 h2,
 h3 {
   letter-spacing: -0.04em;
-}
-
-.glass {
-  background: color-mix(in oklch, var(--background) 90%, transparent);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid color-mix(in oklch, var(--foreground) 10%, transparent);
 }
 </style>

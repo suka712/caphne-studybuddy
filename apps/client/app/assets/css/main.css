@@ -95,14 +95,6 @@
 }
 
 @layer utilities {
-  .glass {
-    @apply bg-white/60 backdrop-blur-xl border border-white/40 shadow-xl;
-  }
-  
-  .dark .glass {
-    @apply bg-black/40 backdrop-blur-xl border border-white/10 shadow-xl;
-  }
-
   .grain {
     position: relative;
   }

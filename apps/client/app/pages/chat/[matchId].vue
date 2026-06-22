@@ -133,22 +133,40 @@ onUnmounted(() => {
       <Icon name="svg-spinners:ring-resize" size="40" class="text-accent" />
     </div>
 
-    <div v-else class="glass h-full rounded-[3rem] overflow-hidden flex flex-col shadow-2xl border-primary/5">
+    <div
+      v-else
+      class="h-full overflow-hidden flex flex-col bg-card border shadow-sm rounded-xl"
+    >
       <!-- Header -->
       <div class="p-4 border-b border-primary/5 flex items-center gap-3">
         <NuxtLink to="/matches">
-          <Button variant="ghost" size="icon" class="size-10 rounded-xl hover:bg-secondary transition-colors">
+          <Button
+            variant="ghost"
+            size="icon"
+            class="size-10 rounded-xl hover:bg-secondary transition-colors"
+          >
             <Icon name="lucide:arrow-left" size="20" />
           </Button>
         </NuxtLink>
         <div class="min-w-0">
-          <p class="text-base font-black text-primary truncate">{{ matchDisplayName }}</p>
+          <p class="text-base font-black text-primary truncate">
+            {{ matchDisplayName }}
+          </p>
           <div class="flex items-center gap-1.5">
-            <span class="size-2 rounded-full" :class="isMatchOnline ? 'bg-green-500' : 'bg-slate-400'" />
-            <p v-if="isMatchOnline" class="text-[10px] font-bold text-green-600 uppercase tracking-widest">
+            <span
+              class="size-2 rounded-full"
+              :class="isMatchOnline ? 'bg-green-500' : 'bg-slate-400'"
+            />
+            <p
+              v-if="isMatchOnline"
+              class="text-[10px] font-bold text-green-600 uppercase tracking-widest"
+            >
               Online
             </p>
-            <p v-else-if="matchLastActiveAt" class="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+            <p
+              v-else-if="matchLastActiveAt"
+              class="text-[10px] font-bold text-muted-foreground uppercase tracking-widest"
+            >
               {{ timeAgo(matchLastActiveAt) }}
             </p>
           </div>
@@ -181,7 +199,9 @@ onUnmounted(() => {
             :key="msg.id"
             :class="[
               'max-w-[85%] flex flex-col',
-              msg.senderId === currentUserId ? 'ml-auto items-end' : 'mr-auto items-start',
+              msg.senderId === currentUserId
+                ? 'ml-auto items-end'
+                : 'mr-auto items-start',
             ]"
           >
             <div
@@ -194,7 +214,9 @@ onUnmounted(() => {
             >
               {{ msg.content }}
             </div>
-            <p class="text-[9px] font-black text-muted-foreground/40 mt-1 uppercase tracking-tighter">
+            <p
+              class="text-[9px] font-black text-muted-foreground/40 mt-1 uppercase tracking-tighter"
+            >
               {{ formatTime(msg.createdAt) }}
             </p>
           </div>
@@ -203,14 +225,19 @@ onUnmounted(() => {
 
       <!-- Input -->
       <div class="p-4 bg-background/50 border-t border-primary/5">
-        <form @submit.prevent="handleSend" class="flex gap-2">
+        <form class="flex gap-2" @submit.prevent="handleSend">
           <Input
             v-model="newMessage"
             placeholder="Type a message..."
             class="flex-1 h-12 rounded-xl bg-background border-primary/5 font-bold text-sm focus:ring-accent/20"
             :disabled="!isConnected"
           />
-          <Button type="submit" size="icon" class="size-12 rounded-xl shadow-lg shadow-primary/10 active:scale-95 transition-transform" :disabled="!canSend">
+          <Button
+            type="submit"
+            size="icon"
+            class="size-12 rounded-xl shadow-lg shadow-primary/10 active:scale-95 transition-transform"
+            :disabled="!canSend"
+          >
             <Icon name="mingcute:send-fill" size="20" class="text-accent" />
           </Button>
         </form>

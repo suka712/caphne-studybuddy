@@ -20,25 +20,43 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="h-screen bg-background text-foreground grain overflow-hidden flex flex-col items-center justify-center p-4">
+  <div
+    class="h-screen bg-background text-foreground grain overflow-hidden flex flex-col items-center justify-center"
+  >
     <div class="fixed inset-0 -z-10 dot-grid pointer-events-none" />
-    
-    <!-- App Container -->
-    <main class="w-full max-w-sm h-[85vh] max-h-[800px] relative animate-in fade-in zoom-in-95 duration-700">
+
+    <!-- App Container: fixed-size card, consistent across every page -->
+    <main
+      class="w-full max-w-sm h-4/6 max-h-215 relative animate-in fade-in zoom-in-95 duration-700 grid grid-cols-1 grid-rows-1"
+    >
       <slot />
     </main>
-    
+
     <!-- Simple Bottom Navigation for easy access -->
-    <div class="mt-6 glass rounded-full px-6 py-2 flex items-center gap-6 shadow-lg border-primary/5">
-       <NuxtLink to="/matches" class="text-primary/40 hover:text-primary transition-colors" active-class="!text-primary">
-         <Icon name="lucide:message-circle" size="22" />
-       </NuxtLink>
-       <NuxtLink to="/profile" class="text-primary/40 hover:text-primary transition-colors" active-class="!text-primary">
-         <Icon name="lucide:user" size="22" />
-       </NuxtLink>
-       <NuxtLink to="/settings" class="text-primary/40 hover:text-primary transition-colors" active-class="!text-primary">
-         <Icon name="lucide:settings" size="22" />
-       </NuxtLink>
+    <div
+      class="mt-6 shrink-0 bg-card border shadow-sm rounded-full px-6 py-2 flex items-center gap-6"
+    >
+      <NuxtLink
+        to="/matches"
+        class="text-primary/40 hover:text-primary transition-colors"
+        active-class="!text-primary"
+      >
+        <Icon name="lucide:message-circle" size="22" />
+      </NuxtLink>
+      <NuxtLink
+        to="/profile"
+        class="text-primary/40 hover:text-primary transition-colors"
+        active-class="!text-primary"
+      >
+        <Icon name="lucide:user" size="22" />
+      </NuxtLink>
+      <NuxtLink
+        to="/settings"
+        class="text-primary/40 hover:text-primary transition-colors"
+        active-class="!text-primary"
+      >
+        <Icon name="lucide:settings" size="22" />
+      </NuxtLink>
     </div>
 
     <Toaster position="top-center" />

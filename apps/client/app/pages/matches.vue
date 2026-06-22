@@ -104,7 +104,7 @@ const handleGenerate = async () => {
 
     <div
       v-else
-      class="glass h-full rounded-[3rem] overflow-hidden flex flex-col shadow-2xl border-primary/5"
+      class="h-full overflow-hidden flex flex-col bg-card border shadow-sm rounded-xl"
     >
       <!-- Header -->
       <div

@@ -48,3 +48,16 @@ matchesRouter.post("/", requireAuth, async (req, res) => {
     res.status(500).json({ error: "Something went wrong" });
   }
 });
+
+// Internal for profile display
+matchesRouter.get("/count", requireAuth, async (req, res) => {
+  const user = req.user as User;
+
+  try {
+    const result = await getAllMatches(user.id);
+    res.json({ matchCount: result.matches.length });
+  } catch (e) {
+    console.log(`Error getting match count: ${e}`);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+});

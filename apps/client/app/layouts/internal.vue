@@ -34,7 +34,7 @@ onUnmounted(() => {
 
     <!-- Simple Bottom Navigation for easy access -->
     <div
-      class="mt-6 shrink-0 bg-card border shadow-sm rounded-full px-6 py-2 flex items-center gap-6"
+      class="mt-5 shrink-0 bg-card border shadow-sm rounded-full px-6 py-2 pt-3.5 flex items-center gap-6"
     >
       <NuxtLink
         to="/matches"

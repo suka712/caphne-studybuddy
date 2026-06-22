@@ -4,6 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineNuxtConfig({
   ssr: false,
   app: {
+    pageTransition: { name: "page", mode: "out-in" },
     head: {
       link: [
         { rel: "preconnect", href: "https://fonts.googleapis.com" },

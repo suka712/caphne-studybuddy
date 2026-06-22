@@ -117,3 +117,21 @@
   background-size: 32px 32px;
   opacity: 0.06;
 }
+
+/* Page transition for route changes (pill / nav navigation) */
+.page-enter-active,
+.page-leave-active {
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}

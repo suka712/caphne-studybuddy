@@ -136,7 +136,7 @@ const handleGenerate = async () => {
       </div>
 
       <!-- Matches List -->
-      <ScrollArea class="flex-1">
+      <ScrollArea class="flex-1 min-h-0">
         <div class="p-4 space-y-3">
           <p
             v-if="matches.length === 0"

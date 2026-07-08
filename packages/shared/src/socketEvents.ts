@@ -11,3 +11,4 @@ export const SocketEvents = {
   MESSAGES_ARE_READ: "messages_are_read",
   ERROR: "error",
 } as const;
+// Test to redeploy front and backend Jul 8

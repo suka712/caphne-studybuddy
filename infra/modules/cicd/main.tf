@@ -6,6 +6,14 @@ resource "aws_iam_openid_connect_provider" "github" {
   thumbprint_list = ["6938fd4d98bab03faadb97b34396831e3780aea1"]
 }
 
+# GitLab CI OIDC provider — the migration made GitLab the primary CI, so its
+# tokens also need to be exchangeable for AWS credentials. AWS validates
+# gitlab.com against its trust store, so no thumbprint is required.
+resource "aws_iam_openid_connect_provider" "gitlab" {
+  url            = "https://gitlab.com"
+  client_id_list = ["https://gitlab.com"]
+}
+
 # Trust policy: which GitHub Actions runs can assume this role.
 # We scope to `repo:<owner>/<repo>:*` which covers main, PR branches, tags.
 data "aws_iam_policy_document" "trust" {
@@ -30,6 +38,29 @@ data "aws_iam_policy_document" "trust" {
       values   = ["repo:${var.github_repo}:*"]
     }
   }
+
+  # GitLab CI: scope to this project's branches (covers MR branches + main).
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+
+    principals {
+      type        = "Federated"
+      identifiers = [aws_iam_openid_connect_provider.gitlab.arn]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "gitlab.com:aud"
+      values   = ["https://gitlab.com"]
+    }
+
+    condition {
+      test     = "StringLike"
+      variable = "gitlab.com:sub"
+      values   = ["project_path:${var.gitlab_project}:ref_type:branch:ref:*"]
+    }
+  }
 }
 
 resource "aws_iam_role" "deploy" {
@@ -43,8 +74,8 @@ resource "aws_iam_role" "deploy" {
 data "aws_iam_policy_document" "deploy" {
   # ── Frontend deploys: sync to S3 bucket + invalidate CloudFront ──
   statement {
-    sid     = "FrontendS3Sync"
-    effect  = "Allow"
+    sid    = "FrontendS3Sync"
+    effect = "Allow"
     actions = [
       "s3:ListBucket",
       "s3:GetBucketLocation",
@@ -52,8 +83,8 @@ data "aws_iam_policy_document" "deploy" {
     resources = ["arn:aws:s3:::${var.frontend_bucket_name}"]
   }
   statement {
-    sid     = "FrontendS3Objects"
-    effect  = "Allow"
+    sid    = "FrontendS3Objects"
+    effect = "Allow"
     actions = [
       "s3:GetObject",
       "s3:PutObject",
@@ -62,8 +93,8 @@ data "aws_iam_policy_document" "deploy" {
     resources = ["arn:aws:s3:::${var.frontend_bucket_name}/*"]
   }
   statement {
-    sid     = "CloudFrontInvalidate"
-    effect  = "Allow"
+    sid    = "CloudFrontInvalidate"
+    effect = "Allow"
     actions = [
       "cloudfront:CreateInvalidation",
       "cloudfront:GetInvalidation",
@@ -83,8 +114,8 @@ data "aws_iam_policy_document" "deploy" {
     ]
   }
   statement {
-    sid     = "SSMCommandStatus"
-    effect  = "Allow"
+    sid    = "SSMCommandStatus"
+    effect = "Allow"
     actions = [
       "ssm:GetCommandInvocation",
       "ssm:ListCommandInvocations",
@@ -95,8 +126,8 @@ data "aws_iam_policy_document" "deploy" {
 
   # ── Parameter Store: read so workflows can pull config at build time ──
   statement {
-    sid     = "ParameterStoreRead"
-    effect  = "Allow"
+    sid    = "ParameterStoreRead"
+    effect = "Allow"
     actions = [
       "ssm:GetParameter",
       "ssm:GetParameters",
@@ -107,8 +138,8 @@ data "aws_iam_policy_document" "deploy" {
 
   # ── Terraform state: read/write the state file and acquire the lock ──
   statement {
-    sid     = "TerraformStateBucket"
-    effect  = "Allow"
+    sid    = "TerraformStateBucket"
+    effect = "Allow"
     actions = [
       "s3:ListBucket",
       "s3:GetBucketLocation",
@@ -116,8 +147,8 @@ data "aws_iam_policy_document" "deploy" {
     resources = ["arn:aws:s3:::${var.tf_state_bucket}"]
   }
   statement {
-    sid     = "TerraformStateObjects"
-    effect  = "Allow"
+    sid    = "TerraformStateObjects"
+    effect = "Allow"
     actions = [
       "s3:GetObject",
       "s3:PutObject",

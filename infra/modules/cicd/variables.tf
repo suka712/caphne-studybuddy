@@ -3,6 +3,11 @@ variable "github_repo" {
   type        = string
 }
 
+variable "gitlab_project" {
+  description = "GitLab project in group/name format (used to scope the OIDC sub)"
+  type        = string
+}
+
 variable "frontend_bucket_name" {
   description = "S3 bucket used for the static site"
   type        = string

@@ -35,6 +35,7 @@ module "cicd" {
   source = "./modules/cicd"
 
   github_repo               = "suka712/caphne-studybuddy"
+  gitlab_project            = "nauri/caphne-studybuddy"
   frontend_bucket_name      = module.frontend.bucket_name
   frontend_distribution_arn = "arn:aws:cloudfront::387219500825:distribution/${module.frontend.distribution_id}"
   api_distribution_arn      = "arn:aws:cloudfront::387219500825:distribution/${module.backend.api_distribution_id}"

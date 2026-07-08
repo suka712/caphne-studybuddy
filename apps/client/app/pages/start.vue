@@ -458,6 +458,7 @@ onMounted(async () => {
         <h2 class="text-2xl font-semibold">What are you into?</h2>
       </div>
 
+      <!-- Test change -->
       <div class="w-full max-h-[50vh] overflow-y-auto pr-2">
         <Accordion type="multiple" class="w-full" :default-value="['academic']">
           <AccordionItem

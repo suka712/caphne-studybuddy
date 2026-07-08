@@ -1,21 +1,26 @@
-# GitLab mirror of .github/workflows/pr-checks.yml — lint + build on every
-# feature-branch push. Deploy jobs (frontend / backend / infra) are deliberately
-# NOT here yet: they assume an AWS IAM role that currently trusts only GitHub's
-# OIDC provider, so they'd fail until that trust policy is updated for GitLab.
+# GitLab CI — mirrors the GitHub Actions workflows.
+#   checks  ← pr-checks.yml        (lint + build, on merge requests)
+#   plan    ← pr-infra-plan.yml    (terraform plan, on MRs touching infra/**)
+#   apply   ← apply-infra.yml      (terraform apply, manual, on main)
+#
+# App deploys (deploy-frontend / deploy-backend) are NOT here yet — only infra.
 
 stages:
   - checks
+  - plan
+  - apply
 
-# Only run these checks on non-main branches. Pushes to main are deploys, which
-# are handled outside this file. Mirrors the GitHub `branches-ignore: [main]`.
+# Run pipelines for merge requests and for the default branch. MR pipelines
+# carry the checks + terraform plan; the main pipeline carries terraform apply.
+# This mirrors the GitHub triggers (pull_request + push-to-main).
 workflow:
   rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-      when: never
-    - when: always
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
-# Shared setup: Node 24 + pnpm 10 (matching the pnpm/action-setup version in the
-# GitHub workflow), with the pnpm store cached per-lockfile to speed up installs.
+# ---------------------------------------------------------------------------
+# Node checks (mirror of .github/workflows/pr-checks.yml)
+# ---------------------------------------------------------------------------
 .node:
   image: node:24-slim
   before_script:
@@ -28,6 +33,8 @@ workflow:
         - pnpm-lock.yaml
     paths:
       - .pnpm-store
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
 
 lint:
   stage: checks
@@ -48,3 +55,67 @@ build-server:
   extends: .node
   script:
     - pnpm --filter server build
+
+# ---------------------------------------------------------------------------
+# Terraform (mirror of apply-infra.yml + pr-infra-plan.yml)
+#
+# Auth: GitLab issues an OIDC token per job; we write it to a file and let the
+# AWS provider assume the role natively via AWS_ROLE_ARN + web-identity token —
+# no AWS CLI needed. Set AWS_ROLE_ARN as a CI/CD variable in project settings.
+# State is the existing S3 backend (infra/state.tf), unchanged.
+# ---------------------------------------------------------------------------
+.terraform:
+  image:
+    name: hashicorp/terraform:1.15.6
+    entrypoint: [""]
+  variables:
+    AWS_DEFAULT_REGION: ap-southeast-1
+    AWS_ROLE_SESSION_NAME: gitlab-ci
+    AWS_WEB_IDENTITY_TOKEN_FILE: /tmp/gitlab_oidc_token
+  id_tokens:
+    GITLAB_OIDC_TOKEN:
+      aud: https://gitlab.com
+  before_script:
+    - echo "$GITLAB_OIDC_TOKEN" > "$AWS_WEB_IDENTITY_TOKEN_FILE"
+    - cd infra
+    - terraform init -input=false
+
+tf-plan:
+  stage: plan
+  extends: .terraform
+  script:
+    - apk add --no-cache jq
+    - terraform plan -input=false -out=plan.tfplan
+    # Convert the plan into the JSON summary GitLab renders in the MR widget.
+    - terraform show -json plan.tfplan > plan.show.json
+    - |
+      jq -r '([.resource_changes[]?.change.actions?] | flatten)
+        | {"create": (map(select(.=="create")) | length),
+           "update": (map(select(.=="update")) | length),
+           "delete": (map(select(.=="delete")) | length)}' plan.show.json > plan.json
+  artifacts:
+    paths:
+      - infra/plan.tfplan
+    reports:
+      terraform: infra/plan.json
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - infra/**/*
+
+tf-apply:
+  stage: apply
+  extends: .terraform
+  # Manual gate = the GitHub `environment: production` approval. Protect the
+  # `production` environment in Settings → CI/CD → Environments to require a
+  # specific approver before this can run.
+  environment:
+    name: production
+  script:
+    - terraform plan -input=false -out=plan.tfplan
+    - terraform apply -input=false plan.tfplan
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        - infra/**/*
+      when: manual

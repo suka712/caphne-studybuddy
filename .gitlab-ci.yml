@@ -1,0 +1,50 @@
+# GitLab mirror of .github/workflows/pr-checks.yml — lint + build on every
+# feature-branch push. Deploy jobs (frontend / backend / infra) are deliberately
+# NOT here yet: they assume an AWS IAM role that currently trusts only GitHub's
+# OIDC provider, so they'd fail until that trust policy is updated for GitLab.
+
+stages:
+  - checks
+
+# Only run these checks on non-main branches. Pushes to main are deploys, which
+# are handled outside this file. Mirrors the GitHub `branches-ignore: [main]`.
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: never
+    - when: always
+
+# Shared setup: Node 24 + pnpm 10 (matching the pnpm/action-setup version in the
+# GitHub workflow), with the pnpm store cached per-lockfile to speed up installs.
+.node:
+  image: node:24-slim
+  before_script:
+    - npm install -g pnpm@10
+    - pnpm config set store-dir .pnpm-store
+    - pnpm install --frozen-lockfile
+  cache:
+    key:
+      files:
+        - pnpm-lock.yaml
+    paths:
+      - .pnpm-store
+
+lint:
+  stage: checks
+  extends: .node
+  script:
+    - pnpm -r lint
+
+build-client:
+  stage: checks
+  extends: .node
+  variables:
+    NUXT_PUBLIC_API_BASE: https://api.caphne.co
+  script:
+    - pnpm --filter client generate
+
+build-server:
+  stage: checks
+  extends: .node
+  script:
+    - pnpm --filter server build

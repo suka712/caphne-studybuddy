@@ -175,7 +175,7 @@ onUnmounted(() => {
 
       <!-- Messages -->
       <ScrollArea ref="scrollAreaRef" class="flex-1">
-        <div class="p-4 space-y-4">
+        <div class="p-4 space-y-1">
           <Button
             v-if="hasMore"
             variant="ghost"
@@ -206,7 +206,7 @@ onUnmounted(() => {
           >
             <div
               :class="[
-                'px-4 py-3 text-sm font-bold shadow-sm',
+                'px-5 py-2 text-sm font-bold shadow-sm',
                 msg.senderId === currentUserId
                   ? 'bg-primary text-primary-foreground rounded-2xl rounded-tr-none'
                   : 'bg-secondary text-primary rounded-2xl rounded-tl-none',

@@ -1,22 +1,40 @@
 # GitLab CI — mirrors the GitHub Actions workflows.
-#   checks  ← pr-checks.yml        (lint + build, on merge requests)
-#   plan    ← pr-infra-plan.yml    (terraform plan, on MRs touching infra/**)
-#   apply   ← apply-infra.yml      (terraform apply, manual, on main)
+#   checks           ← pr-checks.yml        (lint + build, on MRs)
+#   plan             ← pr-infra-plan.yml    (terraform plan, on MRs touching infra/**)
+#   apply            ← apply-infra.yml      (terraform apply, manual, on main)
+#   deploy-frontend  ← deploy-frontend.yml  (build + S3 sync + CF invalidate, on main)
+#   deploy-backend   ← deploy-backend.yml   (SSM redeploy on the EC2, on main)
 #
-# App deploys (deploy-frontend / deploy-backend) are NOT here yet — only infra.
+# All AWS access uses GitLab OIDC → assumes the ci-deploy role. Requires the
+# AWS_ROLE_ARN CI/CD variable (unprotected).
 
 stages:
   - checks
   - plan
   - apply
+  - deploy
 
 # Run pipelines for merge requests and for the default branch. MR pipelines
-# carry the checks + terraform plan; the main pipeline carries terraform apply.
-# This mirrors the GitHub triggers (pull_request + push-to-main).
+# carry the checks + terraform plan; main pipelines carry apply + deploys.
 workflow:
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+# ---------------------------------------------------------------------------
+# Shared AWS OIDC auth. GitLab issues a per-job OIDC token; we write it to a
+# file and the AWS SDK/CLI assumes the role natively via AWS_ROLE_ARN +
+# AWS_WEB_IDENTITY_TOKEN_FILE. Each job still writes the token in before_script
+# (before_script doesn't merge across extends).
+# ---------------------------------------------------------------------------
+.aws-oidc:
+  variables:
+    AWS_DEFAULT_REGION: ap-southeast-1
+    AWS_ROLE_SESSION_NAME: gitlab-ci
+    AWS_WEB_IDENTITY_TOKEN_FILE: /tmp/gitlab_oidc_token
+  id_tokens:
+    GITLAB_OIDC_TOKEN:
+      aud: https://gitlab.com
 
 # ---------------------------------------------------------------------------
 # Node checks (mirror of .github/workflows/pr-checks.yml)
@@ -58,23 +76,12 @@ build-server:
 
 # ---------------------------------------------------------------------------
 # Terraform (mirror of apply-infra.yml + pr-infra-plan.yml)
-#
-# Auth: GitLab issues an OIDC token per job; we write it to a file and let the
-# AWS provider assume the role natively via AWS_ROLE_ARN + web-identity token —
-# no AWS CLI needed. Set AWS_ROLE_ARN as a CI/CD variable in project settings.
-# State is the existing S3 backend (infra/state.tf), unchanged.
 # ---------------------------------------------------------------------------
 .terraform:
+  extends: .aws-oidc
   image:
     name: hashicorp/terraform:1.15.6
     entrypoint: [""]
-  variables:
-    AWS_DEFAULT_REGION: ap-southeast-1
-    AWS_ROLE_SESSION_NAME: gitlab-ci
-    AWS_WEB_IDENTITY_TOKEN_FILE: /tmp/gitlab_oidc_token
-  id_tokens:
-    GITLAB_OIDC_TOKEN:
-      aud: https://gitlab.com
   before_script:
     - echo "$GITLAB_OIDC_TOKEN" > "$AWS_WEB_IDENTITY_TOKEN_FILE"
     - cd infra
@@ -107,8 +114,8 @@ tf-apply:
   stage: apply
   extends: .terraform
   # Manual gate = the GitHub `environment: production` approval. Protect the
-  # `production` environment in Settings → CI/CD → Environments to require a
-  # specific approver before this can run.
+  # `production` environment in Settings → CI/CD → Environments to require an
+  # approver before this can run.
   environment:
     name: production
   script:
@@ -119,3 +126,81 @@ tf-apply:
       changes:
         - infra/**/*
       when: manual
+
+# ---------------------------------------------------------------------------
+# App deploys (mirror of deploy-frontend.yml + deploy-backend.yml)
+# resource_group = the GitHub `concurrency` group: one deploy at a time.
+# ---------------------------------------------------------------------------
+deploy-frontend:
+  stage: deploy
+  extends: .aws-oidc
+  image: node:24-slim
+  resource_group: deploy-frontend
+  variables:
+    NUXT_PUBLIC_API_BASE: https://api.caphne.co
+  before_script:
+    - echo "$GITLAB_OIDC_TOKEN" > "$AWS_WEB_IDENTITY_TOKEN_FILE"
+    - apt-get update -qq && apt-get install -y -qq awscli
+    - npm install -g pnpm@10
+    - pnpm install --frozen-lockfile
+  script:
+    - pnpm --filter client generate
+    - aws s3 sync apps/client/.output/public/ "s3://caphne-frontend/" --delete
+    - |
+      INV=$(aws cloudfront create-invalidation \
+        --distribution-id E2NI2OUQXGO5W8 --paths '/*' \
+        --query 'Invalidation.Id' --output text)
+      echo "Invalidation: $INV"
+      aws cloudfront wait invalidation-completed \
+        --distribution-id E2NI2OUQXGO5W8 --id "$INV"
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        - apps/client/**/*
+        - packages/shared/**/*
+        - pnpm-lock.yaml
+
+deploy-backend:
+  stage: deploy
+  extends: .aws-oidc
+  image:
+    name: amazon/aws-cli:latest
+    entrypoint: [""]
+  resource_group: deploy-backend
+  before_script:
+    - echo "$GITLAB_OIDC_TOKEN" > "$AWS_WEB_IDENTITY_TOKEN_FILE"
+  script:
+    - |
+      ID=$(aws ec2 describe-instances \
+        --filters "Name=tag:Name,Values=caphne-prod-v6" \
+                  "Name=instance-state-name,Values=running" \
+        --query 'Reservations[].Instances[].InstanceId | [0]' --output text)
+      echo "Instance: $ID"
+    # NOTE: this does `git reset --hard origin/main` on the EC2. The instance's
+    # `origin` remote MUST point at GitLab (the source of truth). With the
+    # GitLab-web-merge + dual-push topology, GitHub lags after a web merge, so
+    # if the EC2 still pulls GitHub it can deploy STALE code. Verify/repoint.
+    - |
+      CMD=$(aws ssm send-command \
+        --instance-ids "$ID" \
+        --document-name "AWS-RunShellScript" \
+        --comment "Deploy $CI_COMMIT_SHORT_SHA" \
+        --parameters 'commands=["set -euxo pipefail","cd /opt/caphne","sudo -u ubuntu git fetch --all","sudo -u ubuntu git reset --hard origin/main","sudo -u ubuntu pnpm install --frozen-lockfile","sudo -u ubuntu pnpm --filter server build","sudo systemctl restart caphne","sleep 3","systemctl is-active caphne","curl -sf http://localhost:8080/health"]' \
+        --query 'Command.CommandId' --output text)
+      echo "Command: $CMD"
+    - aws ssm wait command-executed --command-id "$CMD" --instance-id "$ID" || true
+    - |
+      aws ssm get-command-invocation --command-id "$CMD" --instance-id "$ID" \
+        --query '{Status:Status,Stdout:StandardOutputContent,Stderr:StandardErrorContent}' \
+        --output json
+    - |
+      STATUS=$(aws ssm get-command-invocation --command-id "$CMD" --instance-id "$ID" \
+        --query 'Status' --output text)
+      echo "Final status: $STATUS"
+      test "$STATUS" = "Success"
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        - apps/server/**/*
+        - packages/shared/**/*
+        - pnpm-lock.yaml

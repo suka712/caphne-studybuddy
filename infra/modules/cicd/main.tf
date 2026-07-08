@@ -64,8 +64,8 @@ data "aws_iam_policy_document" "trust" {
 }
 
 resource "aws_iam_role" "deploy" {
-  name               = "github-actions-deploy"
-  description        = "Assumed by GitHub Actions via OIDC for build, deploy, and terraform"
+  name               = "ci-deploy"
+  description        = "Assumed by CI (GitHub Actions + GitLab CI) via OIDC for build, deploy, and terraform"
   assume_role_policy = data.aws_iam_policy_document.trust.json
 }
 
@@ -179,7 +179,7 @@ data "aws_iam_policy_document" "deploy" {
 }
 
 resource "aws_iam_role_policy" "deploy" {
-  name   = "github-actions-deploy"
+  name   = "ci-deploy"
   role   = aws_iam_role.deploy.id
   policy = data.aws_iam_policy_document.deploy.json
 }

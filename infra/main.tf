@@ -43,7 +43,7 @@ module "cicd" {
   tf_state_bucket           = "caphne-terraform-state-61346134"
 }
 
-output "github_actions_role_arn" {
-  description = "Use this ARN in .github/workflows/*.yml under role-to-assume"
+output "ci_deploy_role_arn" {
+  description = "Role ARN assumed by CI via OIDC — set as AWS_ROLE_ARN in GitLab CI/CD variables"
   value       = module.cicd.deploy_role_arn
 }

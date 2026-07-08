@@ -1,5 +1,5 @@
 output "deploy_role_arn" {
-  description = "Role ARN that GitHub Actions assumes via OIDC. Put this in workflow YAML."
+  description = "Role ARN that CI (GitHub Actions + GitLab CI) assumes via OIDC. Use as AWS_ROLE_ARN in GitLab / role-to-assume in workflow YAML."
   value       = aws_iam_role.deploy.arn
 }
 

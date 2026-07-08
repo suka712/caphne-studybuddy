@@ -141,7 +141,13 @@ resource "aws_iam_role_policy" "parameter_store" {
           "ssm:GetParameters",
           "ssm:GetParametersByPath",
         ]
-        Resource = "arn:aws:ssm:*:*:parameter${var.parameter_path}/*"
+        # GetParametersByPath authorizes against the path node itself; the
+        # single/batch gets authorize against the child parameters. Grant both,
+        # or the by-path call the service uses to load env is denied.
+        Resource = [
+          "arn:aws:ssm:*:*:parameter${var.parameter_path}",
+          "arn:aws:ssm:*:*:parameter${var.parameter_path}/*",
+        ]
       },
       {
         Effect   = "Allow"

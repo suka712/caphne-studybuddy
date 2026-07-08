@@ -1,12 +1,12 @@
 import { defineConfig, globalIgnores } from "eslint/config";
 import eslintJs from "@eslint/js";
 import eslintTs from "typescript-eslint";
-import prettier from "eslint-plugin-prettier/recommended";
+import prettierConfig from "eslint-config-prettier";
 
 export default defineConfig(
   eslintJs.configs.recommended,
   eslintTs.configs.recommended,
-  prettier,
+  prettierConfig,
   globalIgnores(["**/dist/**", "**/node_modules/**"]),
   {
     rules: {

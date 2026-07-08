@@ -656,14 +656,13 @@ onMounted(async () => {
         Finding the best matches for you
       </p>
     </div>
+    <ProgressControl
+      :currentQuestion="currentQuestion"
+      :totalQuestions="totalQuestion"
+      :isLoading="isLoading"
+      :canProceed="canProceedCurrentScreen"
+      :onNext="onNext"
+      :onPrevious="onPrevious"
+    />
   </div>
-
-  <ProgressControl
-    :currentQuestion="currentQuestion"
-    :totalQuestions="totalQuestion"
-    :isLoading="isLoading"
-    :canProceed="canProceedCurrentScreen"
-    :onNext="onNext"
-    :onPrevious="onPrevious"
-  />
 </template>

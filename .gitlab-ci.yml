@@ -185,7 +185,7 @@ deploy-backend:
         --instance-ids "$ID" \
         --document-name "AWS-RunShellScript" \
         --comment "Deploy $CI_COMMIT_SHORT_SHA" \
-        --parameters 'commands=["set -euxo pipefail","cd /opt/caphne","sudo -u ubuntu git fetch --all","sudo -u ubuntu git reset --hard origin/main","sudo -u ubuntu pnpm install --frozen-lockfile","sudo -u ubuntu pnpm --filter server build","sudo systemctl restart caphne","sleep 3","systemctl is-active caphne","curl -sf http://localhost:8080/health"]' \
+        --parameters 'commands=["set -eux","cd /opt/caphne","sudo -u ubuntu git fetch --all","sudo -u ubuntu git reset --hard origin/main","sudo -u ubuntu pnpm install --frozen-lockfile","sudo -u ubuntu pnpm --filter server build","sudo systemctl restart caphne","sleep 3","systemctl is-active caphne","curl -sf http://localhost:8080/health"]' \
         --query 'Command.CommandId' --output text)
       echo "Command: $CMD"
     - aws ssm wait command-executed --command-id "$CMD" --instance-id "$ID" || true

@@ -1,3 +1,4 @@
+// Deploy trigger: verify GitLab CI frontend + backend deploy path.
 export const SocketEvents = {
   // Client to Server
   USER_JOINS_MATCH_ROOM: "user_joins_match_room",

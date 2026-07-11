@@ -225,7 +225,7 @@ onMounted(() => {
       </div>
     </section>
 
-    <!-- ── VIBE ─────────────────────────────────────────────── -->
+    <!-- ── VIBE test─────────────────────────────────────────────── -->
     <section
       ref="vibeRef"
       class="max-w-7xl mx-auto px-4 mb-32 md:mb-48 transition-all duration-1000 ease-out"

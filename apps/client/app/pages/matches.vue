@@ -102,13 +102,10 @@ const handleGenerate = async () => {
       <Icon name="svg-spinners:ring-resize" size="40" class="text-accent" />
     </div>
 
-    <div
-      v-else
-      class="h-full overflow-hidden flex flex-col bg-card border shadow-sm rounded-xl"
-    >
+    <div v-else class="h-full flex flex-col min-h-0">
       <!-- Header -->
       <div
-        class="p-6 border-b border-primary/5 flex items-center justify-between"
+        class="pt-2 pb-4 px-2 border-b border-primary/5 flex items-center justify-between"
       >
         <h1 class="text-xl font-black text-primary flex items-center gap-2">
           Matches

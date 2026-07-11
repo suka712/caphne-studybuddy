@@ -84,7 +84,7 @@ const handleLogout = async () => {
     <Icon name="svg-spinners:ring-resize" size="40" class="text-primary" />
   </div>
 
-  <Card v-else-if="profile" class="w-full h-full flex flex-col p-2">
+  <div v-else-if="profile">
     <CardContent class="flex flex-col h-full p-0">
       <!-- Header -->
       <div class="flex items-center gap-3 p-4 border-b border-border">
@@ -298,5 +298,5 @@ const handleLogout = async () => {
         </div>
       </div>
     </CardContent>
-  </Card>
+  </div>
 </template>

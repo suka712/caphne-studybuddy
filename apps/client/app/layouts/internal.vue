@@ -25,17 +25,24 @@ onUnmounted(() => {
   >
     <div class="fixed inset-0 -z-10 dot-grid pointer-events-none" />
 
-    <!-- App Container: fixed-size card, consistent across every page -->
-    <main
-      class="w-full max-w-sm h-4/6 max-h-215 relative animate-in fade-in zoom-in-95 duration-700 grid grid-cols-1 grid-rows-1"
-    >
-      <slot />
+    <!-- App Container: fixed-size card -->
+    <main class="w-full max-w-sm h-4/6 max-h-215 relative animate-in fade-in zoom-in-95 duration-700 grid grid-cols-1 grid-rows-1">
+      <div class="h-full overflow-hidden flex flex-col bg-card border shadow-sm rounded-xl p-4">
+        <slot />
+      </div>
     </main>
 
-    <!-- Simple Bottom Navigation for easy access -->
+    <!-- Bottom Navigation -->
     <div
       class="mt-5 shrink-0 bg-card border shadow-sm rounded-full px-6 py-2 pt-3.5 flex items-center gap-6"
     >
+      <NuxtLink
+        to="/browse"
+        class="text-primary/40 hover:text-primary transition-colors"
+        active-class="!text-primary"
+      >
+        <Icon name="lucide:earth" size="22" />
+      </NuxtLink>
       <NuxtLink
         to="/matches"
         class="text-primary/40 hover:text-primary transition-colors"

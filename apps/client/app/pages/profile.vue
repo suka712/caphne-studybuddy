@@ -37,7 +37,7 @@ onMounted(() => {
     <Icon name="svg-spinners:ring-resize" size="40" class="text-accent" />
   </Card>
 
-  <Card v-else-if="profile" class="h-full overflow-hidden flex flex-col">
+  <div v-else-if="profile">
     <!-- Header -->
     <div class="p-8 pb-6 flex flex-col items-center text-center space-y-4">
       <div
@@ -113,5 +113,5 @@ onMounted(() => {
         </div>
       </div>
     </div>
-  </Card>
+  </div>
 </template>

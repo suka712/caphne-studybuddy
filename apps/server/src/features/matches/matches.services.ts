@@ -19,7 +19,7 @@ export const generateMatch = async (userId: number) => {
     .limit(1);
 
   if (!candidate) {
-    return { match: null };
+    return null;
   }
 
   const [newMatch] = await db

@@ -135,7 +135,7 @@ onUnmounted(() => {
 
     <div
       v-else
-      class="h-full overflow-hidden flex flex-col bg-card border shadow-sm rounded-xl"
+      class="h-full flex flex-col min-h-0 overflow-hidden"
     >
       <!-- Header -->
       <div class="p-4 border-b border-primary/5 flex items-center gap-3">
@@ -174,7 +174,7 @@ onUnmounted(() => {
       </div>
 
       <!-- Messages -->
-      <ScrollArea ref="scrollAreaRef" class="flex-1">
+      <ScrollArea ref="scrollAreaRef" class="flex-1 min-h-0">
         <div class="p-4 space-y-1">
           <Button
             v-if="hasMore"

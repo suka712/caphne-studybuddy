@@ -138,7 +138,7 @@ onUnmounted(() => {
       class="h-full flex flex-col min-h-0 overflow-hidden"
     >
       <!-- Header -->
-      <div class="p-4 border-b border-primary/5 flex items-center gap-3">
+      <div class="p-4 border-b border-primary/5 flex items-center gap-2">
         <NuxtLink to="/matches">
           <Button
             variant="ghost"

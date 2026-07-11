@@ -23,11 +23,13 @@ onUnmounted(() => {
   <div
     class="h-screen bg-background text-foreground grain overflow-hidden flex flex-col items-center justify-center"
   >
-    <div class="fixed inset-0 -z-10 dot-grid pointer-events-none" />
-
     <!-- App Container: fixed-size card -->
-    <main class="w-full max-w-sm h-4/6 max-h-215 relative animate-in fade-in zoom-in-95 duration-700 grid grid-cols-1 grid-rows-1">
-      <div class="h-full overflow-hidden flex flex-col bg-card border shadow-sm rounded-xl p-4">
+    <main
+      class="w-full max-w-sm h-4/6 max-h-215 relative animate-in fade-in zoom-in-95 duration-700 grid grid-cols-1 grid-rows-1"
+    >
+      <div
+        class="h-full overflow-hidden flex flex-col bg-card border shadow-sm rounded-xl"
+      >
         <slot />
       </div>
     </main>

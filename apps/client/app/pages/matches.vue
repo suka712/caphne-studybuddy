@@ -105,7 +105,7 @@ const handleGenerate = async () => {
     <div v-else class="h-full flex flex-col min-h-0">
       <!-- Header -->
       <div
-        class="pt-2 pb-4 px-2 border-b border-primary/5 flex items-center justify-between"
+        class="p-5 pb-4 pl-6 border-b border-primary/5 flex items-center justify-between"
       >
         <h1 class="text-xl font-black text-primary flex items-center gap-2">
           Matches

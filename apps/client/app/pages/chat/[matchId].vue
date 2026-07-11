@@ -198,7 +198,7 @@ onUnmounted(() => {
             v-for="msg in messages"
             :key="msg.id"
             :class="[
-              'max-w-[85%] flex flex-col',
+              'max-w-[85%] min-w-0 flex flex-col',
               msg.senderId === currentUserId
                 ? 'ml-auto items-end'
                 : 'mr-auto items-start',
@@ -206,7 +206,7 @@ onUnmounted(() => {
           >
             <div
               :class="[
-                'px-5 py-2 text-sm font-bold shadow-sm',
+                'px-5 py-2 text-sm font-bold shadow-sm whitespace-pre-wrap break-all',
                 msg.senderId === currentUserId
                   ? 'bg-primary text-primary-foreground rounded-2xl rounded-tr-none'
                   : 'bg-secondary text-primary rounded-2xl rounded-tl-none',

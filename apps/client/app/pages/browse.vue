@@ -11,12 +11,12 @@ type BrowseProfile = {
   id: string;
   major: string;
   photoUrl: string;
-}
+};
 
 type BrowseProfilesResponse = {
   profiles: BrowseProfile[];
-  cursor: NextCursor;
-}
+  nextCursor: NextCursor;
+};
 
 const isLoading = ref(true);
 const browseProfiles = ref<BrowseProfile[]>([]);
@@ -36,58 +36,62 @@ const fetchBrowseProfiles = async () => {
 
 onMounted(async () => {
   await fetchBrowseProfiles();
-
-  console.log(browseProfiles.value);
 });
 </script>
+
 <template>
-  <div v-if="isLoading">
-    <div>Loading</div>
-  </div>
-  <div v-else>
-    <div
-      class="p-5 pb-4 pl-6 border-b border-primary/5 flex items-center justify-between"
-    >
-      <h1 class="text-xl font-black text-primary flex items-center gap-2">
-        Browse
-      </h1>
-      <!-- TODOO: Implement filter here -->
-      <Button
-        variant="outline"
-        class="rounded-xl h-9 px-4 font-bold border-primary/10 hover:bg-primary hover:text-primary-foreground transition-all"
-      >
-        Filter
-      </Button>
+  <div class="h-full">
+    <!-- TODOO: Implement skeleton íntead of this -->
+    <div v-if="isLoading">
+      <div>Loading</div>
     </div>
-    <ScrollArea class="flex min-h-0">
-      <!-- TODOO: Implement /browse/id -->
-      <div class="flex p-5 gap-3">
-        <NuxtLink
-          v-for="browseProfile in browseProfiles"
-          :key="browseProfile.id"
-          :to="`/browse/${browseProfile.id}`"
-          class="flex gap-3"
+
+    <div v-else class="h-full flex flex-col">
+      <div
+        class="p-5 pb-4 pl-6 border-b border-primary/5 flex items-center justify-between"
+      >
+        <h1 class="text-xl font-black text-primary flex items-center gap-2">
+          Browse
+        </h1>
+        <!-- TODOO: Implement filter here -->
+        <Button
+          variant="outline"
+          class="rounded-xl h-9 px-4 font-bold border-primary/10 hover:bg-primary hover:text-primary-foreground transition-all"
         >
-          <div
-            class="items-center p-2 rounded-md bg-secondary/30 hover:bg-secondary/60 transition-all cursor-pointer border border-transparent hover:border-primary/5"
-          >
-            <img
-              v-if="browseProfile.photoUrl"
-              :src="browseProfile.photoUrl"
-              alt="Profile"
-              class="rounded-sm shadow-md"
-            />
-            <Icon
-              v-else
-              name="mdi:account"
-              size="24"
-              class="text-muted-foreground"
-            />
-            <div class="font-bold pt-1">{{ browseProfile.displayName }}</div>
-            <div class="text-sm">{{ browseProfile.major }}</div>
-          </div>
-        </NuxtLink>
+          Filter
+        </Button>
       </div>
-    </ScrollArea>
+      <ScrollArea class="flex-1 min-h-0">
+        <!-- TODOO: Implement /browse/id -->
+        <div class="grid grid-cols-2 p-5 gap-5">
+          <NuxtLink
+            v-for="browseProfile in browseProfiles"
+            :key="browseProfile.id"
+            :to="`/browse/${browseProfile.id}`"
+          >
+            <div
+              class="p-3 rounded-md bg-secondary/30 hover:bg-secondary/60 transition-all cursor-pointer border border-transparent hover:border-primary/5"
+            >
+              <img
+                v-if="browseProfile.photoUrl"
+                :src="browseProfile.photoUrl"
+                alt="Profile"
+                class="rounded-sm shadow-md w-full aspect-square object-cover"
+              />
+              <div v-else class="relative w-full aspect-square">
+                <Icon
+                  name="mdi:account"
+                  size="50"
+                  class="absolute inset-0 m-auto"
+                />  
+              </div>
+              
+              <div class="font-bold pt-1 truncate">{{ browseProfile.displayName }}</div>
+              <div class="text-sm truncate">{{ browseProfile.major }}</div>
+            </div>
+          </NuxtLink>
+        </div>
+      </ScrollArea>
+    </div>
   </div>
 </template>

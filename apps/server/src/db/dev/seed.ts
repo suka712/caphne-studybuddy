@@ -114,6 +114,25 @@ const majors = [
 const years = ["year-1", "year-2", "year-3", "year-4", "alumni"];
 const genders = ["male", "female", "other"];
 
+// Wikimedia Commons headshots, used as placeholder avatars for local dev only.
+const femalePhotoUrls = [
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Jang_Won-young_at_the_Bulgari_Eclettica_event_in_Seoul%2C_May_12%2C_2026_%281%29.png/500px-Jang_Won-young_at_the_Bulgari_Eclettica_event_in_Seoul%2C_May_12%2C_2026_%281%29.png",
+  "https://upload.wikimedia.org/wikipedia/commons/f/f0/IVE_Yujin_2026_GDA.jpg",
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Ive%27s_Rei_%40_OPENING_PROJECTxSATUR_PhotoCall%2C_12_June_2025_01.png/500px-Ive%27s_Rei_%40_OPENING_PROJECTxSATUR_PhotoCall%2C_12_June_2025_01.png",
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Liz_of_Ive_at_K-SWISS_Flagship_Store_Open_Event%2C_May_7%2C_2026_%281%29.png/500px-Liz_of_Ive_at_K-SWISS_Flagship_Store_Open_Event%2C_May_7%2C_2026_%281%29.png",
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Gaeul_of_Ive_at_Senka_Pop-up_Event%2C_May_19%2C_2026_%281%29.png/500px-Gaeul_of_Ive_at_Senka_Pop-up_Event%2C_May_19%2C_2026_%281%29.png",
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Leeseo_of_Ive%2C_March_19%2C_2026_%283%29.png/500px-Leeseo_of_Ive%2C_March_19%2C_2026_%283%29.png",
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Karina_at_Gimpo_Airport_on_April_22%2C_2026_03.png/500px-Karina_at_Gimpo_Airport_on_April_22%2C_2026_03.png",
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Winter_at_Incheon_Airport_on_July_10%2C_2026.png/500px-Winter_at_Incheon_Airport_on_July_10%2C_2026.png",
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Giselle_at_Incheon_Airport_on_March_4%2C_2026.jpg/500px-Giselle_at_Incheon_Airport_on_March_4%2C_2026.jpg",
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Ningning_at_Mise-en-Scene_event_on_19022026_%282%29.png/500px-Ningning_at_Mise-en-Scene_event_on_19022026_%282%29.png",
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/20260110_Le_Sserafim%27s_Sakura_Miyawaki_01.png/500px-20260110_Le_Sserafim%27s_Sakura_Miyawaki_01.png",
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Kazuha_of_Le_Sserafim%2C_April_5%2C_2024_%282%29.png/500px-Kazuha_of_Le_Sserafim%2C_April_5%2C_2024_%282%29.png",
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/240329_Kim_Chae-won_%281%29.jpg/500px-240329_Kim_Chae-won_%281%29.jpg",
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Huh_Yunjin_of_Le_Sserafim%2C_January_10%2C_2025.png/500px-Huh_Yunjin_of_Le_Sserafim%2C_January_10%2C_2025.png",
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/221013_Hong_Eun_Chae_%28LE_SSERAFIM%29_Airport_Departure.jpg/500px-221013_Hong_Eun_Chae_%28LE_SSERAFIM%29_Airport_Departure.jpg",
+];
+
 const goalOptions = [
   "study-buddy",
   "project-teammate",
@@ -179,10 +198,13 @@ async function seed() {
       .values({ email, password: "seeded" })
       .returning();
 
+    const gender = pick(genders);
+
     await db.insert(profiles).values({
       userId: user!.id,
       displayName: `${first} ${last}`,
-      gender: pick(genders),
+      gender,
+      photoUrl: gender === "female" ? pick(femalePhotoUrls) : null,
       year: pick(years),
       major: pick(majors),
       bio: `Hi! I'm ${first}, a ${pick(majors)} student looking for ${pick(goalOptions).replace("-", " ")}.`,

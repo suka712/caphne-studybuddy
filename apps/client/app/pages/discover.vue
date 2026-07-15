@@ -141,9 +141,11 @@ onMounted(async () => {
             </div>
           </NuxtLink>
         </TransitionGroup>
-        <div v-if="isLoadingMoreProfiles" class="flex justify-center pb-5">
-          <Icon name="svg-spinners:3-dots-bounce" size="28" class="text-muted-foreground" />
-        </div>
+        <Transition name="bouncing-dots">
+          <div v-if="isLoadingMoreProfiles" class="flex justify-center pb-5">
+            <Icon name="svg-spinners:3-dots-bounce" size="28" class="text-muted-foreground" />
+          </div>          
+        </Transition>
       </ScrollArea>
     </div>
   </div>

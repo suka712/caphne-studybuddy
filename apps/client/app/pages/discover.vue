@@ -6,36 +6,36 @@ type NextCursor = {
   id: string;
 } | null;
 
-type BrowseProfile = {
+type DiscoverProfile = {
   displayName: string;
   id: string;
   major: string;
   photoUrl: string;
 };
 
-type BrowseProfilesResponse = {
-  profiles: BrowseProfile[];
+type DiscoverProfilesResponse = {
+  profiles: DiscoverProfile[];
   nextCursor: NextCursor;
 };
 
 const isLoading = ref(true);
-const browseProfiles = ref<BrowseProfile[]>([]);
+const discoverProfiles = ref<DiscoverProfile[]>([]);
 
 const {
   public: { apiBase },
 } = useRuntimeConfig();
 
-const fetchBrowseProfiles = async () => {
-  const data = await $fetch<BrowseProfilesResponse>(`${apiBase}/browse`, {
+const fetchDiscoverProfiles = async () => {
+  const data = await $fetch<DiscoverProfilesResponse>(`${apiBase}/discover`, {
     credentials: "include",
   });
 
-  browseProfiles.value = data.profiles;
+  discoverProfiles.value = data.profiles;
   isLoading.value = false;
 };
 
 onMounted(async () => {
-  await fetchBrowseProfiles();
+  await fetchDiscoverProfiles();
 });
 </script>
 
@@ -51,7 +51,7 @@ onMounted(async () => {
         class="p-5 pb-4 pl-6 border-b border-primary/5 flex items-center justify-between"
       >
         <h1 class="text-xl font-black text-primary flex items-center gap-2">
-          Browse
+          Discover
         </h1>
         <!-- TODOO: Implement filter here -->
         <Button
@@ -62,19 +62,19 @@ onMounted(async () => {
         </Button>
       </div>
       <ScrollArea class="flex-1 min-h-0">
-        <!-- TODOO: Implement /browse/id -->
+        <!-- TODOO: Implement discover popup -->
         <div class="grid grid-cols-2 p-5 gap-5">
           <NuxtLink
-            v-for="browseProfile in browseProfiles"
-            :key="browseProfile.id"
-            :to="`/browse/${browseProfile.id}`"
+            v-for="discoverProfile in discoverProfiles"
+            :key="discoverProfile.id"
+            :to="`/discover/${discoverProfile.id}`"
           >
             <div
               class="p-3 rounded-md bg-secondary/30 hover:bg-secondary/60 transition-all cursor-pointer border border-transparent hover:border-primary/5"
             >
               <img
-                v-if="browseProfile.photoUrl"
-                :src="browseProfile.photoUrl"
+                v-if="discoverProfile.photoUrl"
+                :src="discoverProfile.photoUrl"
                 alt="Profile"
                 class="rounded-sm shadow-md w-full aspect-square object-cover"
               />
@@ -86,8 +86,8 @@ onMounted(async () => {
                 />  
               </div>
               
-              <div class="font-bold pt-1 truncate">{{ browseProfile.displayName }}</div>
-              <div class="text-sm truncate">{{ browseProfile.major }}</div>
+              <div class="font-bold pt-1 truncate">{{ discoverProfile.displayName }}</div>
+              <div class="text-sm truncate">{{ discoverProfile.major }}</div>
             </div>
           </NuxtLink>
         </div>

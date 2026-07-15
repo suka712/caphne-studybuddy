@@ -11,7 +11,7 @@ import { profileRouter } from "./features/profile/profile.routes.js";
 import { matchesRouter } from "./features/matches/matches.routes.js";
 import { chatRouter } from "./features/chat/chat.routes.js";
 import { setupSocketIO } from "./features/chat/socket.js";
-import { browseRouter } from "./features/browse/browse.routes.js";
+import { discoverRouter } from "./features/discover/discover.routes.js";
 
 const app = express();
 
@@ -30,7 +30,7 @@ app.use("/auth", authRouter);
 app.use("/email-collection", emailRouter);
 app.use("/profile", profileRouter);
 app.use("/matches", matchesRouter);
-app.use("/browse", browseRouter);
+app.use("/discover", discoverRouter);
 app.use("/chat", chatRouter);
 
 const server = createServer(app);

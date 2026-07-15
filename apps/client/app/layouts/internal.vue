@@ -39,7 +39,7 @@ onUnmounted(() => {
       class="mt-5 shrink-0 bg-card border shadow-sm rounded-full px-6 py-2 pt-3.5 flex items-center gap-6"
     >
       <NuxtLink
-        to="/browse"
+        to="/discover"
         class="text-primary/40 hover:text-primary transition-colors"
         active-class="!text-primary"
       >

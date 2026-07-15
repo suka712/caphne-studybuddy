@@ -1,10 +1,10 @@
 import { Router } from "express";
 import { requireAuth } from "../../middleware/requireAuth.js";
-import { getPublicProfiles } from "./browse.services.js";
+import { getPublicProfiles } from "./discover.services.js";
 
-export const browseRouter = Router();
+export const discoverRouter = Router();
 
-browseRouter.get("/", requireAuth, async (req, res) => {
+discoverRouter.get("/", requireAuth, async (req, res) => {
   const { updatedAt, id } = req.query;
   const cursor =
     updatedAt && id

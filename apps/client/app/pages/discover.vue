@@ -25,6 +25,9 @@ const isLoadingMoreProfiles = ref(false);
 const discoverProfiles = ref<DiscoverProfile[]>([]);
 const nextCursor = ref<NextCursor | null>(null);
 
+const LOADING_DELAY_MS = 2000;
+const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 const {
   public: { apiBase },
 } = useRuntimeConfig();
@@ -42,7 +45,7 @@ const fetchInitialProfiles = async () => {
 const fetchMoreProfiles = async () => {
   if (isLoadingMoreProfiles.value) return;
   if (discoverProfiles.value.length > 0 && !nextCursor.value) return;
-  
+
   isLoadingMoreProfiles.value = true;
 
   const query = nextCursor.value
@@ -52,12 +55,16 @@ const fetchMoreProfiles = async () => {
       }
     : {};
 
-  const data = await $fetch<DiscoverProfilesResponse>(`${apiBase}/discover`, {
-    credentials: "include",
-    query,
-  });
+  const [data] = await Promise.all([
+    $fetch<DiscoverProfilesResponse>(`${apiBase}/discover`, {
+      credentials: "include",
+      query,
+    }),
+    delay(LOADING_DELAY_MS),
+  ]);
 
   discoverProfiles.value = [...discoverProfiles.value, ...data.profiles];
+  // discoverProfiles.value = null; // DEBUGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
   nextCursor.value = data.nextCursor;
   isLoadingMoreProfiles.value = false;
 };
@@ -104,7 +111,7 @@ onMounted(async () => {
       </div>
       <ScrollArea ref="scrollAreaRef" class="flex-1 min-h-0">
         <!-- TODOO: Implement discover popup -->
-        <div class="grid grid-cols-2 p-5 gap-5">
+        <TransitionGroup tag="div" name="discover-profile" class="grid grid-cols-2 p-5 gap-5">
           <NuxtLink
             v-for="discoverProfile in discoverProfiles"
             :key="discoverProfile.id"
@@ -133,6 +140,9 @@ onMounted(async () => {
               <div class="text-sm truncate">{{ discoverProfile.major }}</div>
             </div>
           </NuxtLink>
+        </TransitionGroup>
+        <div v-if="isLoadingMoreProfiles" class="flex justify-center pb-5">
+          <Icon name="svg-spinners:3-dots-bounce" size="28" class="text-muted-foreground" />
         </div>
       </ScrollArea>
     </div>

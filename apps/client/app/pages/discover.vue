@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import { ScrollArea } from "@/components/ui/scroll-area";
+
 definePageMeta({ layout: "internal", middleware: "auth" });
 
 type NextCursor = {
   updatedAt: Date;
   id: string;
-} | null;
+};
 
 type DiscoverProfile = {
   displayName: string;
@@ -18,31 +20,70 @@ type DiscoverProfilesResponse = {
   nextCursor: NextCursor;
 };
 
-const isLoading = ref(true);
+const isLoadingInitialProfiles = ref(true);
+const isLoadingMoreProfiles = ref(false);
 const discoverProfiles = ref<DiscoverProfile[]>([]);
+const nextCursor = ref<NextCursor | null>(null);
 
 const {
   public: { apiBase },
 } = useRuntimeConfig();
 
-const fetchDiscoverProfiles = async () => {
+const fetchInitialProfiles = async () => {
   const data = await $fetch<DiscoverProfilesResponse>(`${apiBase}/discover`, {
     credentials: "include",
   });
 
   discoverProfiles.value = data.profiles;
-  isLoading.value = false;
+  nextCursor.value = data.nextCursor;
+  isLoadingInitialProfiles.value = false;
 };
 
+const fetchMoreProfiles = async () => {
+  if (isLoadingMoreProfiles.value) return;
+  if (discoverProfiles.value.length > 0 && !nextCursor.value) return;
+  
+  isLoadingMoreProfiles.value = true;
+
+  const query = nextCursor.value
+    ? {
+        updatedAt: String(nextCursor.value.updatedAt),
+        id: nextCursor.value.id,
+      }
+    : {};
+
+  const data = await $fetch<DiscoverProfilesResponse>(`${apiBase}/discover`, {
+    credentials: "include",
+    query,
+  });
+
+  discoverProfiles.value = [...discoverProfiles.value, ...data.profiles];
+  nextCursor.value = data.nextCursor;
+  isLoadingMoreProfiles.value = false;
+};
+
+const onScroll = (e: Event) => {
+  const el = e.target as HTMLElement;
+  const nearBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 100;
+  if (nearBottom) fetchMoreProfiles();
+};
+
+const scrollAreaRef = ref<InstanceType<typeof ScrollArea> | null>(null);
+
 onMounted(async () => {
-  await fetchDiscoverProfiles();
+  await fetchInitialProfiles();
+
+  const viewport = scrollAreaRef.value?.$el?.querySelector(
+    '[data-slot="scroll-area-viewport"]',
+  );
+  viewport?.addEventListener("scroll", onScroll);
 });
 </script>
 
 <template>
   <div class="h-full">
     <!-- TODOO: Implement skeleton íntead of this -->
-    <div v-if="isLoading">
+    <div v-if="isLoadingInitialProfiles">
       <div>Loading</div>
     </div>
 
@@ -61,13 +102,13 @@ onMounted(async () => {
           Filter
         </Button>
       </div>
-      <ScrollArea class="flex-1 min-h-0">
+      <ScrollArea ref="scrollAreaRef" class="flex-1 min-h-0">
         <!-- TODOO: Implement discover popup -->
         <div class="grid grid-cols-2 p-5 gap-5">
           <NuxtLink
             v-for="discoverProfile in discoverProfiles"
             :key="discoverProfile.id"
-            :to="`/discover/${discoverProfile.id}`"
+            :to="`/discover`"
           >
             <div
               class="p-3 rounded-md bg-secondary/30 hover:bg-secondary/60 transition-all cursor-pointer border border-transparent hover:border-primary/5"
@@ -83,10 +124,12 @@ onMounted(async () => {
                   name="mdi:account"
                   size="50"
                   class="absolute inset-0 m-auto"
-                />  
+                />
               </div>
-              
-              <div class="font-bold pt-1 truncate">{{ discoverProfile.displayName }}</div>
+
+              <div class="font-bold pt-1 truncate">
+                {{ discoverProfile.displayName }}
+              </div>
               <div class="text-sm truncate">{{ discoverProfile.major }}</div>
             </div>
           </NuxtLink>

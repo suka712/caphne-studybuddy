@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useScrollNavbar } from "~/lib/utils";
+import { useScrollNavbar } from "./../composables/useScrollNavbar";
 
 const { showNavbar } = useScrollNavbar();
 const mobileMenuOpen = ref(false);

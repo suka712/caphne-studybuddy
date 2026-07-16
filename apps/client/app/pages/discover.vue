@@ -64,7 +64,6 @@ const fetchMoreProfiles = async () => {
   ]);
 
   discoverProfiles.value = [...discoverProfiles.value, ...data.profiles];
-  // discoverProfiles.value = null; // DEBUGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
   nextCursor.value = data.nextCursor;
   isLoadingMoreProfiles.value = false;
 };

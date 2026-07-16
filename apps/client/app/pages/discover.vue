@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ScrollArea } from "@/components/ui/scroll-area";
+import Skeleton from "@/components/ui/skeleton/Skeleton.vue";
 
 definePageMeta({ layout: "internal", middleware: "auth" });
 
@@ -88,12 +89,7 @@ onMounted(async () => {
 
 <template>
   <div class="h-full">
-    <!-- TODOO: Implement skeleton íntead of this -->
-    <div v-if="isLoadingInitialProfiles">
-      <div>Loading</div>
-    </div>
-
-    <div v-else class="h-full flex flex-col">
+    <div class="h-full flex flex-col">
       <div
         class="p-5 pb-4 pl-6 border-b border-primary/5 flex items-center justify-between"
       >
@@ -108,9 +104,25 @@ onMounted(async () => {
           Filter
         </Button>
       </div>
-      <ScrollArea ref="scrollAreaRef" class="flex-1 min-h-0">
+
+      <div v-if="isLoadingInitialProfiles">
+        <div v-for="n in 6" :key="n" class="grid grid-cols-2 p-5 gap-5">
+          <Skeleton class="w-full aspect-square rounded-sm" />
+          <Skeleton class="w-full aspect-square rounded-sm" />
+          <Skeleton class="h-4 w-3/4 mt-2" />
+          <Skeleton class="h-4 w-3/4 mt-1" />
+          <Skeleton class="h-3 w-1/2 mt-2" />
+          <Skeleton class="h-3 w-1/2 mt-1" />
+        </div>
+      </div>
+
+      <ScrollArea v-else ref="scrollAreaRef" class="flex-1 min-h-0">
         <!-- TODOO: Implement discover popup -->
-        <TransitionGroup tag="div" name="discover-profile" class="grid grid-cols-2 p-5 gap-5">
+        <TransitionGroup
+          tag="div"
+          name="discover-profile"
+          class="grid grid-cols-2 p-5 gap-5"
+        >
           <NuxtLink
             v-for="discoverProfile in discoverProfiles"
             :key="discoverProfile.id"
@@ -142,7 +154,11 @@ onMounted(async () => {
         </TransitionGroup>
         <Transition name="bouncing-dots">
           <div v-if="isLoadingMoreProfiles" class="flex justify-center pb-5">
-            <Icon name="svg-spinners:3-dots-bounce" size="28" class="text-muted-foreground" />
+            <Icon
+              name="svg-spinners:3-dots-bounce"
+              size="28"
+              class="text-muted-foreground"
+            />
           </div>
         </Transition>
       </ScrollArea>

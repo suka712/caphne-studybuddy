@@ -144,7 +144,7 @@ onMounted(async () => {
         <Transition name="bouncing-dots">
           <div v-if="isLoadingMoreProfiles" class="flex justify-center pb-5">
             <Icon name="svg-spinners:3-dots-bounce" size="28" class="text-muted-foreground" />
-          </div>          
+          </div>
         </Transition>
       </ScrollArea>
     </div>

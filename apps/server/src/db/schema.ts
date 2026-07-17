@@ -6,6 +6,9 @@ import {
   integer,
   boolean,
   date,
+  uuid,
+  pgEnum,
+  unique,
 } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
@@ -55,6 +58,26 @@ export const emailCollection = pgTable("email_collection", {
     .notNull()
     .defaultNow(),
 });
+
+export const swipeDecision = pgEnum("swipe_decision", ["like", "pass"]);
+
+export const swipes = pgTable(
+  "swipes",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    targetUserId: integer("target_user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    decision: swipeDecision("decision").notNull(),
+  },
+  (t) => [unique("swipes_unique").on(t.userId, t.targetUserId)],
+);
 
 export const matches = pgTable("matches", {
   id: serial("id").primaryKey(),

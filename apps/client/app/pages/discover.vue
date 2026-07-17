@@ -19,6 +19,12 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "~/components/ui/accordion";
+import {
   majorOptions,
   yearOptions,
   interestCategories,
@@ -160,7 +166,7 @@ onMounted(async () => {
   <div class="h-full">
     <div class="h-full flex flex-col">
       <div
-        class="p-5 pb-4 pl-6 border-b border-primary/5 flex items-center justify-between relative"
+        class="p-5 pb-4 pl-6 border-b border-primary/5 flex items-center justify-between relative z-20"
       >
         <h1 class="text-xl font-black text-primary flex items-center gap-2">
           Discover
@@ -173,15 +179,12 @@ onMounted(async () => {
           Filter
         </Button>
 
-        <div
-          v-if="filterIsOpen"
-          class="absolute top-full left-0 right-0 p-3 z-1 bg-background rounded-b-xl"
-        >
-          <div class="space-y-4" align="end">
-            <div class="space-y-1.5">
-              <label class="text-xs font-bold text-muted-foreground"
-                >Major</label
-              >
+        <Transition name="filter-panel">
+          <div
+            v-if="filterIsOpen"
+            class="absolute top-full left-0 right-0 p-3 z-20 bg-white rounded-b-xl border-x border-b border-primary/5 shadow-md"
+          >
+            <div class="space-y-3">
               <Select v-model="filterMajor">
                 <SelectTrigger class="w-full">
                   <SelectValue placeholder="Any major" />
@@ -199,12 +202,7 @@ onMounted(async () => {
                   </SelectGroup>
                 </SelectContent>
               </Select>
-            </div>
 
-            <div class="space-y-1.5">
-              <label class="text-xs font-bold text-muted-foreground"
-                >Year</label
-              >
               <Select v-model="filterYear">
                 <SelectTrigger class="w-full">
                   <SelectValue placeholder="Any year" />
@@ -219,68 +217,73 @@ onMounted(async () => {
                   </SelectItem>
                 </SelectContent>
               </Select>
-            </div>
 
-            <div class="space-y-1.5">
-              <label class="text-xs font-bold text-muted-foreground"
-                >Interests</label
-              >
-              <div class="max-h-48 overflow-y-auto space-y-2 pr-1">
-                <div v-for="category in interestCategories" :key="category.id">
-                  <div
-                    class="text-[11px] font-bold text-muted-foreground/70 pt-1"
-                  >
-                    {{ category.label }}
-                  </div>
-                  <div class="flex flex-wrap gap-1.5 pt-1">
-                    <Badge
-                      v-for="interest in category.options"
-                      :key="interest"
-                      :variant="
-                        filterInterests.includes(interest)
-                          ? 'default'
-                          : 'outline'
-                      "
-                      class="cursor-pointer select-none"
-                      @click="toggleFilterInterest(interest)"
-                    >
-                      {{ interest }}
-                    </Badge>
-                  </div>
-                </div>
+              <Accordion type="single" collapsible>
+                <AccordionItem value="more" class="border-b-0">
+                  <AccordionTrigger class="text-xs font-bold text-muted-foreground py-2 px-3">
+                    More
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div class="max-h-48 overflow-y-auto space-y-2 pr-1">
+                      <div v-for="category in interestCategories" :key="category.id">
+                        <div
+                          class="text-[11px] font-bold text-muted-foreground/70 pt-1"
+                        >
+                          {{ category.label }}
+                        </div>
+                        <div class="flex flex-wrap gap-1.5 pt-1">
+                          <Badge
+                            v-for="interest in category.options"
+                            :key="interest"
+                            :variant="
+                              filterInterests.includes(interest)
+                                ? 'default'
+                                : 'outline'
+                            "
+                            class="cursor-pointer select-none"
+                            @click="toggleFilterInterest(interest)"
+                          >
+                            {{ interest }}
+                          </Badge>
+                        </div>
+                      </div>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+
+              <div class="flex gap-2 pt-1">
+                <Button
+                  variant="outline"
+                  class="flex-1 rounded-xl"
+                  @click="clearFilters"
+                >
+                  Clear
+                </Button>
+                <Button class="flex-1 rounded-xl" @click="applyFilters">
+                  Apply
+                </Button>
               </div>
             </div>
+          </div>
+        </Transition>
+      </div>
 
-            <div class="flex gap-2 pt-1">
-              <Button
-                variant="outline"
-                class="flex-1 rounded-xl"
-                @click="clearFilters"
-              >
-                Clear
-              </Button>
-              <Button class="flex-1 rounded-xl" @click="applyFilters">
-                Apply
-              </Button>
-            </div>
+      <div class="relative flex-1 min-h-0">
+        <!-- Skeleton -->
+        <div v-if="isLoadingInitialProfiles">
+          <div v-for="n in 6" :key="n" class="grid grid-cols-2 p-5 gap-5">
+            <Skeleton class="w-full aspect-square rounded-sm" />
+            <Skeleton class="w-full aspect-square rounded-sm" />
+            <Skeleton class="h-4 w-3/4 mt-2" />
+            <Skeleton class="h-4 w-3/4 mt-1" />
+            <Skeleton class="h-3 w-1/2 mt-2" />
+            <Skeleton class="h-3 w-1/2 mt-1" />
           </div>
         </div>
-      </div>
 
-      <!-- Skeleton -->
-      <div v-if="isLoadingInitialProfiles">
-        <div v-for="n in 6" :key="n" class="grid grid-cols-2 p-5 gap-5">
-          <Skeleton class="w-full aspect-square rounded-sm" />
-          <Skeleton class="w-full aspect-square rounded-sm" />
-          <Skeleton class="h-4 w-3/4 mt-2" />
-          <Skeleton class="h-4 w-3/4 mt-1" />
-          <Skeleton class="h-3 w-1/2 mt-2" />
-          <Skeleton class="h-3 w-1/2 mt-1" />
-        </div>
-      </div>
-
-      <!-- Profiles grid -->
-      <ScrollArea v-else ref="scrollAreaRef" class="flex-1 min-h-0">
+        <!-- Profiles grid -->
+        <ScrollArea v-else ref="scrollAreaRef" class="h-full">
         <!-- TODOO: Implement discover popup -->
         <TransitionGroup
           tag="div"
@@ -339,7 +342,16 @@ onMounted(async () => {
             />
           </div>
         </Transition>
-      </ScrollArea>
+        </ScrollArea>
+
+        <Transition name="backdrop">
+          <div
+            v-if="filterIsOpen"
+            class="absolute inset-0 z-10 bg-black/40"
+            @click="filterIsOpen = false"
+          />
+        </Transition>
+      </div>
     </div>
   </div>
 </template>

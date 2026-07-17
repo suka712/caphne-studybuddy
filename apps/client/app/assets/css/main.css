@@ -148,3 +148,24 @@
   opacity: 0;
   transform: translateY(-8px);
 }
+
+/* Filter panel popping down from the /discover header */
+.filter-panel-enter-active,
+.filter-panel-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.filter-panel-enter-from,
+.filter-panel-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+/* Darkened backdrop behind the filter panel */
+.backdrop-enter-active,
+.backdrop-leave-active {
+  transition: opacity 0.2s ease;
+}
+.backdrop-enter-from,
+.backdrop-leave-to {
+  opacity: 0;
+}

@@ -60,6 +60,7 @@ export const emailCollection = pgTable("email_collection", {
 });
 
 export const swipeDecision = pgEnum("swipe_decision", ["like", "pass"]);
+export type SwipeDecision = typeof swipeDecision.enumValues[number];
 
 export const swipes = pgTable(
   "swipes",

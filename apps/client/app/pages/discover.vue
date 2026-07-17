@@ -28,6 +28,7 @@ import {
   majorOptions,
   yearOptions,
   interestCategories,
+  goalOptions,
 } from "~/data/startOptions";
 
 definePageMeta({ layout: "internal", middleware: "auth" });
@@ -73,6 +74,16 @@ const toggleFilterInterest = (interest: string) => {
     filterInterests.value.splice(idx, 1);
   }
 };
+
+const yearLabel = (value: string) =>
+  yearOptions.find((y) => y.value === value)?.label ?? value;
+
+const majorLabel = (value: string) =>
+  majorOptions.flatMap((g) => g.items).find((i) => i.value === value)?.label ??
+  value;
+
+const goalLabel = (id: string) =>
+  goalOptions.find((g) => g.id === id)?.label ?? id;
 
 const activeFilterQuery = () => ({
   ...(filterMajor.value ? { major: filterMajor.value } : {}),
@@ -321,13 +332,65 @@ onMounted(async () => {
             <!-- Dialog popup -->
             <DialogContent class="w-xs">
               <DialogHeader>
-                <DialogTitle>{{ discoverProfile.displayName }}</DialogTitle>
-                <DialogDescription>
-                  {{ discoverProfile.bio }}
-                </DialogDescription>
+                <div class="flex items-center gap-3">
+                  <img
+                    v-if="discoverProfile.photoUrl"
+                    :src="discoverProfile.photoUrl"
+                    alt="Profile"
+                    class="size-14 rounded-xl object-cover shadow-md shrink-0"
+                  />
+                  <div
+                    v-else
+                    class="size-14 rounded-xl bg-secondary/30 flex items-center justify-center shrink-0"
+                  >
+                    <Icon name="mdi:account" size="28" class="text-muted-foreground" />
+                  </div>
+                  <div class="min-w-0">
+                    <DialogTitle class="truncate">
+                      {{ discoverProfile.displayName }}
+                    </DialogTitle>
+                    <DialogDescription class="truncate">
+                      {{ majorLabel(discoverProfile.major) }} · {{ yearLabel(discoverProfile.year) }}
+                    </DialogDescription>
+                  </div>
+                </div>
               </DialogHeader>
-              <div v-for="vibe in discoverProfile.vibes" :key="vibe">
-                {{ vibe }}
+
+              <p v-if="discoverProfile.bio" class="text-sm text-muted-foreground">
+                {{ discoverProfile.bio }}
+              </p>
+
+              <div v-if="discoverProfile.goals.length > 0" class="space-y-1.5">
+                <div class="text-[11px] font-bold text-muted-foreground/70">
+                  Looking for
+                </div>
+                <div class="flex flex-wrap gap-1.5">
+                  <Badge v-for="goal in discoverProfile.goals" :key="goal" variant="outline">
+                    {{ goalLabel(goal) }}
+                  </Badge>
+                </div>
+              </div>
+
+              <div v-if="discoverProfile.vibes.length > 0" class="space-y-1.5">
+                <div class="text-[11px] font-bold text-muted-foreground/70">
+                  Vibes
+                </div>
+                <div class="flex flex-wrap gap-1.5">
+                  <Badge v-for="vibe in discoverProfile.vibes" :key="vibe" variant="outline">
+                    {{ vibe }}
+                  </Badge>
+                </div>
+              </div>
+
+              <div v-if="discoverProfile.interests.length > 0" class="space-y-1.5">
+                <div class="text-[11px] font-bold text-muted-foreground/70">
+                  Interests
+                </div>
+                <div class="flex flex-wrap gap-1.5">
+                  <Badge v-for="interest in discoverProfile.interests" :key="interest" variant="outline">
+                    {{ interest }}
+                  </Badge>
+                </div>
               </div>
             </DialogContent>
           </Dialog>

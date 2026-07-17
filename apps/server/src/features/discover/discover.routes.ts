@@ -7,14 +7,24 @@ export const discoverRouter = Router();
 const LIMIT = 10;
 
 discoverRouter.get("/", requireAuth, async (req, res) => {
-  const { updatedAt, id } = req.query;
+  const { updatedAt, id, major, year, interests } = req.query;
   const cursor =
     updatedAt && id
       ? { updatedAt: new Date(updatedAt as string), id: Number(id) }
       : undefined;
   const user = req.user!;
 
-  const rows = await getPublicProfiles(user.id, cursor, LIMIT + 1);
+  const filters = {
+    major: typeof major === "string" ? major : undefined,
+    year: typeof year === "string" ? year : undefined,
+    interests: Array.isArray(interests)
+      ? (interests as string[])
+      : typeof interests === "string"
+        ? [interests]
+        : undefined,
+  };
+
+  const rows = await getPublicProfiles(user.id, cursor, LIMIT + 1, filters);
   const hasMore = rows.length > LIMIT;
   const profiles = hasMore ? rows.slice(0, LIMIT) : rows;
   const nextCursor = hasMore

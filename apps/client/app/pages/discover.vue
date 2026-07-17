@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Skeleton from "@/components/ui/skeleton/Skeleton.vue";
-import { Dialog, DialogContent, DialogTrigger } from "~/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle, DialogDescription } from "~/components/ui/dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "~/components/ui/select";
+import { majorOptions, yearOptions, interestCategories } from "~/data/startOptions";
 
 definePageMeta({ layout: "internal", middleware: "auth" });
 
@@ -33,6 +36,28 @@ const isLoadingMoreProfiles = ref(false);
 const discoverProfiles = ref<DiscoverProfile[]>([]);
 const nextCursor = ref<NextCursor | null>(null);
 
+const isFilterOpen = ref(false);
+const filterMajor = ref<string | undefined>(undefined);
+const filterYear = ref<string | undefined>(undefined);
+const filterInterests = ref<string[]>([]);
+
+const toggleFilterInterest = (interest: string) => {
+  const idx = filterInterests.value.indexOf(interest);
+  if (idx === -1) {
+    filterInterests.value.push(interest);
+  } else {
+    filterInterests.value.splice(idx, 1);
+  }
+};
+
+const activeFilterQuery = () => ({
+  ...(filterMajor.value ? { major: filterMajor.value } : {}),
+  ...(filterYear.value ? { year: filterYear.value } : {}),
+  ...(filterInterests.value.length > 0
+    ? { interests: filterInterests.value }
+    : {}),
+});
+
 const LOADING_DELAY_MS = 2000;
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -43,6 +68,7 @@ const {
 const fetchInitialProfiles = async () => {
   const data = await $fetch<DiscoverProfilesResponse>(`${apiBase}/discover`, {
     credentials: "include",
+    query: activeFilterQuery(),
   });
 
   discoverProfiles.value = data.profiles;
@@ -56,12 +82,12 @@ const fetchMoreProfiles = async () => {
 
   isLoadingMoreProfiles.value = true;
 
-  const query = nextCursor.value
-    ? {
-        updatedAt: String(nextCursor.value.updatedAt),
-        id: nextCursor.value.id,
-      }
-    : {};
+  const query = {
+    ...activeFilterQuery(),
+    ...(nextCursor.value
+      ? { updatedAt: String(nextCursor.value.updatedAt), id: nextCursor.value.id }
+      : {}),
+  };
 
   const [data] = await Promise.all([
     $fetch<DiscoverProfilesResponse>(`${apiBase}/discover`, {
@@ -74,6 +100,21 @@ const fetchMoreProfiles = async () => {
   discoverProfiles.value = [...discoverProfiles.value, ...data.profiles];
   nextCursor.value = data.nextCursor;
   isLoadingMoreProfiles.value = false;
+};
+
+const applyFilters = async () => {
+  isFilterOpen.value = false;
+  isLoadingInitialProfiles.value = true;
+  discoverProfiles.value = [];
+  nextCursor.value = null;
+  await fetchInitialProfiles();
+};
+
+const clearFilters = () => {
+  filterMajor.value = undefined;
+  filterYear.value = undefined;
+  filterInterests.value = [];
+  applyFilters();
 };
 
 const onScroll = (e: Event) => {
@@ -103,13 +144,87 @@ onMounted(async () => {
         <h1 class="text-xl font-black text-primary flex items-center gap-2">
           Discover
         </h1>
-        <!-- TODOO: Implement filter here -->
-        <Button
-          variant="outline"
-          class="rounded-xl h-9 px-4 font-bold border-primary/10 hover:bg-primary hover:text-primary-foreground transition-all"
-        >
-          Filter
-        </Button>
+        <Popover v-model:open="isFilterOpen">
+          <PopoverTrigger as-child>
+            <Button
+              variant="outline"
+              class="rounded-xl h-9 px-4 font-bold border-primary/10 hover:bg-primary hover:text-primary-foreground transition-all"
+            >
+              Filter
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent class="w-72 space-y-4" align="end">
+            <div class="space-y-1.5">
+              <label class="text-xs font-bold text-muted-foreground">Major</label>
+              <Select v-model="filterMajor">
+                <SelectTrigger class="w-full">
+                  <SelectValue placeholder="Any major" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup v-for="group in majorOptions" :key="group.group">
+                    <SelectLabel>{{ group.group }}</SelectLabel>
+                    <SelectItem
+                      v-for="item in group.items"
+                      :key="item.value"
+                      :value="item.value"
+                    >
+                      {{ item.label }}
+                    </SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="text-xs font-bold text-muted-foreground">Year</label>
+              <Select v-model="filterYear">
+                <SelectTrigger class="w-full">
+                  <SelectValue placeholder="Any year" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem
+                    v-for="option in yearOptions"
+                    :key="option.value"
+                    :value="option.value"
+                  >
+                    {{ option.label }}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="text-xs font-bold text-muted-foreground">Interests</label>
+              <div class="max-h-48 overflow-y-auto space-y-2 pr-1">
+                <div v-for="category in interestCategories" :key="category.id">
+                  <div class="text-[11px] font-bold text-muted-foreground/70 pt-1">
+                    {{ category.label }}
+                  </div>
+                  <div class="flex flex-wrap gap-1.5 pt-1">
+                    <Badge
+                      v-for="interest in category.options"
+                      :key="interest"
+                      :variant="filterInterests.includes(interest) ? 'default' : 'outline'"
+                      class="cursor-pointer select-none"
+                      @click="toggleFilterInterest(interest)"
+                    >
+                      {{ interest }}
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex gap-2 pt-1">
+              <Button variant="outline" class="flex-1 rounded-xl" @click="clearFilters">
+                Clear
+              </Button>
+              <Button class="flex-1 rounded-xl" @click="applyFilters">
+                Apply
+              </Button>
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
 
       <!-- Skeleton -->
@@ -160,9 +275,16 @@ onMounted(async () => {
                 <div class="text-sm truncate">{{ discoverProfile.major }}</div>
               </div>
             </DialogTrigger>
-            <DialogContent>
-              <div>
-                Someshit
+            <!-- Dialog popup -->
+            <DialogContent class="w-xs">
+              <DialogHeader>
+                <DialogTitle>{{ discoverProfile.displayName }}</DialogTitle>
+                <DialogDescription>
+                  {{ discoverProfile.bio }}
+                </DialogDescription>
+              </DialogHeader>
+              <div v-for="vibe in discoverProfile.vibes" :key="vibe">
+                {{ vibe }}
               </div>
             </DialogContent>
           </Dialog>

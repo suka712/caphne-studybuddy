@@ -1,37 +1,23 @@
 import { Router } from "express";
 import { requireAuth } from "../../middleware/requireAuth.js";
-import { getNextCandidate, recordSwipeAndMatch, createMatch } from "./swipes.services.js";
-import { matches, User } from "../../db/schema.js";
-import { db } from "../../db/db.js";
-import { and, count, eq, gte } from "drizzle-orm";
-import { matchConfig } from "../../config/matchConfig.js";
+import {
+  getRemainingCandidates,
+  isInTodaysBatch,
+  recordSwipe,
+  createMatch,
+} from "./swipes.services.js";
+import { User } from "../../db/schema.js";
 
 export const swipesRouter = Router();
 
-const hasReachedDailyQuota = async (userId: number) => {
-  const startOfDay = new Date();
-  startOfDay.setUTCHours(0, 0, 0, 0);
-
-  const [matchesToday] = await db
-    .select({ count: count() })
-    .from(matches)
-    .where(and(eq(matches.userId, userId), gte(matches.createdAt, startOfDay)));
-
-  return matchesToday.count >= matchConfig.matchesPerDay;
-};
-
-swipesRouter.get("/next", requireAuth, async (req, res) => {
+swipesRouter.get("/", requireAuth, async (req, res) => {
   const user = req.user as User;
 
   try {
-    if (await hasReachedDailyQuota(user.id)) {
-      return res.json({ profile: null });
-    }
-
-    const candidate = await getNextCandidate(user.id);
-    res.json({ profile: candidate ?? null });
+    const profiles = await getRemainingCandidates(user.id);
+    res.json({ profiles });
   } catch (e) {
-    console.log(`Error getting next swipe candidate: ${e}`);
+    console.log(`Error getting swipe batch: ${e}`);
     res.status(500).json({ error: "Something went wrong" });
   }
 });
@@ -48,18 +34,16 @@ swipesRouter.post("/", requireAuth, async (req, res) => {
   }
 
   try {
-    await recordSwipeAndMatch(user.id, targetUserId, decision);
+    if (!(await isInTodaysBatch(user.id, targetUserId))) {
+      return res.status(400).json({
+        error: "This profile isn't in your batch for today.",
+      });
+    }
+
+    await recordSwipe(user.id, targetUserId, decision);
 
     if (decision === "pass") {
       return res.json({ decision: "pass" });
-    }
-
-    if (await hasReachedDailyQuota(user.id)) {
-      return res.json({
-        decision: "like",
-        matched: false,
-        reason: "quota_exceeded",
-      });
     }
 
     const match = await createMatch(user.id, targetUserId);

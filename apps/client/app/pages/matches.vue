@@ -22,19 +22,20 @@ type SwipeCandidate = {
 
 type SwipeResponse =
   | { decision: "pass" }
-  | { decision: "like"; matched: true }
-  | { decision: "like"; matched: false; reason: "quota_exceeded" };
+  | { decision: "like"; matched: true };
 
 const {
   public: { apiBase },
 } = useRuntimeConfig();
 
-const currentCandidate = ref<SwipeCandidate | null>(null);
+const remainingCandidates = ref<SwipeCandidate[]>([]);
 const isLoading = ref(true);
 const isSwiping = ref(false);
-const noMoreCandidates = ref(false);
 const lastDecision = ref<"like" | "pass">("pass");
 const isLikeHovered = ref(false);
+
+const currentCandidate = computed(() => remainingCandidates.value[0] ?? null);
+const noMoreCandidates = computed(() => remainingCandidates.value.length === 0);
 
 const yearLabel = (value: string) =>
   yearOptions.find((y) => y.value === value)?.label ?? value;
@@ -46,14 +47,13 @@ const majorLabel = (value: string) =>
 const goalLabel = (id: string) =>
   goalOptions.find((g) => g.id === id)?.label ?? id;
 
-const fetchNextCandidate = async () => {
-  const data = await $fetch<{ profile: SwipeCandidate | null }>(
-    `${apiBase}/swipes/next`,
+const fetchBatch = async () => {
+  const data = await $fetch<{ profiles: SwipeCandidate[] }>(
+    `${apiBase}/swipes`,
     { credentials: "include" },
   );
 
-  currentCandidate.value = data.profile;
-  noMoreCandidates.value = !data.profile;
+  remainingCandidates.value = data.profiles;
 };
 
 const handleSwipe = async (decision: "like" | "pass") => {
@@ -62,9 +62,10 @@ const handleSwipe = async (decision: "like" | "pass") => {
   const targetUserId = currentCandidate.value.userId;
   isSwiping.value = true;
   lastDecision.value = decision;
-  // Clear immediately so the card animates out right on tap, instead of
-  // waiting on the network round trip before showing any feedback.
-  currentCandidate.value = null;
+  // Drop immediately so the card animates out right on tap, instead of
+  // waiting on the network round trip before showing any feedback. No new
+  // fetch needed — the rest of today's batch is already in hand.
+  remainingCandidates.value = remainingCandidates.value.slice(1);
 
   try {
     const result = await $fetch<SwipeResponse>(`${apiBase}/swipes`, {
@@ -73,26 +74,19 @@ const handleSwipe = async (decision: "like" | "pass") => {
       body: { targetUserId, decision },
     });
 
-    if (result.decision === "like") {
-      if (result.matched) {
-        toast.success("It's a match!");
-      } else if (result.reason === "quota_exceeded") {
-        toast.error(
-          "Liked! But you've hit today's match limit — this profile won't come back.",
-        );
-      }
+    if (result.decision === "like" && result.matched) {
+      toast.success("It's a match!");
     }
   } catch (e) {
     console.error("Failed to record swipe:", e);
     toast.error("Failed to record swipe");
   } finally {
-    await fetchNextCandidate();
     isSwiping.value = false;
   }
 };
 
 onMounted(async () => {
-  await fetchNextCandidate();
+  await fetchBatch();
   isLoading.value = false;
 });
 </script>

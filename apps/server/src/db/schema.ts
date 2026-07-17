@@ -80,6 +80,22 @@ export const swipes = pgTable(
   (t) => [unique("swipes_unique").on(t.userId, t.targetUserId)],
 );
 
+export const dailyBatches = pgTable(
+  "daily_batches",
+  {
+    id: serial("id").primaryKey(),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    batchDate: date("batch_date").notNull(),
+    candidateUserIds: integer("candidate_user_ids").array().notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [unique("daily_batches_user_date_unique").on(t.userId, t.batchDate)],
+);
+
 export const matches = pgTable("matches", {
   id: serial("id").primaryKey(),
   userId: integer("user_id")

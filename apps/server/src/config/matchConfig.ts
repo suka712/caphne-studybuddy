@@ -1,5 +1,5 @@
 export const matchConfig = {
   adminEmail: "khiemnguyen.hye@gmail.com",
-  matchesPerDay: 100,
+  swipesPerDay: 15,
   initialMatch: 3,
 } as const;

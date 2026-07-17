@@ -231,12 +231,17 @@ onMounted(async () => {
 
               <Accordion type="single" collapsible>
                 <AccordionItem value="more" class="border-b-0">
-                  <AccordionTrigger class="text-xs font-bold text-muted-foreground py-2 px-3">
+                  <AccordionTrigger
+                    class="text-xs font-bold text-muted-foreground py-2 px-3"
+                  >
                     More
                   </AccordionTrigger>
                   <AccordionContent>
                     <div class="max-h-48 overflow-y-auto space-y-2 pr-1">
-                      <div v-for="category in interestCategories" :key="category.id">
+                      <div
+                        v-for="category in interestCategories"
+                        :key="category.id"
+                      >
                         <div
                           class="text-[11px] font-bold text-muted-foreground/70 pt-1"
                         >
@@ -295,116 +300,158 @@ onMounted(async () => {
 
         <!-- Profiles grid -->
         <ScrollArea v-else ref="scrollAreaRef" class="h-full">
-        <!-- TODOO: Implement discover popup -->
-        <TransitionGroup
-          tag="div"
-          name="discover-profile"
-          class="grid grid-cols-2 p-5 gap-5"
-        >
-          <Dialog
-            v-for="discoverProfile in discoverProfiles"
-            :key="discoverProfile.id"
+          <TransitionGroup
+            tag="div"
+            name="discover-profile"
+            class="grid grid-cols-2 p-5 gap-5"
           >
-            <DialogTrigger as-child>
-              <div
-                class="p-3 rounded-md bg-secondary/30 hover:bg-secondary/60 transition-all cursor-pointer border border-transparent hover:border-primary/5"
-              >
-                <img
-                  v-if="discoverProfile.photoUrl"
-                  :src="discoverProfile.photoUrl"
-                  alt="Profile"
-                  class="rounded-sm shadow-md w-full aspect-square object-cover"
-                />
-                <div v-else class="relative w-full aspect-square">
-                  <Icon
-                    name="mdi:account"
-                    size="50"
-                    class="absolute inset-0 m-auto"
-                  />
-                </div>
-
-                <div class="font-bold pt-1 truncate">
-                  {{ discoverProfile.displayName }}
-                </div>
-                <div class="text-sm truncate">{{ discoverProfile.major }}</div>
+            <!-- If no profiles found -->
+            <div v-if="discoverProfiles.length === 0" class="col-span-2 flex items-center justify-center py-16">
+              <div class="text-center text-muted-foreground">
+                {{
+                  filterInterests || filterMajor || filterYear
+                    ? "No profiles found matching your filters. Please check back later."
+                    : "No profiles found. Please check back later."
+                }}
               </div>
-            </DialogTrigger>
-            <!-- Dialog popup -->
-            <DialogContent class="w-xs">
-              <DialogHeader>
-                <div class="flex items-center gap-3">
+            </div>
+
+            <Dialog
+              v-for="discoverProfile in discoverProfiles"
+              v-else
+              :key="discoverProfile.id"
+            >
+              <DialogTrigger as-child>
+                <div
+                  class="p-3 rounded-md bg-secondary/30 hover:bg-secondary/60 transition-all cursor-pointer border border-transparent hover:border-primary/5"
+                >
                   <img
                     v-if="discoverProfile.photoUrl"
                     :src="discoverProfile.photoUrl"
                     alt="Profile"
-                    class="size-14 rounded-xl object-cover shadow-md shrink-0"
+                    class="rounded-sm shadow-md w-full aspect-square object-cover"
                   />
-                  <div
-                    v-else
-                    class="size-14 rounded-xl bg-secondary/30 flex items-center justify-center shrink-0"
-                  >
-                    <Icon name="mdi:account" size="28" class="text-muted-foreground" />
+                  <div v-else class="relative w-full aspect-square">
+                    <Icon
+                      name="mdi:account"
+                      size="50"
+                      class="absolute inset-0 m-auto"
+                    />
                   </div>
-                  <div class="min-w-0">
-                    <DialogTitle class="truncate">
-                      {{ discoverProfile.displayName }}
-                    </DialogTitle>
-                    <DialogDescription class="truncate">
-                      {{ majorLabel(discoverProfile.major) }} · {{ yearLabel(discoverProfile.year) }}
-                    </DialogDescription>
+
+                  <div class="font-bold pt-1 truncate">
+                    {{ discoverProfile.displayName }}
+                  </div>
+                  <div class="text-sm truncate">
+                    {{ discoverProfile.major }}
                   </div>
                 </div>
-              </DialogHeader>
+              </DialogTrigger>
+              <!-- Profile popup -->
+              <DialogContent class="w-xs">
+                <DialogHeader>
+                  <div class="flex items-center gap-3">
+                    <img
+                      v-if="discoverProfile.photoUrl"
+                      :src="discoverProfile.photoUrl"
+                      alt="Profile"
+                      class="size-14 rounded-sm object-cover shadow-md shrink-0"
+                    />
+                    <div
+                      v-else
+                      class="size-14 rounded-xl bg-secondary/30 flex items-center justify-center shrink-0"
+                    >
+                      <Icon
+                        name="mdi:account"
+                        size="28"
+                        class="text-muted-foreground"
+                      />
+                    </div>
+                    <div class="min-w-0">
+                      <DialogTitle class="truncate">
+                        {{ discoverProfile.displayName }}
+                      </DialogTitle>
+                      <DialogDescription class="truncate">
+                        {{ majorLabel(discoverProfile.major) }} ·
+                        {{ yearLabel(discoverProfile.year) }}
+                      </DialogDescription>
+                    </div>
+                  </div>
+                </DialogHeader>
 
-              <p v-if="discoverProfile.bio" class="text-sm text-muted-foreground">
-                {{ discoverProfile.bio }}
-              </p>
+                <p
+                  v-if="discoverProfile.bio"
+                  class="text-sm text-muted-foreground"
+                >
+                  {{ discoverProfile.bio }}
+                </p>
 
-              <div v-if="discoverProfile.goals.length > 0" class="space-y-1.5">
-                <div class="text-[11px] font-bold text-muted-foreground/70">
-                  Looking for
+                <div
+                  v-if="discoverProfile.goals.length > 0"
+                  class="space-y-1.5"
+                >
+                  <div class="text-[11px] font-bold text-muted-foreground/70">
+                    Looking for
+                  </div>
+                  <div class="flex flex-wrap gap-1.5">
+                    <Badge
+                      v-for="goal in discoverProfile.goals"
+                      :key="goal"
+                      variant="outline"
+                    >
+                      {{ goalLabel(goal) }}
+                    </Badge>
+                  </div>
                 </div>
-                <div class="flex flex-wrap gap-1.5">
-                  <Badge v-for="goal in discoverProfile.goals" :key="goal" variant="outline">
-                    {{ goalLabel(goal) }}
-                  </Badge>
-                </div>
-              </div>
 
-              <div v-if="discoverProfile.vibes.length > 0" class="space-y-1.5">
-                <div class="text-[11px] font-bold text-muted-foreground/70">
-                  Vibes
+                <div
+                  v-if="discoverProfile.vibes.length > 0"
+                  class="space-y-1.5"
+                >
+                  <div class="text-[11px] font-bold text-muted-foreground/70">
+                    Vibes
+                  </div>
+                  <div class="flex flex-wrap gap-1.5">
+                    <Badge
+                      v-for="vibe in discoverProfile.vibes"
+                      :key="vibe"
+                      variant="outline"
+                    >
+                      {{ vibe }}
+                    </Badge>
+                  </div>
                 </div>
-                <div class="flex flex-wrap gap-1.5">
-                  <Badge v-for="vibe in discoverProfile.vibes" :key="vibe" variant="outline">
-                    {{ vibe }}
-                  </Badge>
-                </div>
-              </div>
 
-              <div v-if="discoverProfile.interests.length > 0" class="space-y-1.5">
-                <div class="text-[11px] font-bold text-muted-foreground/70">
-                  Interests
+                <div
+                  v-if="discoverProfile.interests.length > 0"
+                  class="space-y-1.5"
+                >
+                  <div class="text-[11px] font-bold text-muted-foreground/70">
+                    Interests
+                  </div>
+                  <div class="flex flex-wrap gap-1.5">
+                    <Badge
+                      v-for="interest in discoverProfile.interests"
+                      :key="interest"
+                      variant="outline"
+                    >
+                      {{ interest }}
+                    </Badge>
+                  </div>
                 </div>
-                <div class="flex flex-wrap gap-1.5">
-                  <Badge v-for="interest in discoverProfile.interests" :key="interest" variant="outline">
-                    {{ interest }}
-                  </Badge>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
-        </TransitionGroup>
-        <!-- Loading indicator -->
-        <Transition name="bouncing-dots">
-          <div v-if="isLoadingMoreProfiles" class="flex justify-center pb-5">
-            <Icon
-              name="svg-spinners:3-dots-bounce"
-              size="28"
-              class="text-muted-foreground"
-            />
-          </div>
-        </Transition>
+              </DialogContent>
+            </Dialog>
+          </TransitionGroup>
+          <!-- Loading indicator -->
+          <Transition name="bouncing-dots">
+            <div v-if="isLoadingMoreProfiles" class="flex justify-center pb-5">
+              <Icon
+                name="svg-spinners:3-dots-bounce"
+                size="28"
+                class="text-muted-foreground"
+              />
+            </div>
+          </Transition>
         </ScrollArea>
 
         <Transition name="backdrop">

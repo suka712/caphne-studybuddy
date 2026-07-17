@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Skeleton from "@/components/ui/skeleton/Skeleton.vue";
+import { Dialog, DialogContent, DialogTrigger } from "~/components/ui/dialog";
 
 definePageMeta({ layout: "internal", middleware: "auth" });
 
@@ -131,34 +132,40 @@ onMounted(async () => {
           name="discover-profile"
           class="grid grid-cols-2 p-5 gap-5"
         >
-          <NuxtLink
+          <Dialog
             v-for="discoverProfile in discoverProfiles"
             :key="discoverProfile.id"
-            :to="`/discover`"
           >
-            <div
-              class="p-3 rounded-md bg-secondary/30 hover:bg-secondary/60 transition-all cursor-pointer border border-transparent hover:border-primary/5"
-            >
-              <img
-                v-if="discoverProfile.photoUrl"
-                :src="discoverProfile.photoUrl"
-                alt="Profile"
-                class="rounded-sm shadow-md w-full aspect-square object-cover"
-              />
-              <div v-else class="relative w-full aspect-square">
-                <Icon
-                  name="mdi:account"
-                  size="50"
-                  class="absolute inset-0 m-auto"
+            <DialogTrigger as-child>
+              <div
+                class="p-3 rounded-md bg-secondary/30 hover:bg-secondary/60 transition-all cursor-pointer border border-transparent hover:border-primary/5"
+              >
+                <img
+                  v-if="discoverProfile.photoUrl"
+                  :src="discoverProfile.photoUrl"
+                  alt="Profile"
+                  class="rounded-sm shadow-md w-full aspect-square object-cover"
                 />
-              </div>
+                <div v-else class="relative w-full aspect-square">
+                  <Icon
+                    name="mdi:account"
+                    size="50"
+                    class="absolute inset-0 m-auto"
+                  />
+                </div>
 
-              <div class="font-bold pt-1 truncate">
-                {{ discoverProfile.displayName }}
+                <div class="font-bold pt-1 truncate">
+                  {{ discoverProfile.displayName }}
+                </div>
+                <div class="text-sm truncate">{{ discoverProfile.major }}</div>
               </div>
-              <div class="text-sm truncate">{{ discoverProfile.major }}</div>
-            </div>
-          </NuxtLink>
+            </DialogTrigger>
+            <DialogContent>
+              <div>
+                Someshit
+              </div>
+            </DialogContent>
+          </Dialog>
         </TransitionGroup>
         <!-- Loading indicator -->
         <Transition name="bouncing-dots">

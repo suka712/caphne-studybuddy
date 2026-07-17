@@ -1,10 +1,28 @@
 <script setup lang="ts">
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Skeleton from "@/components/ui/skeleton/Skeleton.vue";
-import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle, DialogDescription } from "~/components/ui/dialog";
-import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "~/components/ui/select";
-import { majorOptions, yearOptions, interestCategories } from "~/data/startOptions";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "~/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
+import {
+  majorOptions,
+  yearOptions,
+  interestCategories,
+} from "~/data/startOptions";
 
 definePageMeta({ layout: "internal", middleware: "auth" });
 
@@ -36,7 +54,7 @@ const isLoadingMoreProfiles = ref(false);
 const discoverProfiles = ref<DiscoverProfile[]>([]);
 const nextCursor = ref<NextCursor | null>(null);
 
-const isFilterOpen = ref(false);
+const filterIsOpen = ref(false);
 const filterMajor = ref<string | undefined>(undefined);
 const filterYear = ref<string | undefined>(undefined);
 const filterInterests = ref<string[]>([]);
@@ -85,7 +103,10 @@ const fetchMoreProfiles = async () => {
   const query = {
     ...activeFilterQuery(),
     ...(nextCursor.value
-      ? { updatedAt: String(nextCursor.value.updatedAt), id: nextCursor.value.id }
+      ? {
+          updatedAt: String(nextCursor.value.updatedAt),
+          id: nextCursor.value.id,
+        }
       : {}),
   };
 
@@ -103,7 +124,7 @@ const fetchMoreProfiles = async () => {
 };
 
 const applyFilters = async () => {
-  isFilterOpen.value = false;
+  filterIsOpen.value = false;
   isLoadingInitialProfiles.value = true;
   discoverProfiles.value = [];
   nextCursor.value = null;
@@ -139,23 +160,28 @@ onMounted(async () => {
   <div class="h-full">
     <div class="h-full flex flex-col">
       <div
-        class="p-5 pb-4 pl-6 border-b border-primary/5 flex items-center justify-between"
+        class="p-5 pb-4 pl-6 border-b border-primary/5 flex items-center justify-between relative"
       >
         <h1 class="text-xl font-black text-primary flex items-center gap-2">
           Discover
         </h1>
-        <Popover v-model:open="isFilterOpen">
-          <PopoverTrigger as-child>
-            <Button
-              variant="outline"
-              class="rounded-xl h-9 px-4 font-bold border-primary/10 hover:bg-primary hover:text-primary-foreground transition-all"
-            >
-              Filter
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent class="w-72 space-y-4" align="end">
+        <Button
+          variant="outline"
+          class="rounded-xl h-9 px-4 font-bold border-primary/10 hover:bg-primary hover:text-primary-foreground transition-all"
+          @click="filterIsOpen = !filterIsOpen"
+        >
+          Filter
+        </Button>
+
+        <div
+          v-if="filterIsOpen"
+          class="absolute top-full left-0 right-0 p-3 z-1 bg-background rounded-b-xl"
+        >
+          <div class="space-y-4" align="end">
             <div class="space-y-1.5">
-              <label class="text-xs font-bold text-muted-foreground">Major</label>
+              <label class="text-xs font-bold text-muted-foreground"
+                >Major</label
+              >
               <Select v-model="filterMajor">
                 <SelectTrigger class="w-full">
                   <SelectValue placeholder="Any major" />
@@ -176,7 +202,9 @@ onMounted(async () => {
             </div>
 
             <div class="space-y-1.5">
-              <label class="text-xs font-bold text-muted-foreground">Year</label>
+              <label class="text-xs font-bold text-muted-foreground"
+                >Year</label
+              >
               <Select v-model="filterYear">
                 <SelectTrigger class="w-full">
                   <SelectValue placeholder="Any year" />
@@ -194,17 +222,25 @@ onMounted(async () => {
             </div>
 
             <div class="space-y-1.5">
-              <label class="text-xs font-bold text-muted-foreground">Interests</label>
+              <label class="text-xs font-bold text-muted-foreground"
+                >Interests</label
+              >
               <div class="max-h-48 overflow-y-auto space-y-2 pr-1">
                 <div v-for="category in interestCategories" :key="category.id">
-                  <div class="text-[11px] font-bold text-muted-foreground/70 pt-1">
+                  <div
+                    class="text-[11px] font-bold text-muted-foreground/70 pt-1"
+                  >
                     {{ category.label }}
                   </div>
                   <div class="flex flex-wrap gap-1.5 pt-1">
                     <Badge
                       v-for="interest in category.options"
                       :key="interest"
-                      :variant="filterInterests.includes(interest) ? 'default' : 'outline'"
+                      :variant="
+                        filterInterests.includes(interest)
+                          ? 'default'
+                          : 'outline'
+                      "
                       class="cursor-pointer select-none"
                       @click="toggleFilterInterest(interest)"
                     >
@@ -216,15 +252,19 @@ onMounted(async () => {
             </div>
 
             <div class="flex gap-2 pt-1">
-              <Button variant="outline" class="flex-1 rounded-xl" @click="clearFilters">
+              <Button
+                variant="outline"
+                class="flex-1 rounded-xl"
+                @click="clearFilters"
+              >
                 Clear
               </Button>
               <Button class="flex-1 rounded-xl" @click="applyFilters">
                 Apply
               </Button>
             </div>
-          </PopoverContent>
-        </Popover>
+          </div>
+        </div>
       </div>
 
       <!-- Skeleton -->

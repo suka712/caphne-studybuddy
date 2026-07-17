@@ -1,199 +1,219 @@
 <script setup lang="ts">
 import { toast } from "vue-sonner";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "~/components/ui/badge";
-import { SocketEvents } from "@caphne/shared/socket-events";
+import { yearOptions, majorOptions, goalOptions } from "~/data/startOptions";
 
 definePageMeta({
   middleware: ["require-auth", "require-profile"],
   layout: "internal",
 });
 
-const { getSocket } = useSocket();
-const { getUnreadCount, initUnreadCounts } = useChatNotifications();
+type SwipeCandidate = {
+  userId: number;
+  displayName: string;
+  major: string;
+  year: string;
+  bio: string;
+  photoUrl: string | null;
+  goals: string[];
+  vibes: string[];
+  interests: string[];
+};
+
+type SwipeResponse =
+  | { decision: "pass" }
+  | { decision: "like"; matched: true }
+  | { decision: "like"; matched: false; reason: "quota_exceeded" };
 
 const {
   public: { apiBase },
 } = useRuntimeConfig();
 
-interface MatchCard {
-  matchId: number;
-  displayName: string;
-  major: string;
-  year: string;
-  photoUrl: string | null;
-  matchedAt: string;
-  unreadCount: number;
-  isOnline: boolean;
-  lastActiveAt: string | null;
-}
-
-const matches = ref<MatchCard[]>([]);
+const currentCandidate = ref<SwipeCandidate | null>(null);
 const isLoading = ref(true);
-const isGenerating = ref(false);
-const onCooldown = ref(false);
-const canGenerate = computed(() => !onCooldown.value && !isGenerating.value);
+const isSwiping = ref(false);
+const noMoreCandidates = ref(false);
 
-const fetchMatches = async () => {
+const yearLabel = (value: string) =>
+  yearOptions.find((y) => y.value === value)?.label ?? value;
+
+const majorLabel = (value: string) =>
+  majorOptions.flatMap((g) => g.items).find((i) => i.value === value)?.label ??
+  value;
+
+const goalLabel = (id: string) =>
+  goalOptions.find((g) => g.id === id)?.label ?? id;
+
+const fetchNextCandidate = async () => {
+  const data = await $fetch<{ profile: SwipeCandidate | null }>(
+    `${apiBase}/swipes/next`,
+    { credentials: "include" },
+  );
+
+  currentCandidate.value = data.profile;
+  noMoreCandidates.value = !data.profile;
+};
+
+const handleSwipe = async (decision: "like" | "pass") => {
+  if (!currentCandidate.value || isSwiping.value) return;
+
+  isSwiping.value = true;
   try {
-    const data = await $fetch<{ matches: MatchCard[] }>(`${apiBase}/matches`, {
+    const result = await $fetch<SwipeResponse>(`${apiBase}/swipes`, {
+      method: "POST",
       credentials: "include",
+      body: { targetUserId: currentCandidate.value.userId, decision },
     });
-    matches.value = data.matches;
+
+    if (result.decision === "like") {
+      if (result.matched) {
+        toast.success("It's a match!");
+      } else if (result.reason === "quota_exceeded") {
+        toast.error(
+          "Liked! But you've hit today's match limit — this profile won't come back.",
+        );
+      }
+    }
+
+    await fetchNextCandidate();
   } catch (e) {
-    console.error("Failed to fetch matches:", e);
-    toast.error("Failed to load matches");
+    console.error("Failed to record swipe:", e);
+    toast.error("Failed to record swipe");
+  } finally {
+    isSwiping.value = false;
   }
 };
 
 onMounted(async () => {
-  await fetchMatches();
-  initUnreadCounts(matches.value);
+  await fetchNextCandidate();
   isLoading.value = false;
-
-  const socket = getSocket();
-  if (socket) {
-    socket.on(
-      SocketEvents.USER_HAS_NEW_MESSAGE,
-      (data: { matchId: number }) => {
-        const idx = matches.value.findIndex((m) => m.matchId === data.matchId);
-        if (idx > 0) {
-          const [match] = matches.value.splice(idx, 1);
-          matches.value.unshift(match!);
-        }
-      },
-    );
-  }
 });
-
-const handleGenerate = async () => {
-  isGenerating.value = true;
-  try {
-    const result = await $fetch<{ match: any }>(`${apiBase}/matches`, {
-      method: "POST",
-      credentials: "include",
-    });
-    await fetchMatches();
-    if (result) {
-      toast.success("New match found!");
-    } else {
-      toast.info("No more matches available right now");
-    }
-    onCooldown.value = true;
-    setTimeout(() => {
-      onCooldown.value = false;
-    }, 2_000);
-  } catch (e: any) {
-    if (e?.response?.status === 429) {
-      toast.error("You have reached your match limit for today");
-    } else {
-      toast.error("Failed to generate matches");
-    }
-  } finally {
-    isGenerating.value = false;
-  }
-};
 </script>
 
 <template>
-  <div class="h-full">
-    <div v-if="isLoading" class="flex items-center justify-center h-full">
-      <Icon name="svg-spinners:ring-resize" size="40" class="text-accent" />
+  <div class="h-full flex flex-col">
+    <!-- Header -->
+    <div
+      class="p-5 pb-4 pl-6 border-b border-primary/5 flex items-center justify-between"
+    >
+      <h1 class="text-xl font-black text-primary flex items-center gap-2">
+        Matches
+      </h1>
     </div>
 
-    <div v-else class="h-full flex flex-col min-h-0">
-      <!-- Header -->
-      <div
-        class="p-5 pb-4 pl-6 border-b border-primary/5 flex items-center justify-between"
-      >
-        <h1 class="text-xl font-black text-primary flex items-center gap-2">
-          Matches
-          <span
-            class="text-xs font-bold px-2 py-0.5 rounded-full bg-secondary text-muted-foreground"
-          >
-            {{ matches.length }}
-          </span>
-        </h1>
-        <Button
-          variant="outline"
-          class="rounded-xl h-9 px-4 font-bold border-primary/10 hover:bg-primary hover:text-primary-foreground transition-all"
-          :disabled="!canGenerate"
-          @click="handleGenerate"
-        >
-          <Icon
-            v-if="isGenerating"
-            name="svg-spinners:ring-resize"
-            size="14"
-            class="mr-2"
-          />
-          <Icon v-else name="lucide:sparkles" size="14" class="mr-2" />
-          New
-        </Button>
+    <div class="flex-1 min-h-0 flex flex-col items-center justify-center p-5">
+      <div v-if="isLoading" class="flex items-center justify-center">
+        <Icon name="svg-spinners:ring-resize" size="40" class="text-accent" />
       </div>
 
-      <!-- Matches List -->
-      <ScrollArea class="flex-1 min-h-0">
-        <div class="p-4 space-y-3">
-          <p
-            v-if="matches.length === 0"
-            class="text-muted-foreground text-sm text-center py-12 font-bold italic"
-          >
-            No matches yet. Click "New" to start!
-          </p>
+      <div
+        v-else-if="noMoreCandidates"
+        class="text-center text-muted-foreground text-sm font-bold italic"
+      >
+        No more profiles right now. Please check back later.
+      </div>
 
-          <NuxtLink
-            v-for="match in matches"
-            :key="match.matchId"
-            :to="`/chat/${match.matchId}`"
-            class="flex items-center gap-4 rounded-3xl bg-secondary/30 hover:bg-secondary/60 transition-all cursor-pointer p-3 border border-transparent hover:border-primary/5 group"
+      <div
+        v-else-if="currentCandidate"
+        class="w-full max-w-xs bg-secondary/30 border border-primary/5 rounded-3xl p-5 space-y-4"
+      >
+        <div class="flex items-center gap-3">
+          <img
+            v-if="currentCandidate.photoUrl"
+            :src="currentCandidate.photoUrl"
+            alt="Profile"
+            class="size-14 rounded-sm object-cover shadow-md shrink-0"
+          />
+          <div
+            v-else
+            class="size-14 rounded-xl bg-secondary/30 flex items-center justify-center shrink-0"
           >
-            <div class="relative shrink-0">
-              <div
-                class="size-12 rounded-2xl bg-background flex items-center justify-center overflow-hidden border-2 border-background shadow-md"
-              >
-                <img
-                  v-if="match.photoUrl"
-                  :src="match.photoUrl"
-                  class="w-full h-full object-cover"
-                />
-                <Icon
-                  v-else
-                  name="mdi:account"
-                  size="24"
-                  class="text-muted-foreground"
-                />
-              </div>
-              <span
-                class="absolute -bottom-1 -right-1 size-3.5 rounded-full border-2 border-background"
-                :class="match.isOnline ? 'bg-green-500' : 'bg-slate-400'"
-              />
-            </div>
-            <div class="overflow-hidden flex-1">
-              <p
-                class="text-sm font-black text-primary truncate group-hover:text-accent transition-colors"
-              >
-                {{ match.displayName }}
-              </p>
-              <p class="text-[11px] font-bold text-muted-foreground truncate">
-                {{ match.major }}
-              </p>
-            </div>
-            <div class="flex flex-col items-end gap-1 shrink-0">
-              <Badge
-                v-if="getUnreadCount(match.matchId) > 0"
-                class="bg-accent text-primary-foreground font-black animate-bounce"
-              >
-                {{ getUnreadCount(match.matchId) }}
-              </Badge>
-              <Icon
-                name="lucide:chevron-right"
-                size="16"
-                class="text-muted-foreground opacity-20 group-hover:opacity-100 transition-opacity"
-              />
-            </div>
-          </NuxtLink>
+            <Icon
+              name="mdi:account"
+              size="28"
+              class="text-muted-foreground"
+            />
+          </div>
+          <div class="min-w-0">
+            <p class="font-black text-primary truncate">
+              {{ currentCandidate.displayName }}
+            </p>
+            <p class="text-sm text-muted-foreground truncate">
+              {{ majorLabel(currentCandidate.major) }} ·
+              {{ yearLabel(currentCandidate.year) }}
+            </p>
+          </div>
         </div>
-      </ScrollArea>
+
+        <p v-if="currentCandidate.bio" class="text-sm text-muted-foreground">
+          {{ currentCandidate.bio }}
+        </p>
+
+        <div v-if="currentCandidate.goals.length > 0" class="space-y-1.5">
+          <div class="text-[11px] font-bold text-muted-foreground/70">
+            Looking for
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <Badge
+              v-for="goal in currentCandidate.goals"
+              :key="goal"
+              variant="outline"
+            >
+              {{ goalLabel(goal) }}
+            </Badge>
+          </div>
+        </div>
+
+        <div v-if="currentCandidate.vibes.length > 0" class="space-y-1.5">
+          <div class="text-[11px] font-bold text-muted-foreground/70">
+            Vibes
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <Badge
+              v-for="vibe in currentCandidate.vibes"
+              :key="vibe"
+              variant="outline"
+            >
+              {{ vibe }}
+            </Badge>
+          </div>
+        </div>
+
+        <div v-if="currentCandidate.interests.length > 0" class="space-y-1.5">
+          <div class="text-[11px] font-bold text-muted-foreground/70">
+            Interests
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <Badge
+              v-for="interest in currentCandidate.interests"
+              :key="interest"
+              variant="outline"
+            >
+              {{ interest }}
+            </Badge>
+          </div>
+        </div>
+
+        <div class="flex gap-3 pt-2">
+          <Button
+            variant="outline"
+            class="flex-1 rounded-xl h-11"
+            :disabled="isSwiping"
+            @click="handleSwipe('pass')"
+          >
+            <Icon name="lucide:x" size="18" class="mr-2" />
+            Pass
+          </Button>
+          <Button
+            class="flex-1 rounded-xl h-11 bg-accent hover:bg-accent/90"
+            :disabled="isSwiping"
+            @click="handleSwipe('like')"
+          >
+            <Icon name="lucide:heart" size="18" class="mr-2" />
+            Like
+          </Button>
+        </div>
+      </div>
     </div>
   </div>
 </template>

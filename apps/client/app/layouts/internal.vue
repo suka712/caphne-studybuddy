@@ -46,6 +46,13 @@ onUnmounted(() => {
         <Icon name="lucide:earth" size="22" />
       </NuxtLink>
       <NuxtLink
+        to="/matches"
+        class="text-primary/40 hover:text-primary transition-colors"
+        active-class="!text-primary"
+      >
+        <Icon name="lucide:heart-handshake" size="22" />
+      </NuxtLink>
+      <NuxtLink
         to="/chat"
         class="text-primary/40 hover:text-primary transition-colors"
         active-class="!text-primary"

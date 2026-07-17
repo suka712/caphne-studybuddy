@@ -31,7 +31,10 @@ import {
   goalOptions,
 } from "~/data/startOptions";
 
-definePageMeta({ layout: "internal", middleware: "auth" });
+definePageMeta({
+  middleware: ["require-auth", "require-profile"],
+  layout: "internal",
+});
 
 type NextCursor = {
   updatedAt: Date;

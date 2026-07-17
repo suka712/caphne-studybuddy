@@ -1,11 +1,11 @@
 <script setup lang="ts">
 definePageMeta({
-  middleware: "auth",
+  middleware: ["require-auth", "require-profile"],
   layout: "internal",
 });
 
 const { authUser } = useAuth();
-const { profile, fetchProfile, isCheckingProfile } = useProfile();
+const { profile, isCheckingProfile } = useProfile();
 
 const {
   public: { apiBase },
@@ -27,9 +27,6 @@ const stats = computed(() => [
   },
 ]);
 
-onMounted(() => {
-  fetchProfile();
-});
 </script>
 
 <template>

@@ -5,7 +5,7 @@ import { Badge } from "~/components/ui/badge";
 import { SocketEvents } from "@caphne/shared/socket-events";
 
 definePageMeta({
-  middleware: "auth",
+  middleware: ["require-auth", "require-profile"],
   layout: "internal",
 });
 

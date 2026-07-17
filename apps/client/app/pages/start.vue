@@ -45,7 +45,7 @@ import {
 } from "~/data/startOptions";
 import { toast } from "vue-sonner";
 
-definePageMeta({ layout: "internal", middleware: "auth" });
+definePageMeta({ layout: "internal", middleware: "require-auth" });
 
 type Gender = "male" | "female" | "other";
 

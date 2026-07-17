@@ -2,17 +2,13 @@
 import { toast } from "vue-sonner";
 
 definePageMeta({
-  middleware: "auth",
+  middleware: ["require-auth", "require-profile"],
   layout: "internal",
 });
 
 const { authUser, logout } = useAuth();
-const { isCheckingProfile, profile, fetchProfile, updateProfile } =
+const { isCheckingProfile, profile, updateProfile } =
   useProfile();
-
-onMounted(() => {
-  fetchProfile();
-});
 
 const editingField = ref<"displayName" | "photoUrl" | "bio" | null>(null);
 const editingValue = ref("");

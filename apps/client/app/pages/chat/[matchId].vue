@@ -4,7 +4,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import type { ChatMessage } from "~/types/chat";
 
 definePageMeta({
-  middleware: "auth",
+  middleware: ["require-auth", "require-profile"],
   layout: "internal",
 });
 

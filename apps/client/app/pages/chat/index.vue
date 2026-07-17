@@ -30,9 +30,6 @@ interface MatchCard {
 
 const matches = ref<MatchCard[]>([]);
 const isLoading = ref(true);
-const isGenerating = ref(false);
-const onCooldown = ref(false);
-const canGenerate = computed(() => !onCooldown.value && !isGenerating.value);
 
 const fetchMatches = async () => {
   try {
@@ -66,33 +63,6 @@ onMounted(async () => {
   }
 });
 
-const handleGenerate = async () => {
-  isGenerating.value = true;
-  try {
-    const result = await $fetch<{ match: any }>(`${apiBase}/matches`, {
-      method: "POST",
-      credentials: "include",
-    });
-    await fetchMatches();
-    if (result) {
-      toast.success("New match found!");
-    } else {
-      toast.info("No more matches available right now");
-    }
-    onCooldown.value = true;
-    setTimeout(() => {
-      onCooldown.value = false;
-    }, 2_000);
-  } catch (e: any) {
-    if (e?.response?.status === 429) {
-      toast.error("You have reached your match limit for today");
-    } else {
-      toast.error("Failed to generate matches");
-    }
-  } finally {
-    isGenerating.value = false;
-  }
-};
 </script>
 
 <template>
@@ -107,28 +77,13 @@ const handleGenerate = async () => {
         class="p-5 pb-4 pl-6 border-b border-primary/5 flex items-center justify-between"
       >
         <h1 class="text-xl font-black text-primary flex items-center gap-2">
-          Matches
+          Chats
           <span
             class="text-xs font-bold px-2 py-0.5 rounded-full bg-secondary text-muted-foreground"
           >
             {{ matches.length }}
           </span>
         </h1>
-        <Button
-          variant="outline"
-          class="rounded-xl h-9 px-4 font-bold border-primary/10 hover:bg-primary hover:text-primary-foreground transition-all"
-          :disabled="!canGenerate"
-          @click="handleGenerate"
-        >
-          <Icon
-            v-if="isGenerating"
-            name="svg-spinners:ring-resize"
-            size="14"
-            class="mr-2"
-          />
-          <Icon v-else name="lucide:sparkles" size="14" class="mr-2" />
-          New
-        </Button>
       </div>
 
       <!-- Matches List -->

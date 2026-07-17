@@ -34,6 +34,7 @@ const isLoading = ref(true);
 const isSwiping = ref(false);
 const noMoreCandidates = ref(false);
 const lastDecision = ref<"like" | "pass">("pass");
+const isLikeHovered = ref(false);
 
 const yearLabel = (value: string) =>
   yearOptions.find((y) => y.value === value)?.label ?? value;
@@ -122,17 +123,20 @@ onMounted(async () => {
       <div v-else class="relative w-full max-w-xs min-h-[26rem]">
         <!-- Deck stack: static cards peeking out behind the current one -->
         <div
-          class="absolute inset-x-0 top-3 h-full bg-secondary/15 border border-primary/5 rounded-3xl z-0"
+          class="absolute left-1/2 -translate-x-1/2 -top-8 w-[82%] h-full bg-amber-50 border border-b-0 border-primary/10 rounded-md z-0"
         />
         <div
-          class="absolute inset-x-0 top-1.5 h-full bg-secondary/20 border border-primary/5 rounded-3xl z-[5]"
+          class="absolute left-1/2 -translate-x-1/2 -top-4 w-[90%] h-full bg-amber-100 border border-b-0 border-primary/10 rounded-md z-[5]"
         />
 
-        <Transition :name="lastDecision === 'like' ? 'swipe-right' : 'swipe-left'">
+        <Transition
+          :name="lastDecision === 'like' ? 'swipe-right' : 'swipe-left'"
+          mode="out-in"
+        >
           <div
             v-if="currentCandidate"
             :key="currentCandidate.userId"
-            class="relative z-10 w-full h-full bg-secondary/30 border border-primary/5 rounded-3xl p-5 space-y-4"
+            class="relative z-10 w-full overflow-hidden bg-secondary border border-primary/5 rounded-xl p-5 space-y-4"
           >
             <div class="flex items-center gap-3">
               <img
@@ -220,19 +224,29 @@ onMounted(async () => {
             <div class="flex gap-3 pt-2">
               <Button
                 variant="outline"
-                class="flex-1 rounded-xl h-11"
+                class="group flex-1 rounded-xl h-11"
                 :disabled="isSwiping"
                 @click="handleSwipe('pass')"
               >
-                <Icon name="lucide:x" size="18" class="mr-2" />
+                <Icon
+                  name="lucide:x"
+                  size="18"
+                  class="mr-2 transition-transform duration-300 group-hover:rotate-90"
+                />
                 Pass
               </Button>
               <Button
                 class="flex-1 rounded-xl h-11 bg-accent text-accent-foreground hover:bg-amber-500"
                 :disabled="isSwiping"
+                @mouseenter="isLikeHovered = true"
+                @mouseleave="isLikeHovered = false"
                 @click="handleSwipe('like')"
               >
-                <Icon name="lucide:heart" size="18" class="mr-2" />
+                <Icon
+                  :name="isLikeHovered ? 'mdi:heart' : 'mdi:heart-outline'"
+                  size="18"
+                  class="mr-2"
+                />
                 Like
               </Button>
             </div>

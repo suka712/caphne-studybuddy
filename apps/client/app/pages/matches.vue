@@ -11,7 +11,6 @@ definePageMeta({
 
 const { getSocket } = useSocket();
 const { getUnreadCount, initUnreadCounts } = useChatNotifications();
-const { fetchProfile } = useProfile();
 
 const {
   public: { apiBase },
@@ -48,7 +47,7 @@ const fetchMatches = async () => {
 };
 
 onMounted(async () => {
-  await Promise.all([fetchMatches(), fetchProfile()]);
+  await fetchMatches();
   initUnreadCounts(matches.value);
   isLoading.value = false;
 

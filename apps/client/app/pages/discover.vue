@@ -10,10 +10,16 @@ type NextCursor = {
 };
 
 type DiscoverProfile = {
-  displayName: string;
   id: string;
+  displayName: string;
   major: string;
-  photoUrl: string;
+  bio: string;
+  gender: string;
+  year: string;
+  photoUrl: string | null;
+  goals: string[];
+  vibes: string[];
+  interests: string[];
 };
 
 type DiscoverProfilesResponse = {
@@ -105,6 +111,7 @@ onMounted(async () => {
         </Button>
       </div>
 
+      <!-- Skeleton -->
       <div v-if="isLoadingInitialProfiles">
         <div v-for="n in 6" :key="n" class="grid grid-cols-2 p-5 gap-5">
           <Skeleton class="w-full aspect-square rounded-sm" />
@@ -116,6 +123,7 @@ onMounted(async () => {
         </div>
       </div>
 
+      <!-- Profiles grid -->
       <ScrollArea v-else ref="scrollAreaRef" class="flex-1 min-h-0">
         <!-- TODOO: Implement discover popup -->
         <TransitionGroup
@@ -152,6 +160,7 @@ onMounted(async () => {
             </div>
           </NuxtLink>
         </TransitionGroup>
+        <!-- Loading indicator -->
         <Transition name="bouncing-dots">
           <div v-if="isLoadingMoreProfiles" class="flex justify-center pb-5">
             <Icon

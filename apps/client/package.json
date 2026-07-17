@@ -13,6 +13,7 @@
   "dependencies": {
     "@caphne/shared": "workspace:^",
     "@internationalized/date": "^3.10.1",
+    "@lucide/vue": "^1.24.0",
     "@nuxt/icon": "2.2.0",
     "@tailwindcss/vite": "^4.1.18",
     "@vueuse/core": "^14.1.0",

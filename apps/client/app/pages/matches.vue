@@ -33,6 +33,7 @@ const currentCandidate = ref<SwipeCandidate | null>(null);
 const isLoading = ref(true);
 const isSwiping = ref(false);
 const noMoreCandidates = ref(false);
+const lastDecision = ref<"like" | "pass">("pass");
 
 const yearLabel = (value: string) =>
   yearOptions.find((y) => y.value === value)?.label ?? value;
@@ -57,12 +58,18 @@ const fetchNextCandidate = async () => {
 const handleSwipe = async (decision: "like" | "pass") => {
   if (!currentCandidate.value || isSwiping.value) return;
 
+  const targetUserId = currentCandidate.value.userId;
   isSwiping.value = true;
+  lastDecision.value = decision;
+  // Clear immediately so the card animates out right on tap, instead of
+  // waiting on the network round trip before showing any feedback.
+  currentCandidate.value = null;
+
   try {
     const result = await $fetch<SwipeResponse>(`${apiBase}/swipes`, {
       method: "POST",
       credentials: "include",
-      body: { targetUserId: currentCandidate.value.userId, decision },
+      body: { targetUserId, decision },
     });
 
     if (result.decision === "like") {
@@ -74,12 +81,11 @@ const handleSwipe = async (decision: "like" | "pass") => {
         );
       }
     }
-
-    await fetchNextCandidate();
   } catch (e) {
     console.error("Failed to record swipe:", e);
     toast.error("Failed to record swipe");
   } finally {
+    await fetchNextCandidate();
     isSwiping.value = false;
   }
 };
@@ -113,106 +119,125 @@ onMounted(async () => {
         No more profiles right now. Please check back later.
       </div>
 
-      <div
-        v-else-if="currentCandidate"
-        class="w-full max-w-xs bg-secondary/30 border border-primary/5 rounded-3xl p-5 space-y-4"
-      >
-        <div class="flex items-center gap-3">
-          <img
-            v-if="currentCandidate.photoUrl"
-            :src="currentCandidate.photoUrl"
-            alt="Profile"
-            class="size-14 rounded-sm object-cover shadow-md shrink-0"
-          />
+      <div v-else class="relative w-full max-w-xs min-h-[26rem]">
+        <!-- Deck stack: static cards peeking out behind the current one -->
+        <div
+          class="absolute inset-x-0 top-3 h-full bg-secondary/15 border border-primary/5 rounded-3xl z-0"
+        />
+        <div
+          class="absolute inset-x-0 top-1.5 h-full bg-secondary/20 border border-primary/5 rounded-3xl z-[5]"
+        />
+
+        <Transition :name="lastDecision === 'like' ? 'swipe-right' : 'swipe-left'">
           <div
-            v-else
-            class="size-14 rounded-xl bg-secondary/30 flex items-center justify-center shrink-0"
+            v-if="currentCandidate"
+            :key="currentCandidate.userId"
+            class="relative z-10 w-full h-full bg-secondary/30 border border-primary/5 rounded-3xl p-5 space-y-4"
           >
-            <Icon
-              name="mdi:account"
-              size="28"
-              class="text-muted-foreground"
-            />
-          </div>
-          <div class="min-w-0">
-            <p class="font-black text-primary truncate">
-              {{ currentCandidate.displayName }}
+            <div class="flex items-center gap-3">
+              <img
+                v-if="currentCandidate.photoUrl"
+                :src="currentCandidate.photoUrl"
+                alt="Profile"
+                class="size-14 rounded-sm object-cover shadow-md shrink-0"
+              />
+              <div
+                v-else
+                class="size-14 rounded-xl bg-secondary/30 flex items-center justify-center shrink-0"
+              >
+                <Icon
+                  name="mdi:account"
+                  size="28"
+                  class="text-muted-foreground"
+                />
+              </div>
+              <div class="min-w-0">
+                <p class="font-black text-primary truncate">
+                  {{ currentCandidate.displayName }}
+                </p>
+                <p class="text-sm text-muted-foreground truncate">
+                  {{ majorLabel(currentCandidate.major) }} ·
+                  {{ yearLabel(currentCandidate.year) }}
+                </p>
+              </div>
+            </div>
+
+            <p
+              v-if="currentCandidate.bio"
+              class="text-sm text-muted-foreground"
+            >
+              {{ currentCandidate.bio }}
             </p>
-            <p class="text-sm text-muted-foreground truncate">
-              {{ majorLabel(currentCandidate.major) }} ·
-              {{ yearLabel(currentCandidate.year) }}
-            </p>
-          </div>
-        </div>
 
-        <p v-if="currentCandidate.bio" class="text-sm text-muted-foreground">
-          {{ currentCandidate.bio }}
-        </p>
+            <div v-if="currentCandidate.goals.length > 0" class="space-y-1.5">
+              <div class="text-[11px] font-bold text-muted-foreground/70">
+                Looking for
+              </div>
+              <div class="flex flex-wrap gap-1.5">
+                <Badge
+                  v-for="goal in currentCandidate.goals"
+                  :key="goal"
+                  variant="outline"
+                >
+                  {{ goalLabel(goal) }}
+                </Badge>
+              </div>
+            </div>
 
-        <div v-if="currentCandidate.goals.length > 0" class="space-y-1.5">
-          <div class="text-[11px] font-bold text-muted-foreground/70">
-            Looking for
-          </div>
-          <div class="flex flex-wrap gap-1.5">
-            <Badge
-              v-for="goal in currentCandidate.goals"
-              :key="goal"
-              variant="outline"
+            <div v-if="currentCandidate.vibes.length > 0" class="space-y-1.5">
+              <div class="text-[11px] font-bold text-muted-foreground/70">
+                Vibes
+              </div>
+              <div class="flex flex-wrap gap-1.5">
+                <Badge
+                  v-for="vibe in currentCandidate.vibes"
+                  :key="vibe"
+                  variant="outline"
+                >
+                  {{ vibe }}
+                </Badge>
+              </div>
+            </div>
+
+            <div
+              v-if="currentCandidate.interests.length > 0"
+              class="space-y-1.5"
             >
-              {{ goalLabel(goal) }}
-            </Badge>
-          </div>
-        </div>
+              <div class="text-[11px] font-bold text-muted-foreground/70">
+                Interests
+              </div>
+              <div class="flex flex-wrap gap-1.5">
+                <Badge
+                  v-for="interest in currentCandidate.interests"
+                  :key="interest"
+                  variant="outline"
+                >
+                  {{ interest }}
+                </Badge>
+              </div>
+            </div>
 
-        <div v-if="currentCandidate.vibes.length > 0" class="space-y-1.5">
-          <div class="text-[11px] font-bold text-muted-foreground/70">
-            Vibes
+            <div class="flex gap-3 pt-2">
+              <Button
+                variant="outline"
+                class="flex-1 rounded-xl h-11"
+                :disabled="isSwiping"
+                @click="handleSwipe('pass')"
+              >
+                <Icon name="lucide:x" size="18" class="mr-2" />
+                Pass
+              </Button>
+              <Button
+                class="flex-1 rounded-xl h-11 bg-accent text-accent-foreground hover:bg-amber-500"
+                :disabled="isSwiping"
+                @click="handleSwipe('like')"
+              >
+                <Icon name="lucide:heart" size="18" class="mr-2" />
+                Like
+              </Button>
+            </div>
           </div>
-          <div class="flex flex-wrap gap-1.5">
-            <Badge
-              v-for="vibe in currentCandidate.vibes"
-              :key="vibe"
-              variant="outline"
-            >
-              {{ vibe }}
-            </Badge>
-          </div>
-        </div>
-
-        <div v-if="currentCandidate.interests.length > 0" class="space-y-1.5">
-          <div class="text-[11px] font-bold text-muted-foreground/70">
-            Interests
-          </div>
-          <div class="flex flex-wrap gap-1.5">
-            <Badge
-              v-for="interest in currentCandidate.interests"
-              :key="interest"
-              variant="outline"
-            >
-              {{ interest }}
-            </Badge>
-          </div>
-        </div>
-
-        <div class="flex gap-3 pt-2">
-          <Button
-            variant="outline"
-            class="flex-1 rounded-xl h-11"
-            :disabled="isSwiping"
-            @click="handleSwipe('pass')"
-          >
-            <Icon name="lucide:x" size="18" class="mr-2" />
-            Pass
-          </Button>
-          <Button
-            class="flex-1 rounded-xl h-11 bg-accent hover:bg-accent/90"
-            :disabled="isSwiping"
-            @click="handleSwipe('like')"
-          >
-            <Icon name="lucide:heart" size="18" class="mr-2" />
-            Like
-          </Button>
-        </div>
+        </Transition>
       </div>
     </div>
   </div>

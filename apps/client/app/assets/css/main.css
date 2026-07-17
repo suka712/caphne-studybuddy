@@ -149,6 +149,29 @@
   transform: translateY(-8px);
 }
 
+/* Swipe card leaving/arriving in /matches */
+.swipe-right-leave-active,
+.swipe-left-leave-active {
+  transition: transform 0.6s ease, opacity 0.6s ease;
+}
+.swipe-right-leave-to {
+  transform: translateX(150%);
+  opacity: 0;
+}
+.swipe-left-leave-to {
+  transform: translateX(-150%);
+  opacity: 0;
+}
+.swipe-right-enter-active,
+.swipe-left-enter-active {
+  transition: transform 0.4s ease, opacity 0.4s ease;
+}
+.swipe-right-enter-from,
+.swipe-left-enter-from {
+  transform: scale(0.95);
+  opacity: 0;
+}
+
 /* Filter panel popping down from the /discover header */
 .filter-panel-enter-active,
 .filter-panel-leave-active {

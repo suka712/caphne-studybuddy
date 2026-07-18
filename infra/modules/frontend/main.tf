@@ -1,21 +1,17 @@
-# All resources here live in us-east-1 because that's where the bucket is and
-# where the OAC is attached.
 terraform {
   required_providers {
     aws = {
       source                = "hashicorp/aws"
-      configuration_aliases = [aws.us_east_1]
     }
   }
 }
 
 resource "aws_s3_bucket" "this" {
-  provider = aws.us_east_1
   bucket   = var.bucket_name
+  force_destroy = true
 }
 
 resource "aws_s3_bucket_public_access_block" "this" {
-  provider = aws.us_east_1
   bucket   = aws_s3_bucket.this.id
 
   block_public_acls       = true
@@ -25,7 +21,6 @@ resource "aws_s3_bucket_public_access_block" "this" {
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
-  provider = aws.us_east_1
   bucket   = aws_s3_bucket.this.id
 
   rule {
@@ -37,7 +32,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
 }
 
 resource "aws_cloudfront_origin_access_control" "this" {
-  name                              = "oac-${var.bucket_name}.s3.us-east-1.amazonaws.com-mq8xvxmc7ka"
+  name                              = "oac-${var.bucket_name}"
   description                       = "Created by CloudFront"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
@@ -58,8 +53,8 @@ resource "aws_cloudfront_distribution" "this" {
   }
 
   origin {
-    origin_id                = "${var.bucket_name}.s3.us-east-1.amazonaws.com-mq8xupil1ja"
-    domain_name              = "${var.bucket_name}.s3.us-east-1.amazonaws.com"
+    origin_id                = "frontend-s3-whatever"
+    domain_name              = aws_s3_bucket.this.bucket_regional_domain_name
     origin_access_control_id = aws_cloudfront_origin_access_control.this.id
 
     connection_attempts = 3
@@ -67,7 +62,7 @@ resource "aws_cloudfront_distribution" "this" {
   }
 
   default_cache_behavior {
-    target_origin_id       = "${var.bucket_name}.s3.us-east-1.amazonaws.com-mq8xupil1ja"
+    target_origin_id       = "frontend-s3-whatever"
     viewer_protocol_policy = "redirect-to-https"
     allowed_methods        = ["GET", "HEAD"]
     cached_methods         = ["GET", "HEAD"]
@@ -101,10 +96,7 @@ resource "aws_cloudfront_distribution" "this" {
   }
 }
 
-# Bucket policy — now references the distribution as a Terraform-managed value
-# instead of a hardcoded ARN.
 resource "aws_s3_bucket_policy" "this" {
-  provider = aws.us_east_1
   bucket   = aws_s3_bucket.this.id
 
   policy = jsonencode({

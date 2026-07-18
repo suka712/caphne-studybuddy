@@ -145,7 +145,7 @@ deploy-frontend:
     - pnpm install --frozen-lockfile
   script:
     - pnpm --filter client generate
-    - aws s3 sync apps/client/.output/public/ "s3://caphne-frontend/" --delete
+    - aws s3 sync apps/client/.output/public/ "s3://caphne-frontend-bucket/" --delete
     - |
       INV=$(aws cloudfront create-invalidation \
         --distribution-id E2NI2OUQXGO5W8 --paths '/*' \

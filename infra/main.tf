@@ -12,14 +12,10 @@ module "dns" {
 module "frontend" {
   source = "./modules/frontend"
 
-  bucket_name = "caphne-frontend"
+  bucket_name = "caphne-frontend-bucket"
   domain_name = "caphne.co"
   zone_id     = module.dns.zone_id
   cert_arn    = module.dns.frontend_cert_arn
-
-  providers = {
-    aws.us_east_1 = aws.us_east_1
-  }
 }
 
 module "backend" {

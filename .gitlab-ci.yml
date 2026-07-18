@@ -160,9 +160,31 @@ deploy-frontend:
         - packages/shared/**/*
         - pnpm-lock.yaml
 
+migrate-db:
+  stage: deploy
+  extends: .aws-oidc
+  image:
+    name: node:24-slim
+  resource_group: deploy-backend
+  before_script:
+    - echo "$GITLAB_OIDC_TOKEN" > "$AWS_WEB_IDENTITY_TOKEN_FILE"
+    - apt-get update -qq && apt-get install -y -qq awscli
+    - npm install -g pnpm@10
+    - pnpm install --frozen-lockfile
+  script:
+    - export DATABASE_URL=$(aws ssm get-parameter --name /caphne/prod/DATABASE_URL --with-decryption --query Parameter.Value --output text)
+    - pnpm --filter server db:migrate
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        - apps/server/**/*
+        - packages/shared/**/*
+        - pnpm-lock.yaml
+
 deploy-backend:
   stage: deploy
   extends: .aws-oidc
+  needs: ["migrate-db"]
   image:
     name: amazon/aws-cli:latest
     entrypoint: [""]

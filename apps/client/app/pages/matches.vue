@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { toast } from "vue-sonner";
 import { Badge } from "~/components/ui/badge";
+import Button from "~/components/ui/button/Button.vue";
 import { yearOptions, majorOptions, goalOptions } from "~/data/startOptions";
 
 definePageMeta({
@@ -109,9 +110,14 @@ onMounted(async () => {
 
       <div
         v-else-if="noMoreCandidates"
-        class="text-muted-foreground"
+        class="flex-col text-center space-y-2"
       >
-        You've reached the end of today's matches.
+        <div class="text-muted-foreground">
+          You've reached the end of today's matches.
+        </div>
+        <Button as-child variant="secondary">
+          <router-link to="/chat">Go to chat</router-link>
+        </Button>
       </div>
 
       <div v-else class="relative w-full max-w-xs min-h-[26rem]">

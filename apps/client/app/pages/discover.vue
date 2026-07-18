@@ -309,12 +309,12 @@ onMounted(async () => {
             class="grid grid-cols-2 p-5 gap-5"
           >
             <!-- If no profiles found -->
-            <div v-if="discoverProfiles.length === 0" class="col-span-2 flex items-center justify-center py-16">
+            <div v-if="discoverProfiles.length === 0" class="col-span-2 flex items-center justify-center pt-64">
               <div class="text-center text-muted-foreground">
                 {{
                   filterInterests || filterMajor || filterYear
-                    ? "No profiles found matching your filters. Please check back later."
-                    : "No profiles found. Please check back later."
+                    ? "No profiles found matching your filters."
+                    : "No public profiles found."
                 }}
               </div>
             </div>

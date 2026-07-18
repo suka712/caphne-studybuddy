@@ -109,9 +109,9 @@ onMounted(async () => {
 
       <div
         v-else-if="noMoreCandidates"
-        class="text-center text-muted-foreground text-sm font-bold italic"
+        class="text-muted-foreground"
       >
-        No more profiles right now. Please check back later.
+        You've reached the end of today's matches.
       </div>
 
       <div v-else class="relative w-full max-w-xs min-h-[26rem]">

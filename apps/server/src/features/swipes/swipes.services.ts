@@ -1,5 +1,11 @@
 import { db } from "../../db/db.js";
-import { swipes, profiles, matches, dailyBatches, SwipeDecision } from "../../db/schema.js";
+import {
+  swipes,
+  profiles,
+  matches,
+  dailyBatches,
+  SwipeDecision,
+} from "../../db/schema.js";
 import { and, eq, inArray, notInArray, or, sql } from "drizzle-orm";
 import { matchConfig } from "../../config/matchConfig.js";
 
@@ -28,7 +34,10 @@ const generateTodaysBatch = async (userId: number) => {
     .select({ userId: profiles.userId })
     .from(profiles)
     .where(
-      and(eq(profiles.isPublic, true), notInArray(profiles.userId, excludedProfiles)),
+      and(
+        eq(profiles.isPublic, true),
+        notInArray(profiles.userId, excludedProfiles),
+      ),
     )
     .orderBy(sql`RANDOM()`)
     .limit(matchConfig.swipesPerDay);
@@ -89,7 +98,9 @@ export const getRemainingCandidates = async (userId: number) => {
     .where(eq(swipes.userId, userId));
 
   const swipedIds = new Set(existingSwipes.map((s) => s.targetUserId));
-  const remainingIds = batch.candidateUserIds.filter((id) => !swipedIds.has(id));
+  const remainingIds = batch.candidateUserIds.filter(
+    (id) => !swipedIds.has(id),
+  );
 
   if (remainingIds.length === 0) return [];
 

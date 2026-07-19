@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Skeleton from "@/components/ui/skeleton/Skeleton.vue";
+import { cn } from "~/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -68,6 +69,13 @@ const filterIsOpen = ref(false);
 const filterMajor = ref<string | undefined>(undefined);
 const filterYear = ref<string | undefined>(undefined);
 const filterInterests = ref<string[]>([]);
+
+const hasActiveFilters = computed(
+  () =>
+    !!filterMajor.value ||
+    !!filterYear.value ||
+    filterInterests.value.length > 0,
+);
 
 const toggleFilterInterest = (interest: string) => {
   const idx = filterInterests.value.indexOf(interest);
@@ -174,33 +182,52 @@ onMounted(async () => {
   );
   viewport?.addEventListener("scroll", onScroll);
 });
+
+const fieldClass =
+  "h-11 w-full rounded-2xl border-primary/10 bg-secondary/20 px-3.5 font-bold text-sm";
+
+function pillClass(active: boolean) {
+  return cn(
+    "border transition-all duration-200",
+    active
+      ? "bg-accent/15 border-accent/40 text-primary shadow-sm"
+      : "bg-secondary/20 border-transparent text-muted-foreground hover:bg-secondary/40",
+  );
+}
+
+const tagClass = "bg-accent/10 border-accent/20 text-primary font-bold";
 </script>
 
 <template>
   <div class="h-full">
     <div class="h-full flex flex-col">
       <div
-        class="p-5 pb-4 pl-6 border-b border-primary/5 flex items-center justify-between relative z-20"
+        class="shrink-0 px-6 pt-6 pb-4 border-b border-primary/5 flex items-center justify-between relative z-20"
       >
-        <h1 class="text-xl font-black text-primary flex items-center gap-2">
+        <h1 class="text-xl font-black tracking-tight text-primary">
           Discover
         </h1>
         <Button
           variant="outline"
-          class="rounded-xl h-9 px-4 font-bold border-primary/10 hover:bg-primary hover:text-primary-foreground transition-all"
+          class="relative rounded-2xl h-10 px-4 font-black text-sm gap-1.5 border-primary/10 hover:bg-primary hover:text-primary-foreground transition-all"
           @click="filterIsOpen = !filterIsOpen"
         >
+          <Icon name="lucide:sliders-horizontal" size="14" />
           Filter
+          <span
+            v-if="hasActiveFilters"
+            class="absolute -top-1 -right-1 size-2.5 rounded-full bg-accent ring-2 ring-card"
+          />
         </Button>
 
         <Transition name="filter-panel">
           <div
             v-if="filterIsOpen"
-            class="absolute top-full left-0 right-0 p-3 z-20 bg-white rounded-b-xl border-x border-b border-primary/5 shadow-md"
+            class="absolute top-full left-0 right-0 p-4 z-20 bg-card rounded-b-xl border-x border-b border-primary/10 shadow-md"
           >
             <div class="space-y-3">
               <Select v-model="filterMajor">
-                <SelectTrigger class="w-full">
+                <SelectTrigger :class="cn(fieldClass, 'justify-between')">
                   <SelectValue placeholder="Any major" />
                 </SelectTrigger>
                 <SelectContent>
@@ -218,7 +245,7 @@ onMounted(async () => {
               </Select>
 
               <Select v-model="filterYear">
-                <SelectTrigger class="w-full">
+                <SelectTrigger :class="cn(fieldClass, 'justify-between')">
                   <SelectValue placeholder="Any year" />
                 </SelectTrigger>
                 <SelectContent>
@@ -235,31 +262,27 @@ onMounted(async () => {
               <Accordion type="single" collapsible>
                 <AccordionItem value="more" class="border-b-0">
                   <AccordionTrigger
-                    class="text-xs font-bold text-muted-foreground py-2 px-3"
+                    class="text-[11px] font-black uppercase tracking-widest text-muted-foreground/70 py-2 px-0.5 hover:no-underline"
                   >
                     More
                   </AccordionTrigger>
                   <AccordionContent>
-                    <div class="max-h-48 overflow-y-auto space-y-2 pr-1">
+                    <div class="max-h-48 overflow-y-auto space-y-3 pr-1">
                       <div
                         v-for="category in interestCategories"
                         :key="category.id"
                       >
                         <div
-                          class="text-[11px] font-bold text-muted-foreground/70 pt-1"
+                          class="text-[11px] font-black uppercase tracking-widest text-muted-foreground/50 pt-1 pb-1.5"
                         >
                           {{ category.label }}
                         </div>
-                        <div class="flex flex-wrap gap-1.5 pt-1">
+                        <div class="flex flex-wrap gap-1.5">
                           <Badge
                             v-for="interest in category.options"
                             :key="interest"
-                            :variant="
-                              filterInterests.includes(interest)
-                                ? 'default'
-                                : 'outline'
-                            "
-                            class="cursor-pointer select-none"
+                            class="cursor-pointer select-none rounded-full font-bold"
+                            :class="pillClass(filterInterests.includes(interest))"
                             @click="toggleFilterInterest(interest)"
                           >
                             {{ interest }}
@@ -274,12 +297,15 @@ onMounted(async () => {
               <div class="flex gap-2 pt-1">
                 <Button
                   variant="outline"
-                  class="flex-1 rounded-xl"
+                  class="flex-1 h-11 rounded-2xl font-black border-primary/10"
                   @click="clearFilters"
                 >
                   Clear
                 </Button>
-                <Button class="flex-1 rounded-xl" @click="applyFilters">
+                <Button
+                  class="flex-1 h-11 rounded-2xl font-black shadow-lg shadow-primary/10"
+                  @click="applyFilters"
+                >
                   Apply
                 </Button>
               </div>
@@ -291,13 +317,13 @@ onMounted(async () => {
       <div class="relative flex-1 min-h-0">
         <!-- Skeleton -->
         <div v-if="isLoadingInitialProfiles">
-          <div v-for="n in 6" :key="n" class="grid grid-cols-2 p-5 gap-5">
-            <Skeleton class="w-full aspect-square rounded-sm" />
-            <Skeleton class="w-full aspect-square rounded-sm" />
-            <Skeleton class="h-4 w-3/4 mt-2" />
-            <Skeleton class="h-4 w-3/4 mt-1" />
-            <Skeleton class="h-3 w-1/2 mt-2" />
-            <Skeleton class="h-3 w-1/2 mt-1" />
+          <div v-for="n in 6" :key="n" class="grid grid-cols-2 p-6 gap-4">
+            <Skeleton class="w-full aspect-square rounded-2xl" />
+            <Skeleton class="w-full aspect-square rounded-2xl" />
+            <Skeleton class="h-4 w-3/4 mt-2 rounded-full" />
+            <Skeleton class="h-4 w-3/4 mt-1 rounded-full" />
+            <Skeleton class="h-3 w-1/2 mt-2 rounded-full" />
+            <Skeleton class="h-3 w-1/2 mt-1 rounded-full" />
           </div>
         </div>
 
@@ -306,17 +332,32 @@ onMounted(async () => {
           <TransitionGroup
             tag="div"
             name="discover-profile"
-            class="grid grid-cols-2 p-5 gap-5"
+            class="grid grid-cols-2 gap-4 p-6"
           >
             <!-- If no profiles found -->
-            <div v-if="discoverProfiles.length === 0" class="col-span-2 flex items-center justify-center pt-64">
-              <div class="text-center text-muted-foreground">
-                {{
-                  filterInterests || filterMajor || filterYear
-                    ? "No profiles found matching your filters."
-                    : "No public profiles found."
-                }}
+            <div
+              v-if="discoverProfiles.length === 0"
+              key="empty"
+              class="col-span-2 flex flex-col items-center justify-center gap-3 py-24 text-center"
+            >
+              <div class="size-14 rounded-2xl bg-secondary/40 flex items-center justify-center">
+                <Icon name="lucide:users" size="24" class="text-muted-foreground/50" />
               </div>
+              <p class="text-sm font-bold text-muted-foreground max-w-[200px]">
+                {{
+                  hasActiveFilters
+                    ? "No profiles found matching your filters."
+                    : "No public profiles found yet."
+                }}
+              </p>
+              <Button
+                v-if="hasActiveFilters"
+                variant="outline"
+                class="rounded-2xl h-9 px-4 font-black text-xs border-primary/10"
+                @click="clearFilters"
+              >
+                Clear filters
+              </Button>
             </div>
 
             <Dialog
@@ -326,55 +367,57 @@ onMounted(async () => {
             >
               <DialogTrigger as-child>
                 <div
-                  class="p-3 rounded-md bg-secondary/30 hover:bg-secondary/60 transition-all cursor-pointer border border-transparent hover:border-primary/5"
+                  class="group p-2.5 rounded-2xl bg-secondary/20 hover:bg-secondary/40 transition-all duration-300 cursor-pointer border border-transparent hover:border-accent/20 hover:shadow-sm"
                 >
-                  <img
-                    v-if="discoverProfile.photoUrl"
-                    :src="discoverProfile.photoUrl"
-                    alt="Profile"
-                    class="rounded-sm shadow-md w-full aspect-square object-cover"
-                  />
-                  <div v-else class="relative w-full aspect-square">
-                    <Icon
-                      name="mdi:account"
-                      size="50"
-                      class="absolute inset-0 m-auto"
+                  <div class="relative w-full aspect-square rounded-xl overflow-hidden bg-secondary/40">
+                    <img
+                      v-if="discoverProfile.photoUrl"
+                      :src="discoverProfile.photoUrl"
+                      alt="Profile"
+                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
+                    <div v-else class="w-full h-full flex items-center justify-center">
+                      <Icon
+                        name="lucide:user"
+                        size="32"
+                        class="text-muted-foreground/40"
+                      />
+                    </div>
                   </div>
 
-                  <div class="font-bold pt-1 truncate">
+                  <div class="font-black text-sm truncate pt-2 px-0.5 text-primary">
                     {{ discoverProfile.displayName }}
                   </div>
-                  <div class="text-sm truncate">
-                    {{ discoverProfile.major }}
+                  <div class="text-xs font-bold text-muted-foreground truncate px-0.5">
+                    {{ majorLabel(discoverProfile.major) }}
                   </div>
                 </div>
               </DialogTrigger>
               <!-- Profile popup -->
-              <DialogContent class="w-xs">
+              <DialogContent class="w-[min(90vw,22rem)] rounded-2xl bg-card border-primary/10 gap-5">
                 <DialogHeader>
                   <div class="flex items-center gap-3">
                     <img
                       v-if="discoverProfile.photoUrl"
                       :src="discoverProfile.photoUrl"
                       alt="Profile"
-                      class="size-14 rounded-sm object-cover shadow-md shrink-0"
+                      class="size-16 rounded-2xl object-cover shadow-md shrink-0"
                     />
                     <div
                       v-else
-                      class="size-14 rounded-xl bg-secondary/30 flex items-center justify-center shrink-0"
+                      class="size-16 rounded-2xl bg-secondary/40 flex items-center justify-center shrink-0"
                     >
                       <Icon
-                        name="mdi:account"
+                        name="lucide:user"
                         size="28"
-                        class="text-muted-foreground"
+                        class="text-muted-foreground/50"
                       />
                     </div>
                     <div class="min-w-0">
-                      <DialogTitle class="truncate">
+                      <DialogTitle class="truncate font-black text-lg">
                         {{ discoverProfile.displayName }}
                       </DialogTitle>
-                      <DialogDescription class="truncate">
+                      <DialogDescription class="truncate font-bold">
                         {{ majorLabel(discoverProfile.major) }} ·
                         {{ yearLabel(discoverProfile.year) }}
                       </DialogDescription>
@@ -384,7 +427,7 @@ onMounted(async () => {
 
                 <p
                   v-if="discoverProfile.bio"
-                  class="text-sm text-muted-foreground"
+                  class="text-sm text-muted-foreground font-medium leading-relaxed"
                 >
                   {{ discoverProfile.bio }}
                 </p>
@@ -393,14 +436,14 @@ onMounted(async () => {
                   v-if="discoverProfile.goals.length > 0"
                   class="space-y-1.5"
                 >
-                  <div class="text-[11px] font-bold text-muted-foreground/70">
+                  <div class="text-[11px] font-black uppercase tracking-widest text-muted-foreground/70">
                     Looking for
                   </div>
                   <div class="flex flex-wrap gap-1.5">
                     <Badge
                       v-for="goal in discoverProfile.goals"
                       :key="goal"
-                      variant="outline"
+                      :class="tagClass"
                     >
                       {{ goalLabel(goal) }}
                     </Badge>
@@ -411,14 +454,14 @@ onMounted(async () => {
                   v-if="discoverProfile.vibes.length > 0"
                   class="space-y-1.5"
                 >
-                  <div class="text-[11px] font-bold text-muted-foreground/70">
+                  <div class="text-[11px] font-black uppercase tracking-widest text-muted-foreground/70">
                     Vibes
                   </div>
                   <div class="flex flex-wrap gap-1.5">
                     <Badge
                       v-for="vibe in discoverProfile.vibes"
                       :key="vibe"
-                      variant="outline"
+                      :class="tagClass"
                     >
                       {{ vibe }}
                     </Badge>
@@ -429,14 +472,14 @@ onMounted(async () => {
                   v-if="discoverProfile.interests.length > 0"
                   class="space-y-1.5"
                 >
-                  <div class="text-[11px] font-bold text-muted-foreground/70">
+                  <div class="text-[11px] font-black uppercase tracking-widest text-muted-foreground/70">
                     Interests
                   </div>
                   <div class="flex flex-wrap gap-1.5">
                     <Badge
                       v-for="interest in discoverProfile.interests"
                       :key="interest"
-                      variant="outline"
+                      :class="tagClass"
                     >
                       {{ interest }}
                     </Badge>

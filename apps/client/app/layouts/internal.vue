@@ -29,9 +29,15 @@ onUnmounted(() => {
       class="w-full max-w-sm h-4/6 max-h-215 relative animate-in fade-in zoom-in-95 duration-700 grid grid-cols-1 grid-rows-1"
     >
       <div
-        class="h-full overflow-hidden flex flex-col bg-card border shadow-sm rounded-xl"
+        id="app-shell"
+        class="relative h-full overflow-hidden flex flex-col bg-card border shadow-sm rounded-xl"
       >
         <slot />
+        <!-- Dedicated mount point for dialogs scoped to the card. Kept as a
+        sibling of the page slot (not a parent) so a page's own unmount
+        during route transitions never contends with a teleported dialog's
+        unmount over the same DOM parent. -->
+        <div id="app-shell-portal" class="contents" />
       </div>
     </main>
 

@@ -381,11 +381,12 @@ const tagClass = "bg-accent/10 border-accent/20 text-primary font-bold";
               </Button>
             </div>
 
-            <Dialog
+            <div
               v-for="discoverProfile in discoverProfiles"
               v-else
               :key="discoverProfile.id"
             >
+            <Dialog>
               <DialogTrigger as-child>
                 <div
                   class="group p-2.5 rounded-2xl bg-secondary/20 hover:bg-secondary/40 transition-all duration-300 cursor-pointer border border-transparent hover:border-accent/20 hover:shadow-sm"
@@ -415,7 +416,10 @@ const tagClass = "bg-accent/10 border-accent/20 text-primary font-bold";
                 </div>
               </DialogTrigger>
               <!-- Profile popup -->
-              <DialogContent class="w-[min(90vw,22rem)] rounded-2xl bg-card border-primary/10 gap-5">
+              <DialogContent
+                to="#app-shell-portal"
+                class="w-[calc(100%-2.5rem)] rounded-2xl bg-card border-primary/10 gap-5"
+              >
                 <DialogHeader>
                   <div class="flex items-center gap-3">
                     <img
@@ -522,6 +526,7 @@ const tagClass = "bg-accent/10 border-accent/20 text-primary font-bold";
                 </Button>
               </DialogContent>
             </Dialog>
+            </div>
           </TransitionGroup>
           <!-- Loading indicator -->
           <Transition name="bouncing-dots">
@@ -538,7 +543,7 @@ const tagClass = "bg-accent/10 border-accent/20 text-primary font-bold";
         <Transition name="backdrop">
           <div
             v-if="filterIsOpen"
-            class="absolute inset-0 z-10 bg-black/40"
+            class="absolute inset-0 z-10 bg-black/25"
             @click="filterIsOpen = false"
           />
         </Transition>

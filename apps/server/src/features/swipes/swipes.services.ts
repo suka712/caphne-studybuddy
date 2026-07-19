@@ -33,12 +33,7 @@ const generateTodaysBatch = async (userId: number) => {
   const candidates = await db
     .select({ userId: profiles.userId })
     .from(profiles)
-    .where(
-      and(
-        eq(profiles.isPublic, true),
-        notInArray(profiles.userId, excludedProfiles),
-      ),
-    )
+    .where(notInArray(profiles.userId, excludedProfiles),)
     .orderBy(sql`RANDOM()`)
     .limit(matchConfig.swipesPerDay);
 

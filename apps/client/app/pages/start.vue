@@ -7,7 +7,7 @@ import {
   today,
 } from "@internationalized/date";
 import { CalendarIcon, Plus, X } from "lucide-vue-next";
-import { ref, computed } from "vue";
+import { ref, computed, watchEffect } from "vue";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Badge } from "@/components/ui/badge";
@@ -214,456 +214,488 @@ const onPrevious = () => {
   }
 };
 
+const stepNav = useStepNav();
+
+watchEffect(() => {
+  stepNav.value = {
+    canGoBack: currentQuestion.value > 1,
+    canGoNext: canProceedCurrentScreen.value,
+    isLoading: isLoading.value,
+    isLastStep: currentQuestion.value === totalQuestion,
+    onNext,
+    onPrevious,
+  };
+});
+
+onUnmounted(() => {
+  stepNav.value = null;
+});
+
 const { authUser, fetchUser } = useAuth();
 
 onMounted(async () => {
   await fetchUser();
 });
+
+const labelClass = "text-[11px] font-black uppercase tracking-widest text-muted-foreground/70 mb-2.5 block";
+const fieldClass =
+  "h-12 w-full rounded-2xl border-primary/10 bg-secondary/20 px-4 font-bold text-sm focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:border-accent/40";
+
+function pillClass(active: boolean) {
+  return cn(
+    "border transition-all duration-200",
+    active
+      ? "bg-accent/15 border-accent/40 text-primary shadow-sm"
+      : "bg-secondary/20 border-transparent text-muted-foreground hover:bg-secondary/40",
+  );
+}
 </script>
 
 <template>
-  <div class="flex justify-center items-center min-h-screen pb-20">
-    <!---------------------------------------Screen 1--------------------------------------->
-    <div
-      v-if="currentQuestion === 1 && !isLoading"
-      class="flex flex-col items-center max-w-md px-4"
-    >
-      <div class="text-center mb-8">
-        <h1
-          class="text-muted-foreground flex justify-center items-center hover:text-foreground transition-all text-sm mb-2"
-        >
-          <Icon
-            name="streamline-pixel:food-drink-desert-cake"
-            size="20"
-            class="mr-2"
-          />
-          Let's get started
-        </h1>
-        <h2 class="text-2xl font-semibold">Tell us about yourself</h2>
-      </div>
+  <div class="h-full flex flex-col">
+    <!-- Step header: segmented progress -->
+    <div class="shrink-0 flex gap-1.5 px-6 pt-6 pb-2">
+      <span
+        v-for="n in totalQuestion"
+        :key="n"
+        class="h-1.5 flex-1 rounded-full transition-colors duration-500"
+        :class="n <= currentQuestion ? 'bg-accent' : 'bg-secondary'"
+      />
+    </div>
 
-      <!-- Gender Selection -->
-      <div class="w-full mb-8">
-        <Label class="text-sm text-muted-foreground mb-3 block"
-          >Your gender</Label
+    <!-- Scrollable question body -->
+    <div class="flex-1 overflow-y-auto px-6">
+      <div class="min-h-full flex flex-col justify-center py-6">
+      <Transition name="quiz-step" mode="out-in">
+        <!---------------------------------------Screen 1--------------------------------------->
+        <div
+          v-if="currentQuestion === 1 && !isLoading"
+          key="1"
+          class="flex flex-col items-center text-center"
         >
-        <div class="flex gap-3">
-          <Button
-            :variant="selectedGender === 'male' ? 'default' : 'outline'"
-            class="flex-1 h-16 flex-col gap-1 size-18"
-            @click="selectedGender = 'male'"
+          <p
+            class="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-accent mb-2"
           >
-            <Icon name="streamline-pixel:user-gender-male" size="28" />
-            <span class="text-xs">Male</span>
-          </Button>
-          <Button
-            :variant="selectedGender === 'female' ? 'default' : 'outline'"
-            class="flex-1 h-16 flex-col gap-1 size-18"
-            @click="selectedGender = 'female'"
+            <Icon
+              name="streamline-pixel:food-drink-desert-cake"
+              size="14"
+            />
+            Let's get started
+          </p>
+          <h1 class="text-2xl font-black tracking-tight text-primary mb-8">
+            Tell us about yourself
+          </h1>
+
+          <!-- Gender Selection -->
+          <div class="w-full mb-6 text-left">
+            <Label :class="labelClass">Your gender</Label>
+            <div class="flex gap-3">
+              <button
+                v-for="g in [
+                  { value: 'male', label: 'Male', icon: 'streamline-pixel:user-gender-male' },
+                  { value: 'female', label: 'Female', icon: 'streamline-pixel:user-gender-female' },
+                  { value: 'other', label: 'Other', icon: 'streamline-pixel:interface-essential-question-help-square' },
+                ]"
+                :key="g.value"
+                type="button"
+                class="flex-1 h-18 flex flex-col items-center justify-center gap-1.5 rounded-2xl cursor-pointer"
+                :class="pillClass(selectedGender === g.value)"
+                @click="selectedGender = g.value as Gender"
+              >
+                <Icon :name="g.icon" size="24" />
+                <span class="text-xs font-bold">{{ g.label }}</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Birthday -->
+          <div class="w-full text-left">
+            <Label :class="labelClass">Birthday</Label>
+            <Popover>
+              <PopoverTrigger as-child>
+                <Button
+                  variant="ghost"
+                  :class="
+                    cn(
+                      fieldClass,
+                      'w-full justify-start gap-2',
+                      !date && 'text-muted-foreground font-medium',
+                    )
+                  "
+                >
+                  <CalendarIcon class="size-4 text-accent" />
+                  {{
+                    date
+                      ? df.format(date.toDate(getLocalTimeZone()))
+                      : "Select your birthday"
+                  }}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent class="w-auto p-0 rounded-2xl">
+                <Calendar
+                  v-model="date"
+                  :initial-focus="true"
+                  :default-placeholder="defaultPlaceholder"
+                  layout="month-and-year"
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+        </div>
+
+        <!---------------------------------------Screen 2--------------------------------------->
+        <div
+          v-else-if="currentQuestion === 2 && !isLoading"
+          key="2"
+          class="flex flex-col items-center text-center"
+        >
+          <p
+            class="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-accent mb-2"
           >
-            <Icon name="streamline-pixel:user-gender-female" size="28" />
-            <span class="text-xs">Female</span>
-          </Button>
-          <Button
-            :variant="selectedGender === 'other' ? 'default' : 'outline'"
-            class="flex-1 h-16 flex-col gap-1 size-18"
-            @click="selectedGender = 'other'"
+            <Icon
+              name="streamline-pixel:interface-essential-information-circle-1"
+              size="14"
+            />
+            School info
+          </p>
+          <h1 class="text-2xl font-black tracking-tight text-primary mb-8">
+            Let's get you set up
+          </h1>
+
+          <!-- Display Name -->
+          <div class="w-full mb-6 text-left">
+            <Label :class="labelClass">What should others call you?</Label>
+            <Input
+              v-model="displayName"
+              placeholder="Enter your name"
+              :class="fieldClass"
+            />
+          </div>
+
+          <!-- Year -->
+          <div class="w-full mb-6 text-left">
+            <Label :class="labelClass">Year</Label>
+            <Select v-model="selectedYear">
+              <SelectTrigger :class="cn(fieldClass, 'justify-between')">
+                <SelectValue placeholder="Select your year" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem
+                  v-for="year in yearOptions"
+                  :key="year.value"
+                  :value="year.value"
+                >
+                  {{ year.label }}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <!-- Major -->
+          <div class="w-full text-left">
+            <Label :class="labelClass">Major</Label>
+            <Select v-model="selectedMajor">
+              <SelectTrigger :class="cn(fieldClass, 'justify-between')">
+                <SelectValue placeholder="Select your major" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup v-for="group in majorOptions" :key="group.group">
+                  <SelectLabel>{{ group.group }}</SelectLabel>
+                  <SelectItem
+                    v-for="item in group.items"
+                    :key="item.value"
+                    :value="item.value"
+                  >
+                    {{ item.label }}
+                  </SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <!---------------------------------------Screen 3--------------------------------------->
+        <div
+          v-else-if="currentQuestion === 3 && !isLoading"
+          key="3"
+          class="flex flex-col items-center text-center"
+        >
+          <p
+            class="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-accent mb-2"
           >
             <Icon
               name="streamline-pixel:interface-essential-question-help-square"
-              size="28"
+              size="14"
             />
-            <span class="text-xs">Other</span>
-          </Button>
-        </div>
-      </div>
+            Pick all that apply
+          </p>
+          <h1 class="text-2xl font-black tracking-tight text-primary mb-8">
+            What brings you here?
+          </h1>
 
-      <!-- Birthday -->
-      <div class="w-full">
-        <Label class="text-sm text-muted-foreground mb-3 block">Birthday</Label>
-        <Popover>
-          <PopoverTrigger as-child>
-            <Button
-              variant="outline"
-              :class="
-                cn(
-                  'w-full justify-start text-left font-normal h-9',
-                  !date && 'text-muted-foreground',
-                )
-              "
-            >
-              <CalendarIcon class="mr-2 h-4 w-4" />
-              {{
-                date
-                  ? df.format(date.toDate(getLocalTimeZone()))
-                  : "Select your birthday"
-              }}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent class="w-auto p-0">
-            <Calendar
-              v-model="date"
-              :initial-focus="true"
-              :default-placeholder="defaultPlaceholder"
-              layout="month-and-year"
-            />
-          </PopoverContent>
-        </Popover>
-      </div>
-    </div>
-
-    <!---------------------------------------Screen 2--------------------------------------->
-    <div
-      v-if="currentQuestion === 2 && !isLoading"
-      class="flex flex-col items-center max-w-md px-4"
-    >
-      <div class="text-center mb-8">
-        <h1
-          class="text-muted-foreground flex justify-center items-center hover:text-foreground transition-all text-sm mb-2"
-        >
-          <Icon
-            name="streamline-pixel:interface-essential-information-circle-1"
-            size="20"
-            class="mr-2"
-          />
-          School info
-        </h1>
-        <h2 class="text-2xl font-semibold">Let's get you set up</h2>
-      </div>
-
-      <!-- Display Name -->
-      <div class="w-full mb-6">
-        <Label class="text-sm text-muted-foreground mb-3 block"
-          >What should others call you?</Label
-        >
-        <Input
-          v-model="displayName"
-          placeholder="Enter your name"
-          class="h-9"
-        />
-      </div>
-
-      <!-- Year -->
-      <div class="w-full mb-6">
-        <Label class="text-sm text-muted-foreground mb-3 block">Year</Label>
-        <Select v-model="selectedYear">
-          <SelectTrigger class="h-12">
-            <SelectValue placeholder="Select your year" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem
-              v-for="year in yearOptions"
-              :key="year.value"
-              :value="year.value"
-            >
-              {{ year.label }}
-            </SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <!-- Major -->
-      <div class="w-full">
-        <Label class="text-sm text-muted-foreground mb-3 block">Major</Label>
-        <Select v-model="selectedMajor">
-          <SelectTrigger class="h-12">
-            <SelectValue placeholder="Select your major" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup v-for="group in majorOptions" :key="group.group">
-              <SelectLabel>{{ group.group }}</SelectLabel>
-              <SelectItem
-                v-for="item in group.items"
-                :key="item.value"
-                :value="item.value"
+          <!-- Goals -->
+          <div class="w-full mb-6 text-left">
+            <Label :class="labelClass">Goals</Label>
+            <div class="grid grid-cols-2 gap-2.5">
+              <button
+                v-for="goal in goalOptions"
+                :key="goal.id"
+                type="button"
+                class="h-auto py-3.5 px-3 rounded-2xl text-center cursor-pointer"
+                :class="pillClass(selectedGoals.includes(goal.id))"
+                @click="toggleGoal(goal.id)"
               >
-                {{ item.label }}
-              </SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      </div>
-    </div>
-
-    <!---------------------------------------Screen 3--------------------------------------->
-    <div
-      v-if="currentQuestion === 3 && !isLoading"
-      class="flex flex-col items-center max-w-lg px-4"
-    >
-      <div class="text-center mb-8">
-        <h1
-          class="text-muted-foreground flex justify-center items-center hover:text-foreground transition-all text-sm mb-2"
-        >
-          <Icon
-            name="streamline-pixel:interface-essential-question-help-square"
-            size="20"
-            class="mr-2"
-          />
-          Pick all that apply
-        </h1>
-        <h2 class="text-2xl font-semibold">What brings you here?</h2>
-      </div>
-
-      <!-- Goals -->
-      <div class="w-full mb-8">
-        <Label class="text-sm text-muted-foreground mb-3 block">Goals</Label>
-        <div class="grid grid-cols-2 gap-3">
-          <Button
-            v-for="goal in goalOptions"
-            :key="goal.id"
-            :variant="selectedGoals.includes(goal.id) ? 'default' : 'outline'"
-            class="h-auto py-4 px-4 items-center gap-2 text-center"
-            @click="toggleGoal(goal.id)"
-          >
-            <span class="text-sm">{{ goal.label }}</span>
-          </Button>
-        </div>
-      </div>
-
-      <!-- Vibe -->
-      <div class="w-full">
-        <Label class="text-sm text-muted-foreground mb-3 block"
-          >Your vibe</Label
-        >
-        <div class="flex flex-wrap gap-2">
-          <Badge
-            v-for="vibe in vibeOptions"
-            :key="vibe"
-            :variant="selectedVibes.includes(vibe) ? 'default' : 'outline'"
-            class="cursor-pointer px-4 py-2 text-sm transition-all hover:scale-105"
-            @click="toggleVibe(vibe)"
-          >
-            {{ vibe }}
-          </Badge>
-        </div>
-      </div>
-    </div>
-
-    <!---------------------------------------Screen 4--------------------------------------->
-    <div
-      v-if="currentQuestion === 4 && !isLoading"
-      class="flex flex-col items-center max-w-lg px-4 w-full"
-    >
-      <div class="text-center mb-6">
-        <h1
-          class="text-muted-foreground flex justify-center items-center hover:text-foreground transition-all text-sm mb-2"
-        >
-          <Icon
-            name="streamline-pixel:interface-essential-star-2"
-            size="20"
-            class="mr-2"
-          />
-          Tap everything you vibe with
-        </h1>
-        <h2 class="text-2xl font-semibold">What are you into?</h2>
-      </div>
-
-      <!-- Test change -->
-      <div class="w-full max-h-[50vh] overflow-y-auto pr-2">
-        <Accordion type="multiple" class="w-full" :default-value="['academic']">
-          <AccordionItem
-            v-for="category in interestCategories"
-            :key="category.id"
-            :value="category.id"
-          >
-            <AccordionTrigger class="hover:no-underline">
-              <div class="flex items-center gap-2">
-                <Icon :name="category.icon" size="18" />
-                <span>{{ category.label }}</span>
-                <Badge
-                  v-if="
-                    selectedInterests.filter((i) =>
-                      category.options.includes(i),
-                    ).length > 0
-                  "
-                  variant="secondary"
-                  class="ml-2 text-xs"
-                >
-                  {{
-                    selectedInterests.filter((i) =>
-                      category.options.includes(i),
-                    ).length
-                  }}
-                </Badge>
-              </div>
-            </AccordionTrigger>
-            <AccordionContent>
-              <div class="flex flex-wrap gap-2 pt-2">
-                <Badge
-                  v-for="option in category.options"
-                  :key="option"
-                  :variant="
-                    selectedInterests.includes(option) ? 'default' : 'outline'
-                  "
-                  class="cursor-pointer px-3 py-1.5 text-sm transition-all hover:scale-105"
-                  @click="toggleInterest(option)"
-                >
-                  {{ option }}
-                </Badge>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-
-        <!-- Custom Tags -->
-        <div class="pt-4 border-t">
-          <Label class="text-sm text-muted-foreground mb-3 block"
-            >Add your own tags</Label
-          >
-          <div class="flex gap-2 mb-3">
-            <Input
-              v-model="customTag"
-              placeholder="Type a tag..."
-              class="flex-1"
-              @keyup.enter="addCustomTag"
-            />
-            <Button variant="outline" size="icon" @click="addCustomTag">
-              <Plus class="h-4 w-4" />
-            </Button>
-          </div>
-          <div v-if="customTags.length > 0" class="flex flex-wrap gap-2">
-            <Badge
-              v-for="tag in customTags"
-              :key="tag"
-              variant="default"
-              class="bg-primary px-3 py-1.5 text-sm flex items-center gap-1"
-            >
-              {{ tag }}
-              <X
-                class="h-3 w-3 cursor-pointer hover:text-destructive"
-                @click="removeCustomTag(tag)"
-              />
-            </Badge>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!---------------------------------------Screen 5--------------------------------------->
-    <div
-      v-if="currentQuestion === 5 && !isLoading"
-      class="flex flex-col items-center max-w-md px-4"
-    >
-      <div class="text-center mb-8">
-        <h1
-          class="text-muted-foreground flex justify-center items-center hover:text-foreground transition-all text-sm mb-2"
-        >
-          <Icon
-            name="streamline-pixel:user-profile-focus"
-            size="20"
-            class="mr-2"
-          />
-          Almost there
-        </h1>
-        <h2 class="text-2xl font-semibold">Let people know what's up</h2>
-      </div>
-
-      <!-- Profile Photo -->
-      <div class="w-full mb-8">
-        <div class="flex justify-center items-center">
-          <div class="size-20 rounded-full mb-5 overflow-hidden">
-            <img
-              v-if="authUser?.oauthPhotoUrl"
-              :src="authUser.oauthPhotoUrl"
-              class="w-full h-full object-cover"
-            />
-            <Icon
-              v-else
-              name="material-symbols:person-heart"
-              size="40"
-              class="text-muted-foreground"
-            />
-          </div>
-        </div>
-        <Label class="text-sm text-muted-foreground mb-3"
-          >Link to your profile picture</Label
-        >
-        <Textarea
-          v-model="photoUrl"
-          class="min-w-xs w-xs"
-          placeholder="https://my.profile/aBCDeXe123"
-        />
-      </div>
-
-      <!-- Bio -->
-      <div class="w-full">
-        <div class="flex justify-between items-center mb-3">
-          <Label class="text-sm text-muted-foreground">A short bio</Label>
-          <span
-            :class="
-              cn(
-                'text-xs',
-                bioLength > bioMaxLength
-                  ? 'text-destructive'
-                  : 'text-muted-foreground',
-              )
-            "
-          >
-            {{ bioLength }}/{{ bioMaxLength }}
-          </span>
-        </div>
-        <Textarea
-          v-model="bio"
-          placeholder="I'm into late night study sessions. LF study buddies..."
-          :rows="4"
-          :maxlength="bioMaxLength"
-          class="resize-none min-w-xs w-xs"
-        />
-      </div>
-    </div>
-
-    <!---------------------------------------Screen 6--------------------------------------->
-    <div
-      v-if="currentQuestion === 6 && !isLoading"
-      class="flex flex-col items-center max-w-md px-4"
-    >
-      <div class="text-center mb-8">
-        <h1
-          class="text-muted-foreground flex justify-center items-center hover:text-foreground transition-all text-sm mb-2"
-        >
-          Account privacy
-        </h1>
-        <h2 class="text-2xl font-semibold">Control who finds you</h2>
-      </div>
-
-      <Card class="w-full py-2">
-        <CardContent class="">
-          <div class="flex items-center justify-center gap-4">
-            <div class="flex-1">
-              <h3 class="font-medium mb-1">Show profile publicly</h3>
+                <span class="text-sm font-bold">{{ goal.label }}</span>
+              </button>
             </div>
-            <Switch v-model:checked="showPublicProfile" />
           </div>
-        </CardContent>
-      </Card>
-      <p class="text-xs text-muted-foreground mt-6 text-center">
-        When enabled, people can find and view your profile without matching
-        first. You can change this anytime in settings.
-      </p>
-    </div>
 
-    <!---------------------------------------Screen 7--------------------------------------->
-    <div
-      v-if="isLoading && currentQuestion <= totalQuestion"
-      class="flex flex-col items-center justify-center"
-    >
-      <Icon
-        name="svg-spinners:ring-resize"
-        size="40"
-        class="text-primary mb-6"
-      />
-      <h2 class="text-2xl font-semibold mb-2">Setting things up...</h2>
-      <p class="text-muted-foreground text-center">
-        Finding the best matches for you
-      </p>
+          <!-- Vibe -->
+          <div class="w-full text-left">
+            <Label :class="labelClass">Your vibe</Label>
+            <div class="flex flex-wrap gap-2">
+              <Badge
+                v-for="vibe in vibeOptions"
+                :key="vibe"
+                variant="outline"
+                class="cursor-pointer px-4 py-2 text-sm font-bold rounded-full transition-all duration-200 hover:scale-105"
+                :class="pillClass(selectedVibes.includes(vibe))"
+                @click="toggleVibe(vibe)"
+              >
+                {{ vibe }}
+              </Badge>
+            </div>
+          </div>
+        </div>
+
+        <!---------------------------------------Screen 4--------------------------------------->
+        <div
+          v-else-if="currentQuestion === 4 && !isLoading"
+          key="4"
+          class="flex flex-col items-center text-center w-full"
+        >
+          <p
+            class="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-accent mb-2"
+          >
+            <Icon
+              name="streamline-pixel:interface-essential-star-2"
+              size="14"
+            />
+            Tap everything you vibe with
+          </p>
+          <h1 class="text-2xl font-black tracking-tight text-primary mb-6">
+            What are you into?
+          </h1>
+
+          <div class="w-full text-left">
+            <Accordion
+              type="multiple"
+              class="w-full"
+              :default-value="['academic']"
+            >
+              <AccordionItem
+                v-for="category in interestCategories"
+                :key="category.id"
+                :value="category.id"
+                class="border-primary/10"
+              >
+                <AccordionTrigger class="hover:no-underline font-bold">
+                  <div class="flex items-center gap-2">
+                    <Icon :name="category.icon" size="16" class="text-accent" />
+                    <span>{{ category.label }}</span>
+                    <Badge
+                      v-if="
+                        selectedInterests.filter((i) =>
+                          category.options.includes(i),
+                        ).length > 0
+                      "
+                      class="ml-1 text-xs bg-accent/15 text-primary border-none"
+                    >
+                      {{
+                        selectedInterests.filter((i) =>
+                          category.options.includes(i),
+                        ).length
+                      }}
+                    </Badge>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <div class="flex flex-wrap gap-2 pt-2 pb-1">
+                    <Badge
+                      v-for="option in category.options"
+                      :key="option"
+                      variant="outline"
+                      class="cursor-pointer px-3 py-1.5 text-sm font-bold rounded-full transition-all duration-200 hover:scale-105"
+                      :class="pillClass(selectedInterests.includes(option))"
+                      @click="toggleInterest(option)"
+                    >
+                      {{ option }}
+                    </Badge>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+
+            <!-- Custom Tags -->
+            <div class="pt-4 mt-2 border-t border-primary/10">
+              <Label :class="labelClass">Add your own tags</Label>
+              <div class="flex gap-2 mb-3">
+                <Input
+                  v-model="customTag"
+                  placeholder="Type a tag..."
+                  :class="cn(fieldClass, 'flex-1')"
+                  @keyup.enter="addCustomTag"
+                />
+                <Button
+                  variant="outline"
+                  size="icon"
+                  class="h-12 w-12 rounded-2xl border-primary/10 shrink-0"
+                  @click="addCustomTag"
+                >
+                  <Plus class="h-4 w-4" />
+                </Button>
+              </div>
+              <div v-if="customTags.length > 0" class="flex flex-wrap gap-2">
+                <Badge
+                  v-for="tag in customTags"
+                  :key="tag"
+                  class="bg-accent/15 text-primary border-none px-3 py-1.5 text-sm font-bold rounded-full flex items-center gap-1.5"
+                >
+                  {{ tag }}
+                  <X
+                    class="h-3 w-3 cursor-pointer hover:text-destructive"
+                    @click="removeCustomTag(tag)"
+                  />
+                </Badge>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!---------------------------------------Screen 5--------------------------------------->
+        <div
+          v-else-if="currentQuestion === 5 && !isLoading"
+          key="5"
+          class="flex flex-col items-center text-center"
+        >
+          <p
+            class="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-accent mb-2"
+          >
+            <Icon name="streamline-pixel:user-profile-focus" size="14" />
+            Almost there
+          </p>
+          <h1 class="text-2xl font-black tracking-tight text-primary mb-8">
+            Let people know what's up
+          </h1>
+
+          <!-- Profile Photo -->
+          <div class="w-full mb-6 text-left">
+            <div class="flex justify-center items-center mb-5">
+              <div
+                class="size-20 rounded-full overflow-hidden bg-secondary/30 ring-4 ring-accent/15 flex items-center justify-center"
+              >
+                <img
+                  v-if="authUser?.oauthPhotoUrl"
+                  :src="authUser.oauthPhotoUrl"
+                  class="w-full h-full object-cover"
+                />
+                <Icon
+                  v-else
+                  name="material-symbols:person-heart"
+                  size="36"
+                  class="text-muted-foreground"
+                />
+              </div>
+            </div>
+            <Label :class="labelClass">Link to your profile picture</Label>
+            <Textarea
+              v-model="photoUrl"
+              class="w-full rounded-2xl border-primary/10 bg-secondary/20 font-bold text-sm min-h-16 resize-none focus-visible:ring-2 focus-visible:ring-accent/40"
+              placeholder="https://my.profile/aBCDeXe123"
+            />
+          </div>
+
+          <!-- Bio -->
+          <div class="w-full text-left">
+            <div class="flex justify-between items-center mb-2.5">
+              <Label :class="cn(labelClass, 'mb-0')">A short bio</Label>
+              <span
+                :class="
+                  cn(
+                    'text-xs font-bold',
+                    bioLength > bioMaxLength
+                      ? 'text-destructive'
+                      : 'text-muted-foreground/70',
+                  )
+                "
+              >
+                {{ bioLength }}/{{ bioMaxLength }}
+              </span>
+            </div>
+            <Textarea
+              v-model="bio"
+              placeholder="I'm into late night study sessions. LF study buddies..."
+              :rows="4"
+              :maxlength="bioMaxLength"
+              class="w-full resize-none rounded-2xl border-primary/10 bg-secondary/20 font-medium text-sm focus-visible:ring-2 focus-visible:ring-accent/40"
+            />
+          </div>
+        </div>
+
+        <!---------------------------------------Screen 6--------------------------------------->
+        <div
+          v-else-if="currentQuestion === 6 && !isLoading"
+          key="6"
+          class="flex flex-col items-center text-center"
+        >
+          <p
+            class="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-accent mb-2"
+          >
+            <Icon name="lucide:shield-check" size="14" />
+            Account privacy
+          </p>
+          <h1 class="text-2xl font-black tracking-tight text-primary mb-8">
+            Control who finds you
+          </h1>
+
+          <Card class="w-full border-primary/10 bg-secondary/20 rounded-2xl shadow-none py-5">
+            <CardContent>
+              <div class="flex items-center justify-between gap-4">
+                <div class="flex-1 text-left">
+                  <h3 class="font-black text-sm text-primary">
+                    Show profile publicly
+                  </h3>
+                </div>
+                <Switch v-model:checked="showPublicProfile" />
+              </div>
+            </CardContent>
+          </Card>
+          <p class="text-xs font-medium text-muted-foreground mt-6 text-left leading-relaxed">
+            When enabled, people can find and view your profile without
+            matching first. You can change this anytime in settings.
+          </p>
+        </div>
+
+        <!-- Loading -->
+        <div
+          v-else-if="isLoading && currentQuestion <= totalQuestion"
+          key="loading"
+          class="h-full flex flex-col items-center justify-center text-center"
+        >
+          <Icon
+            name="svg-spinners:ring-resize"
+            size="36"
+            class="text-accent mb-6"
+          />
+          <h2 class="text-xl font-black tracking-tight text-primary mb-2">
+            Setting things up...
+          </h2>
+          <p class="text-sm font-medium text-muted-foreground">
+            Finding the best matches for you
+          </p>
+        </div>
+      </Transition>
+      </div>
     </div>
-    <ProgressControl
-      :currentQuestion="currentQuestion"
-      :totalQuestions="totalQuestion"
-      :isLoading="isLoading"
-      :canProceed="canProceedCurrentScreen"
-      :onNext="onNext"
-      :onPrevious="onPrevious"
-    />
   </div>
 </template>

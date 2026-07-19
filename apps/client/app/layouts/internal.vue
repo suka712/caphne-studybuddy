@@ -5,6 +5,7 @@ import "vue-sonner/style.css";
 const { isAuthenticated } = useAuth();
 const { internalConnect, internalDisconnect } = useSocket();
 const { attachListeners, requestBrowserPermission } = useChatNotifications();
+const stepNav = useStepNav();
 
 onMounted(() => {
   if (isAuthenticated.value) {
@@ -36,6 +37,7 @@ onUnmounted(() => {
 
     <!-- Bottom Navigation -->
     <div
+      v-if="!stepNav"
       class="mt-5 shrink-0 bg-card border shadow-sm rounded-full px-6 py-2 pt-3.5 flex items-center gap-6"
     >
       <NuxtLink
@@ -73,6 +75,39 @@ onUnmounted(() => {
       >
         <Icon name="lucide:settings" size="22" />
       </NuxtLink>
+    </div>
+
+    <!-- Step Navigation (replaces the app nav during onboarding) -->
+    <div
+      v-else
+      class="mt-5 shrink-0 w-full max-w-sm bg-card border shadow-sm rounded-full p-2.5 flex items-center gap-3"
+    >
+      <Button
+        variant="outline"
+        size="icon"
+        class="h-11 w-11 rounded-full border-primary/10 shrink-0"
+        :disabled="!stepNav.canGoBack || stepNav.isLoading"
+        aria-label="Go back"
+        @click="stepNav.onPrevious"
+      >
+        <Icon name="lucide:arrow-left" size="18" />
+      </Button>
+      <Button
+        :disabled="stepNav.isLoading || !stepNav.canGoNext"
+        class="flex-1 h-11 rounded-full font-black gap-2 hover:scale-[1.02] transition-transform active:scale-95"
+        @click="stepNav.onNext"
+      >
+        <template v-if="stepNav.isLoading">
+          <Icon name="svg-spinners:ring-resize" size="16" />
+        </template>
+        <template v-else>
+          {{ stepNav.isLastStep ? "Finish" : "Next" }}
+          <Icon
+            :name="stepNav.isLastStep ? 'lucide:sparkles' : 'lucide:arrow-right'"
+            size="16"
+          />
+        </template>
+      </Button>
     </div>
 
     <Toaster position="top-center" />

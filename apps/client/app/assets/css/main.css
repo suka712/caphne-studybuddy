@@ -192,3 +192,23 @@
 .backdrop-leave-to {
   opacity: 0;
 }
+
+/* Step transitions in the /start onboarding quiz */
+.quiz-step-enter-active,
+.quiz-step-leave-active {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.quiz-step-enter-from {
+  opacity: 0;
+  transform: translateX(12px);
+}
+.quiz-step-leave-to {
+  opacity: 0;
+  transform: translateX(-12px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .quiz-step-enter-active,
+  .quiz-step-leave-active {
+    transition: none;
+  }
+}

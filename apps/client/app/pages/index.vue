@@ -138,15 +138,7 @@ onMounted(() => {
             />
 
             <div class="flex items-center gap-3 mb-8">
-              <div
-                class="size-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20"
-              >
-                <Icon
-                  name="ri:sparkling-2-fill"
-                  class="text-accent"
-                  size="18"
-                />
-              </div>
+              <img src="/favicon.svg" alt="Caphne" class="size-10" />
               <span class="font-black text-xl tracking-tighter">caphne.</span>
             </div>
 
@@ -442,11 +434,7 @@ onMounted(() => {
           class="flex flex-col md:flex-row justify-between items-center gap-6"
         >
           <div class="flex items-center gap-3">
-            <div
-              class="size-8 rounded-lg bg-primary flex items-center justify-center"
-            >
-              <Icon name="ri:sparkling-2-fill" class="text-accent" size="14" />
-            </div>
+            <img src="/favicon.svg" alt="Caphne" class="size-8" />
             <span class="font-black text-xl tracking-tighter">caphne.</span>
             <span class="text-muted-foreground/30 px-2">|</span>
             <span

@@ -29,11 +29,11 @@ const navLinks = [
         <!-- Logo -->
         <div class="flex items-center gap-2">
           <NuxtLink to="/" class="group flex items-center gap-2">
-            <div
-              class="size-9 rounded-xl bg-primary flex items-center justify-center transition-transform group-hover:scale-110 group-hover:rotate-6"
-            >
-              <Icon name="ri:sparkling-2-fill" class="text-accent" size="18" />
-            </div>
+            <img
+              src="/favicon.svg"
+              alt="Caphne"
+              class="size-9 transition-transform group-hover:scale-110 group-hover:rotate-6"
+            />
             <span class="text-xl font-black tracking-tighter">caphne.</span>
           </NuxtLink>
         </div>

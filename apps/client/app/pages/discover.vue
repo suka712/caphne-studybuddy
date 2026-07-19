@@ -31,6 +31,7 @@ import {
   interestCategories,
   goalOptions,
 } from "~/data/startOptions";
+import { toast } from "vue-sonner";
 
 definePageMeta({
   middleware: ["require-auth", "require-profile"],
@@ -44,6 +45,7 @@ type NextCursor = {
 
 type DiscoverProfile = {
   id: string;
+  userId: number;
   displayName: string;
   major: string;
   bio: string;
@@ -110,6 +112,25 @@ const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const {
   public: { apiBase },
 } = useRuntimeConfig();
+
+const startingChatWith = ref<number | null>(null);
+
+const startChat = async (targetUserId: number) => {
+  if (startingChatWith.value) return;
+  startingChatWith.value = targetUserId;
+
+  try {
+    const { match } = await $fetch<{ match: { id: number } }>(
+      `${apiBase}/matches/${targetUserId}`,
+      { method: "POST", credentials: "include" },
+    );
+    await navigateTo(`/chat/${match.id}`);
+  } catch {
+    toast.error("Couldn't start the chat. Try again.");
+  } finally {
+    startingChatWith.value = null;
+  }
+};
 
 const fetchInitialProfiles = async () => {
   const data = await $fetch<DiscoverProfilesResponse>(`${apiBase}/discover`, {
@@ -485,6 +506,20 @@ const tagClass = "bg-accent/10 border-accent/20 text-primary font-bold";
                     </Badge>
                   </div>
                 </div>
+
+                <Button
+                  class="w-full h-12 rounded-2xl font-black gap-2 shadow-lg shadow-primary/10 hover:scale-[1.02] transition-transform active:scale-95"
+                  :disabled="startingChatWith === discoverProfile.userId"
+                  @click="startChat(discoverProfile.userId)"
+                >
+                  <template v-if="startingChatWith === discoverProfile.userId">
+                    <Icon name="svg-spinners:ring-resize" size="16" />
+                  </template>
+                  <template v-else>
+                    <Icon name="lucide:message-circle" size="16" />
+                    Chat
+                  </template>
+                </Button>
               </DialogContent>
             </Dialog>
           </TransitionGroup>

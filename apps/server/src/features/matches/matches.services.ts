@@ -1,6 +1,6 @@
 import { db } from "../../db/db.js";
 import { matches, messages, users, profiles } from "../../db/schema.js";
-import { and, count, eq, isNull, ne, notInArray, sql } from "drizzle-orm";
+import { and, count, eq, isNull, ne, notInArray, or, sql } from "drizzle-orm";
 import { userIsOnline } from "../chat/socket.js";
 
 export const generateMatch = async (userId: number) => {
@@ -25,6 +25,43 @@ export const generateMatch = async (userId: number) => {
   const [newMatch] = await db
     .insert(matches)
     .values({ userId, matchedUserId: candidate.id })
+    .returning();
+
+  return newMatch;
+};
+
+// Discover is a public directory (profiles opted in via isPublic), so
+// starting a chat from there doesn't go through the swipe/like flow -
+// it just finds or creates the match directly, same as a mutual like would.
+export const findOrCreatePublicMatch = async (
+  userId: number,
+  targetUserId: number,
+) => {
+  const [targetProfile] = await db
+    .select({ userId: profiles.userId })
+    .from(profiles)
+    .where(and(eq(profiles.userId, targetUserId), eq(profiles.isPublic, true)));
+
+  if (!targetProfile) {
+    return null;
+  }
+
+  const [existing] = await db
+    .select()
+    .from(matches)
+    .where(
+      or(
+        and(eq(matches.userId, userId), eq(matches.matchedUserId, targetUserId)),
+        and(eq(matches.userId, targetUserId), eq(matches.matchedUserId, userId)),
+      ),
+    )
+    .limit(1);
+
+  if (existing) return existing;
+
+  const [newMatch] = await db
+    .insert(matches)
+    .values({ userId, matchedUserId: targetUserId })
     .returning();
 
   return newMatch;

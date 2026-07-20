@@ -18,9 +18,7 @@ withDefaults(
 );
 
 defineEmits<{
-  (e: "start-edit"): void;
-  (e: "save"): void;
-  (e: "cancel"): void;
+  (e: "start-edit" | "cancel" | "save"): void;
 }>();
 
 const iconButtonClass =

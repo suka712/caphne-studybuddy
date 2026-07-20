@@ -389,14 +389,14 @@ const tagClass = "bg-accent/10 border-accent/20 text-primary font-bold";
             <Dialog>
               <DialogTrigger as-child>
                 <div
-                  class="group p-2.5 rounded-2xl bg-secondary/20 hover:bg-secondary/40 transition-all duration-300 cursor-pointer border border-transparent hover:border-accent/20 hover:shadow-sm"
+                  class="group p-2.5 rounded-2xl bg-secondary/20 hover:bg-secondary/40 hover:border-accent/20 hover:shadow-sm transition-all duration-300 cursor-pointer border border-transparent"
                 >
                   <div class="relative w-full aspect-square rounded-xl overflow-hidden bg-secondary/40">
                     <img
                       v-if="discoverProfile.photoUrl"
                       :src="discoverProfile.photoUrl"
                       alt="Profile"
-                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      class="w-full h-full object-cover transition-transform duration-500"
                     />
                     <div v-else class="w-full h-full flex items-center justify-center">
                       <Icon

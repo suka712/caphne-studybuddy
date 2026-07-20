@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { majorOptions, yearOptions, goalOptions, vibeOptions } from "~/data/profileOptions";
+import { majorOptions, yearOptions, goalOptions } from "~/data/profileOptions";
+import { fieldLabelClass, chipViewClass } from "~/lib/utils";
 
 definePageMeta({
   middleware: ["require-auth", "require-profile"],
@@ -30,23 +31,20 @@ const [matchCount, publicProfileCount, chatCount] = await Promise.all([
 
 const stats = computed(() => [
   {
-    label: "Public Profiles",
+    label: "Profiles",
     value: publicProfileCount.publicProfiles,
-    class: "bg-secondary/30 border-primary/5",
     to: "/discover",
     icon: "lucide:compass",
   },
   {
     label: "Matches",
     value: matchCount.matchCount,
-    class: "bg-accent/10 border-accent/20",
     to: "/matches",
     icon: "lucide:heart",
   },
   {
     label: "Chats",
     value: chatCount.chats,
-    class: "bg-secondary/30 border-primary/5",
     to: "/chat",
     icon: "lucide:message-circle",
   },
@@ -65,141 +63,140 @@ const goalLabel = (id: string) =>
 
 <template>
   <div class="h-full">
-    <div v-if="isCheckingProfile" class="flex items-center justify-center h-full">
+    <div
+      v-if="isCheckingProfile"
+      class="flex items-center justify-center h-full"
+    >
       <Icon name="svg-spinners:ring-resize" size="40" class="text-accent" />
     </div>
 
     <div v-else-if="profile" class="h-full flex flex-col">
       <!-- Header -->
-      <div class="shrink-0 p-8 pb-6 flex flex-col items-center text-center gap-4">
-        <NuxtLink
-          to="/settings"
-          class="group relative size-24 rounded-full bg-secondary/40 flex items-center justify-center overflow-hidden shadow-xl"
+      <div
+        class="shrink-0 px-6 pt-6 pb-4 border-b border-primary/5 flex items-center justify-between"
+      >
+        <h1 class="text-xl font-black tracking-tight text-primary">Profile</h1>
+        <Button
+          as-child
+          variant="outline"
+          class="rounded-2xl h-10 px-4 font-black text-sm gap-1.5 border-primary/10 hover:bg-primary hover:text-primary-foreground transition-all"
         >
-          <img
-            v-if="profile?.photoUrl"
-            :src="profile.photoUrl"
-            class="w-full h-full object-cover"
-          />
-          <Icon
-            v-else
-            name="lucide:user"
-            size="40"
-            class="text-muted-foreground/50"
-          />
-          <div
-            class="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-primary/60 opacity-0 group-hover:opacity-100 transition-opacity"
-          >
-            <Icon name="lucide:pencil" size="18" class="text-white" />
-            <span class="text-[10px] font-black uppercase tracking-widest text-white"
-              >Edit</span
-            >
-          </div>
-        </NuxtLink>
-        <div>
-          <h1 class="text-2xl font-black tracking-tight text-primary">
-            {{ profile.displayName }}
-          </h1>
-          <p class="text-sm font-bold text-muted-foreground">
-            {{ authUser?.email }}
-          </p>
-        </div>
+          <NuxtLink to="/settings">
+            <Icon name="lucide:pencil" size="14" />
+            Edit
+          </NuxtLink>
+        </Button>
       </div>
 
       <!-- Content -->
-      <div class="flex-1 min-h-0 overflow-y-auto px-6 pb-8 space-y-6">
+      <div class="flex-1 min-h-0 overflow-y-auto px-6 py-6 space-y-6">
+        <!-- Identity -->
         <div
-          class="p-6 rounded-2xl bg-secondary/30 border border-primary/5 space-y-5"
+          class="flex items-center gap-4 p-4 rounded-3xl bg-secondary/20 border border-primary/5"
         >
-          <div class="grid grid-cols-2 gap-5">
-            <div class="space-y-1">
-              <label
-                class="text-[11px] font-black uppercase tracking-widest text-muted-foreground/70"
-                >Major</label
-              >
-              <p class="text-lg font-bold text-primary">
-                {{ majorLabel(profile.major) }}
-              </p>
-            </div>
-
-            <div class="space-y-1">
-              <label
-                class="text-[11px] font-black uppercase tracking-widest text-muted-foreground/70"
-                >Year</label
-              >
-              <p class="text-lg font-bold text-primary">
-                {{ yearLabel(profile.year) }}
-              </p>
-            </div>
-          </div>
-
-          <div v-if="profile.bio" class="space-y-1">
-            <label
-              class="text-[11px] font-black uppercase tracking-widest text-muted-foreground/70"
-              >Bio</label
-            >
-            <p class="text-sm font-medium leading-relaxed text-muted-foreground">
-              {{ profile.bio }}
-            </p>
-          </div>
-
-          <div v-if="profile.goals.length > 0" class="space-y-1.5">
-            <label
-              class="text-[11px] font-black uppercase tracking-widest text-muted-foreground/70"
-              >Goals</label
-            >
-            <div class="flex flex-wrap gap-1.5">
-              <Badge
-                v-for="goal in profile.goals"
-                :key="goal"
-                class="bg-accent/10 border-accent/20 text-primary font-bold px-3 py-1.5 text-sm rounded-full"
-              >
-                {{ goalLabel(goal) }}
-              </Badge>
-            </div>
-          </div>
-
-          <div v-if="profile.vibes.length > 0" class="space-y-1.5">
-            <label
-              class="text-[11px] font-black uppercase tracking-widest text-muted-foreground/70"
-              >Vibes</label
-            >
-            <div class="flex flex-wrap gap-1.5">
-              <Badge
-                v-for="vibe in profile.vibes"
-                :key="vibe"
-                class="bg-secondary/40 border-transparent text-muted-foreground font-bold px-3 py-1.5 text-sm rounded-full"
-              >
-                {{ vibe }}
-              </Badge>
-            </div>
-          </div>
-        </div>
-
-        <!-- Social Stats -->
-        <div class="grid grid-cols-3 gap-3">
-          <NuxtLink
-            v-for="stat in stats"
-            :key="stat.label"
-            :to="stat.to"
-            :class="[
-              'group relative p-4 rounded-2xl border text-center transition-transform hover:scale-105 active:scale-95 overflow-hidden',
-              stat.class,
-            ]"
+          <div
+            class="size-16 rounded-2xl bg-secondary/40 flex items-center justify-center overflow-hidden shadow-md shrink-0"
           >
-            <p class="text-lg font-black text-primary">{{ stat.value }}</p>
-            <p
-              class="text-[11px] font-black text-muted-foreground/70 uppercase tracking-widest"
-            >
-              {{ stat.label }}
-            </p>
-            <div
-              class="absolute inset-0 flex items-center justify-center bg-primary/60 opacity-0 group-hover:opacity-100 transition-opacity"
-            >
-              <Icon :name="stat.icon" size="22" class="text-white" />
+            <img
+              v-if="profile.photoUrl"
+              :src="profile.photoUrl"
+              class="w-full h-full object-cover"
+            />
+            <Icon
+              v-else
+              name="lucide:user"
+              size="30"
+              class="text-muted-foreground/50"
+            />
+          </div>
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center gap-2">
+              <h2
+                class="flex-1 truncate text-xl font-black tracking-tight text-primary"
+              >
+                {{ profile.displayName }}
+              </h2>
+              <span
+                class="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-secondary/50 px-2 py-0.5"
+              >
+                <span
+                  class="size-1.5 rounded-full"
+                  :class="
+                    profile.isPublic ? 'bg-accent' : 'bg-muted-foreground/40'
+                  "
+                />
+                <span
+                  class="text-[10px] font-black uppercase tracking-widest text-muted-foreground/80"
+                >
+                  {{ profile.isPublic ? "Public" : "Private" }}
+                </span>
+              </span>
             </div>
-          </NuxtLink>
+            <p class="truncate text-sm font-bold text-muted-foreground">
+              {{ majorLabel(profile.major) }} · {{ yearLabel(profile.year) }}
+            </p>
+            <p class="truncate text-xs font-bold text-muted-foreground/60">
+              {{ authUser?.email }}
+            </p>
+          </div>
         </div>
+
+        <!-- Bio -->
+        <section v-if="profile.bio" class="space-y-1.5">
+          <div :class="fieldLabelClass">Bio</div>
+          <p class="text-sm font-medium leading-relaxed text-muted-foreground">
+            {{ profile.bio }}
+          </p>
+        </section>
+
+        <!-- Looking for -->
+        <section class="space-y-2">
+          <div :class="fieldLabelClass">Looking for</div>
+          <div v-if="profile.goals.length > 0" class="flex flex-wrap gap-1.5">
+            <Badge
+              v-for="goal in profile.goals"
+              :key="goal"
+              :class="chipViewClass"
+            >
+              {{ goalLabel(goal) }}
+            </Badge>
+          </div>
+          <NuxtLink
+            v-else
+            to="/settings"
+            class="inline-flex items-center gap-1.5 rounded-full border border-dashed border-primary/15 px-3 py-1.5 text-sm font-bold text-muted-foreground/70 hover:border-accent/40 hover:text-primary transition-colors"
+          >
+            <Icon name="lucide:plus" size="14" />
+            Add what you're looking for
+          </NuxtLink>
+        </section>
+
+        <!-- Activity -->
+        <section class="space-y-2">
+          <div :class="fieldLabelClass">Activity</div>
+          <div class="grid grid-cols-3 gap-3">
+            <NuxtLink
+              v-for="stat in stats"
+              :key="stat.label"
+              :to="stat.to"
+              class="flex flex-col items-center gap-1 p-4 rounded-2xl border text-center transition-all active:scale-95 bg-secondary/20 border-primary/5 hover:bg-secondary/40 hover:border-accent/20 hover:shadow-sm"
+            >
+              <Icon
+                :name="stat.icon"
+                size="18"
+                class="text-muted-foreground/50"
+              />
+              <p class="text-lg font-black text-primary leading-none">
+                {{ stat.value }}
+              </p>
+              <p
+                class="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70"
+              >
+                {{ stat.label }}
+              </p>
+            </NuxtLink>
+          </div>
+        </section>
       </div>
     </div>
   </div>

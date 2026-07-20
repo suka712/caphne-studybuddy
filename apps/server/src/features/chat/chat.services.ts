@@ -1,6 +1,6 @@
 import { db } from "../../db/db.js";
 import { matches, messages } from "../../db/schema.js";
-import { and, eq, or, desc, lt, ne, isNull, count } from "drizzle-orm";
+import { and, eq, or, desc, lt, ne, isNull, isNotNull, count } from "drizzle-orm";
 
 export const verifyMatchParticipant = async (
   matchId: number,
@@ -82,6 +82,20 @@ export const markMessagesRead = async (
     .returning({ id: messages.id });
 
   return result.length;
+};
+
+export const countActiveChats = async (userId: number) => {
+  const [row] = await db
+    .select({ count: count() })
+    .from(matches)
+    .where(
+      and(
+        or(eq(matches.userId, userId), eq(matches.matchedUserId, userId)),
+        isNotNull(matches.lastMessageAt),
+      ),
+    );
+
+  return row?.count ?? 0;
 };
 
 export const getUnreadCounts = async (userId: number) => {

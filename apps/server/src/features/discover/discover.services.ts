@@ -1,6 +1,6 @@
 import { db } from "../../db/db.js";
 import { profiles } from "../../db/schema.js";
-import { eq, desc, and, ne, or, lt, arrayOverlaps } from "drizzle-orm";
+import { eq, desc, and, ne, or, lt, arrayOverlaps, count } from "drizzle-orm";
 
 export type DiscoverFilters = {
   major?: string;
@@ -35,4 +35,13 @@ export const getPublicProfiles = async (
     .limit(limit);
 
   return publicProfiles;
+};
+
+export const countPublicProfiles = async (userId: number) => {
+  const [row] = await db
+    .select({ count: count() })
+    .from(profiles)
+    .where(and(eq(profiles.isPublic, true), ne(profiles.userId, userId)));
+
+  return row?.count ?? 0;
 };

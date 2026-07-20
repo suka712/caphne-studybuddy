@@ -1,10 +1,23 @@
 import { Router } from "express";
 import { requireAuth } from "../../middleware/requireAuth.js";
-import { getPublicProfiles } from "./discover.services.js";
+import { getPublicProfiles, countPublicProfiles } from "./discover.services.js";
 
 export const discoverRouter = Router();
 
 const LIMIT = 10;
+
+// Internal for profile display
+discoverRouter.get("/count", requireAuth, async (req, res) => {
+  const user = req.user!;
+
+  try {
+    const publicProfiles = await countPublicProfiles(user.id);
+    res.json({ publicProfiles });
+  } catch (e) {
+    console.log(`Error getting public profile count: ${e}`);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+});
 
 discoverRouter.get("/", requireAuth, async (req, res) => {
   const { updatedAt, id, major, year, interests } = req.query;

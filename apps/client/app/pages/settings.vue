@@ -179,6 +179,17 @@ const handleLogout = async () => {
           :max-length="200"
         />
 
+        <div class="border-t border-primary/30"/>
+
+        <!-- Show profile publicly -->
+        <div class="flex items-center justify-between">
+          <label class="text-sm font-bold text-primary">Show profile publicly</label>
+          <Switch :checked="profile.isPublic" @update:checked="togglePublic" />
+        </div>
+
+        <div class="pt-3 border-t border-primary/30"/>
+
+        <!-- Goals -->
         <EditableChipsField
           label="Goals"
           field-key="goals"
@@ -186,7 +197,7 @@ const handleLogout = async () => {
           :options="goalChipOptions"
           empty-text="Add your goals"
         />
-
+        <!-- Vibes -->
         <EditableChipsField
           label="Vibes"
           field-key="vibes"
@@ -194,7 +205,6 @@ const handleLogout = async () => {
           :options="vibeChipOptions"
           empty-text="Add your vibe"
         />
-
         <!-- Interests -->
         <EditableField
           label="Interests"
@@ -303,8 +313,10 @@ const handleLogout = async () => {
           </template>
         </EditableField>
 
+        <div class="border-t border-primary/30"/>
+
         <!-- More details: fields that almost never change once set -->
-        <Accordion type="single" collapsible class="pt-1">
+        <Accordion type="single" collapsible>
           <AccordionItem value="more-details" class="border-primary/10">
             <AccordionTrigger
               class="text-[11px] font-black uppercase tracking-widest text-muted-foreground/50 hover:text-muted-foreground/80 hover:no-underline py-2"
@@ -343,32 +355,40 @@ const handleLogout = async () => {
           </AccordionItem>
         </Accordion>
 
-        <!-- Preferences -->
-        <div class="pt-5 border-t border-primary/10 space-y-4">
-          <div class="flex items-center justify-between">
-            <label class="text-sm font-bold text-primary">Show profile publicly</label>
-            <Switch :checked="profile.isPublic" @update:checked="togglePublic" />
-          </div>
-          <div class="flex items-center justify-between">
-            <label class="text-sm font-bold text-primary">Message notifications</label>
-            <Switch
-              :checked="profile.notificationsEnabled"
-              @update:checked="toggleNotifications"
-            />
-          </div>
-        </div>
-      </div>
+        <div class="border-t border-primary/30"/>
 
-      <!-- Footer -->
-      <div class="shrink-0 p-6 border-t border-primary/5">
-        <Button
-          variant="outline"
-          class="w-full h-11 rounded-2xl border-primary/10 gap-2 font-black text-muted-foreground hover:text-destructive hover:border-destructive/20 hover:bg-destructive/5"
-          @click="handleLogout"
-        >
-          <Icon name="lucide:log-out" size="16" />
-          Log out
-        </Button>
+        <!-- Preferences: notification setting + account actions -->
+        <Accordion type="single" collapsible>
+          <AccordionItem value="preferences" class="border-primary/10">
+            <AccordionTrigger
+              class="text-[11px] font-black uppercase tracking-widest text-muted-foreground/50 hover:text-muted-foreground/80 hover:no-underline py-2"
+            >
+              Preferences
+            </AccordionTrigger>
+            <AccordionContent>
+              <div class="space-y-5 pt-3">
+                <div class="flex items-center justify-between">
+                  <label class="text-sm font-bold text-primary">Message notifications</label>
+                  <Switch
+                    :checked="profile.notificationsEnabled"
+                    @update:checked="toggleNotifications"
+                  />
+                </div>
+
+                <div class="pt-3 border-t border-primary/10">
+                  <button
+                    type="button"
+                    class="flex items-center gap-1.5 text-sm font-bold text-muted-foreground/50 hover:text-destructive transition-colors"
+                    @click="handleLogout"
+                  >
+                    <Icon name="lucide:log-out" size="14" />
+                    Log out
+                  </button>
+                </div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </div>
     </div>
   </div>

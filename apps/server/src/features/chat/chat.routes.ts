@@ -4,10 +4,23 @@ import {
   verifyMatchParticipant,
   getMessages,
   getUnreadCounts,
+  countActiveChats,
 } from "./chat.services.js";
 import { User } from "../../db/schema.js";
 
 export const chatRouter = Router();
+
+// Internal for profile display
+chatRouter.get("/count", requireAuth, async (req, res) => {
+  const user = req.user as User;
+  try {
+    const chats = await countActiveChats(user.id);
+    res.json({ chats });
+  } catch (e) {
+    console.error("Error fetching chat count: ", e);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+});
 
 chatRouter.get("/unread-counts", requireAuth, async (req, res) => {
   const user = req.user as User;

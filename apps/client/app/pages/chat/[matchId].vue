@@ -89,6 +89,16 @@ const handleSend = () => {
   newMessage.value = "";
 };
 
+const icebreakers = [
+  "Hey! What are you studying?",
+  "Want to be study buddies?",
+  "Coffee and a cram session sometime?",
+];
+
+const useIcebreaker = (text: string) => {
+  newMessage.value = text;
+};
+
 onMounted(async () => {
   try {
     const matchesData = await $fetch<{ matches: any[] }>(`${apiBase}/matches`, {
@@ -197,6 +207,17 @@ onUnmounted(() => {
             <p class="text-sm font-bold text-muted-foreground max-w-[200px]">
               No messages yet. Say hi!
             </p>
+            <div class="flex flex-col gap-2 w-full max-w-[240px] pt-2">
+              <button
+                v-for="line in icebreakers"
+                :key="line"
+                type="button"
+                class="rounded-2xl border border-transparent bg-secondary/30 hover:bg-accent/10 hover:border-accent/20 text-primary font-bold text-xs px-4 py-2.5 transition-colors text-left"
+                @click="useIcebreaker(line)"
+              >
+                {{ line }}
+              </button>
+            </div>
           </div>
 
           <div

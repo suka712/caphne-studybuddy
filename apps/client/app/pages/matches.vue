@@ -132,7 +132,7 @@ const tagClass = "bg-accent/10 border-accent/20 text-primary font-bold";
           <div
             v-if="currentCandidate"
             :key="currentCandidate.userId"
-            class="relative z-10 w-full overflow-hidden bg-secondary border border-primary/15 shadow-xl shadow-primary/10 rounded-xl p-5 space-y-4"
+            class="relative z-10 w-full overflow-hidden bg-cafe-cream border border-primary/15 shadow-md shadow-primary/10 rounded-xl p-5 space-y-4"
           >
             <div class="flex items-center gap-3">
               <img

@@ -74,9 +74,9 @@ onMounted(async () => {
     <div v-else class="h-full flex flex-col min-h-0">
       <!-- Header -->
       <div
-        class="p-5 pb-4 pl-6 border-b border-primary/5 flex items-center justify-between"
+        class="shrink-0 px-6 pt-6 pb-4 border-b border-primary/5 flex items-center justify-between"
       >
-        <h1 class="text-xl font-black text-primary flex items-center gap-2">
+        <h1 class="text-xl font-black tracking-tight text-primary flex items-center gap-2">
           Chats
           <span
             class="text-xs font-bold px-2 py-0.5 rounded-full bg-secondary text-muted-foreground"
@@ -89,22 +89,32 @@ onMounted(async () => {
       <!-- Matches List -->
       <ScrollArea class="flex-1 min-h-0">
         <div class="p-4 space-y-3">
-          <p
+          <div
             v-if="matches.length === 0"
-            class="text-muted-foreground text-sm text-center py-12 font-bold italic"
+            class="flex flex-col items-center text-center gap-3 py-16"
           >
-            No matches yet. Click "New" to start!
-          </p>
+            <div class="size-14 rounded-2xl bg-secondary/40 flex items-center justify-center">
+              <Icon name="lucide:message-circle" size="24" class="text-muted-foreground/50" />
+            </div>
+            <p class="text-sm font-bold text-muted-foreground max-w-[200px]">
+              No chats yet.
+            </p>
+            <NuxtLink to="/discover">
+              <Button variant="secondary" class="rounded-2xl h-10 px-5 font-black">
+                Find people to chat with
+              </Button>
+            </NuxtLink>
+          </div>
 
           <NuxtLink
             v-for="match in matches"
             :key="match.matchId"
             :to="`/chat/${match.matchId}`"
-            class="flex items-center gap-4 rounded-3xl bg-secondary/30 hover:bg-secondary/60 transition-all cursor-pointer p-3 border border-transparent hover:border-primary/5 group"
+            class="flex items-center gap-4 rounded-3xl bg-secondary/20 hover:bg-secondary/40 transition-all cursor-pointer p-3 border border-transparent hover:border-accent/20 group"
           >
             <div class="relative shrink-0">
               <div
-                class="size-12 rounded-2xl bg-background flex items-center justify-center overflow-hidden border-2 border-background shadow-md"
+                class="size-12 rounded-2xl bg-secondary/40 flex items-center justify-center overflow-hidden shadow-md"
               >
                 <img
                   v-if="match.photoUrl"
@@ -113,9 +123,9 @@ onMounted(async () => {
                 />
                 <Icon
                   v-else
-                  name="mdi:account"
-                  size="24"
-                  class="text-muted-foreground"
+                  name="lucide:user"
+                  size="22"
+                  class="text-muted-foreground/50"
                 />
               </div>
               <span

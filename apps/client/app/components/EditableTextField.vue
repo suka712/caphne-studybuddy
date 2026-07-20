@@ -68,7 +68,9 @@ const save = async () => {
       <span
         :class="[
           'text-xs font-bold',
-          draft.length > maxLength ? 'text-destructive' : 'text-muted-foreground/70',
+          draft.length > maxLength
+            ? 'text-destructive'
+            : 'text-muted-foreground/70',
         ]"
       >
         {{ draft.length }}/{{ maxLength }}
@@ -89,7 +91,7 @@ const save = async () => {
         :rows="maxLength ? 3 : 2"
         :maxlength="maxLength"
         autofocus
-        class="w-full bg-transparent outline-none resize-none placeholder:text-muted-foreground/50 placeholder:font-medium"
+        class="w-full bg-transparent p-0 outline-none resize-none field-sizing-content placeholder:text-muted-foreground/50 placeholder:font-medium"
         @keyup.escape="cancel"
       />
       <input
@@ -98,7 +100,7 @@ const save = async () => {
         type="text"
         :placeholder="placeholder"
         autofocus
-        class="w-full min-w-0 bg-transparent outline-none placeholder:text-muted-foreground/50 placeholder:font-medium"
+        class="w-full min-w-0 bg-transparent p-0 outline-none placeholder:text-muted-foreground/50 placeholder:font-medium"
         @keyup.enter="save"
         @keyup.escape="cancel"
       />

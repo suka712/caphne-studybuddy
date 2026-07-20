@@ -5,13 +5,7 @@ withDefaults(
   defineProps<{
     label: string;
     editing: boolean;
-    // Edit mode: does the widget need a taller/padded box (textarea, chip
-    // picker) instead of a fixed single-line row (text input)?
     multiline?: boolean;
-    // View mode: does the value render as wrapping badges, or stay
-    // truncated to one line? Independent of `multiline` - a field can have
-    // a multi-line edit widget (Bio's textarea) while still showing a
-    // single truncated line at rest.
     chips?: boolean;
   }>(),
   { multiline: false, chips: false },
@@ -36,11 +30,8 @@ const cancelIconClass = cn(
 
 <template>
   <div class="space-y-1.5">
-    <!-- Label row: Edit/Save/Cancel live here, not inline with the value,
-    so their position never depends on how tall or wide the value content
-    is - the label is always a single fixed line, nothing to drift against. -->
-    <div class="flex items-center justify-between gap-2">
-      <div class="flex items-center gap-2">
+    <div class="flex items-baseline justify-between gap-2">
+      <div class="flex items-baseline gap-2">
         <label :class="fieldLabelClass">{{ label }}</label>
         <slot name="label-suffix" />
       </div>
@@ -68,15 +59,15 @@ const cancelIconClass = cn(
     <!-- Value / widget -->
     <div
       v-if="!editing"
-      :class="cn(fieldBoxClass, chips ? 'min-h-12 px-4 py-2.5' : 'h-12 px-4 flex items-center')"
+      :class="cn(fieldBoxClass, chips ? 'min-h-12 px-3 py-2.5' : multiline ? 'px-3 py-2.5' : 'h-12 px-3 flex items-center')"
     >
-      <div :class="chips ? 'flex flex-wrap gap-2' : 'truncate'">
+      <div :class="chips ? 'flex flex-wrap gap-2' : multiline ? 'whitespace-pre-wrap break-words' : 'truncate'">
         <slot name="view" />
       </div>
     </div>
     <div
       v-else
-      :class="cn(fieldBoxClass, multiline ? 'min-h-12 px-4 py-2.5' : 'h-12 px-4 flex items-center')"
+      :class="cn(fieldBoxClass, multiline ? 'min-h-12 px-3 py-2.5' : 'h-12 px-3 flex items-center')"
     >
       <slot name="edit" />
     </div>

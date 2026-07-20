@@ -173,7 +173,6 @@ const handleLogout = async () => {
           label="Bio"
           field-key="bio"
           :value="profile.bio"
-          placeholder="Tell others about yourself..."
           empty-text="Add a short bio"
           multiline
           :max-length="200"

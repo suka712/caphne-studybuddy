@@ -1,8 +1,5 @@
 import { toast } from "vue-sonner";
 
-// Every profile-field save (text, chips, select, date) does the same thing:
-// call updateProfile, toast success or failure. One place to change that
-// policy instead of seven.
 export function useProfileFieldSave() {
   const { updateProfile } = useProfile();
 

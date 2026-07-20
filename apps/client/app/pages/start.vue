@@ -240,14 +240,14 @@ onMounted(async () => {
 
 const labelClass = "text-[11px] font-black uppercase tracking-widest text-muted-foreground/70 mb-2.5 block";
 const fieldClass =
-  "h-12 w-full rounded-2xl border-primary/10 bg-secondary/20 px-4 font-bold text-sm focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:border-accent/40";
+  "h-12 w-full rounded-2xl border-primary/10 bg-secondary/50 px-4 font-bold text-sm focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:border-accent/40";
 
 function pillClass(active: boolean) {
   return cn(
     "border transition-all duration-200",
     active
       ? "bg-accent/15 border-accent/40 text-primary shadow-sm"
-      : "bg-secondary/20 border-transparent text-muted-foreground hover:bg-secondary/40",
+      : "bg-secondary/50 border-primary/10 text-muted-foreground hover:bg-secondary/70",
   );
 }
 </script>
@@ -593,7 +593,7 @@ function pillClass(active: boolean) {
           <div class="w-full mb-6 text-left">
             <div class="flex justify-center items-center mb-5">
               <div
-                class="size-20 rounded-full overflow-hidden bg-secondary/30 ring-4 ring-accent/15 flex items-center justify-center"
+                class="size-20 rounded-2xl overflow-hidden bg-secondary/60 ring-4 ring-accent/30 flex items-center justify-center shadow-sm"
               >
                 <img
                   v-if="authUser?.oauthPhotoUrl"
@@ -611,7 +611,7 @@ function pillClass(active: boolean) {
             <Label :class="labelClass">Link to your profile picture</Label>
             <Textarea
               v-model="photoUrl"
-              class="w-full rounded-2xl border-primary/10 bg-secondary/20 font-bold text-sm min-h-16 resize-none focus-visible:ring-2 focus-visible:ring-accent/40"
+              class="w-full rounded-2xl border-primary/10 bg-secondary/50 font-bold text-sm min-h-16 resize-none focus-visible:ring-2 focus-visible:ring-accent/40"
               placeholder="https://my.profile/aBCDeXe123"
             />
           </div>
@@ -638,7 +638,7 @@ function pillClass(active: boolean) {
               placeholder="I'm into late night study sessions. LF study buddies..."
               :rows="4"
               :maxlength="bioMaxLength"
-              class="w-full resize-none rounded-2xl border-primary/10 bg-secondary/20 font-medium text-sm focus-visible:ring-2 focus-visible:ring-accent/40"
+              class="w-full resize-none rounded-2xl border-primary/10 bg-secondary/50 font-medium text-sm focus-visible:ring-2 focus-visible:ring-accent/40"
             />
           </div>
         </div>
@@ -659,7 +659,7 @@ function pillClass(active: boolean) {
             Control who finds you
           </h1>
 
-          <Card class="w-full border-primary/10 bg-secondary/20 rounded-2xl shadow-none py-5">
+          <Card class="w-full border-primary/10 bg-secondary/50 rounded-2xl shadow-none py-5">
             <CardContent>
               <div class="flex items-center justify-between gap-4">
                 <div class="flex-1 text-left">

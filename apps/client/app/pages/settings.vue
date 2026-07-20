@@ -128,9 +128,9 @@ const handleLogout = async () => {
 
     <div v-else-if="profile" class="h-full flex flex-col">
       <!-- Header -->
-      <div class="shrink-0 flex items-center gap-3 p-6 border-b border-primary/5">
+      <div class="shrink-0 flex items-center gap-3 p-6 border-b border-primary/10">
         <div
-          class="size-14 rounded-2xl bg-secondary/40 flex items-center justify-center overflow-hidden shrink-0"
+          class="size-14 rounded-2xl bg-secondary/60 flex items-center justify-center overflow-hidden shrink-0 shadow-sm"
         >
           <img
             v-if="profile?.photoUrl"
@@ -319,7 +319,7 @@ const handleLogout = async () => {
         <Accordion type="single" collapsible>
           <AccordionItem value="more-details" class="border-primary/10">
             <AccordionTrigger
-              class="text-[11px] font-black uppercase tracking-widest text-muted-foreground/50 hover:text-muted-foreground/80 hover:no-underline py-2"
+              class="text-[11px] font-black uppercase tracking-widest text-muted-foreground/70 hover:text-muted-foreground/90 hover:no-underline py-2"
             >
               More details
             </AccordionTrigger>
@@ -361,7 +361,7 @@ const handleLogout = async () => {
         <Accordion type="single" collapsible>
           <AccordionItem value="preferences" class="border-primary/10">
             <AccordionTrigger
-              class="text-[11px] font-black uppercase tracking-widest text-muted-foreground/50 hover:text-muted-foreground/80 hover:no-underline py-2"
+              class="text-[11px] font-black uppercase tracking-widest text-muted-foreground/70 hover:text-muted-foreground/90 hover:no-underline py-2"
             >
               Preferences
             </AccordionTrigger>
@@ -378,7 +378,7 @@ const handleLogout = async () => {
                 <div class="pt-3 border-t border-primary/10">
                   <button
                     type="button"
-                    class="flex items-center gap-1.5 text-sm font-bold text-muted-foreground/50 hover:text-destructive transition-colors"
+                    class="flex items-center gap-1.5 text-sm font-bold text-muted-foreground/70 hover:text-destructive transition-colors"
                     @click="handleLogout"
                   >
                     <Icon name="lucide:log-out" size="14" />

@@ -40,7 +40,7 @@ const navLinks = [
 
         <!-- Desktop Nav -->
         <div
-          class="hidden md:flex items-center gap-1 bg-primary/5 p-1 rounded-2xl border border-primary/5"
+          class="hidden md:flex items-center gap-1 bg-primary/5 p-1 rounded-2xl border border-primary/10"
         >
           <NuxtLink v-for="link in navLinks" :key="link.to" :to="link.to">
             <Button

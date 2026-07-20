@@ -185,7 +185,7 @@ onMounted(() => {
             </div>
 
             <div v-else class="space-y-4">
-              <div class="p-4 bg-accent/10 rounded-2xl border border-accent/20">
+              <div class="p-4 bg-accent/15 rounded-2xl border border-accent/30">
                 <p class="text-sm font-black text-primary">Welcome back!</p>
                 <p class="text-xs font-bold text-muted-foreground">
                   You have new matches waiting.
@@ -200,7 +200,7 @@ onMounted(() => {
             </div>
 
             <div
-              class="mt-8 pt-6 border-t border-dashed border-primary/10 flex items-center justify-between text-[11px] font-black uppercase tracking-widest text-muted-foreground/50"
+              class="mt-8 pt-6 border-t border-dashed border-primary/10 flex items-center justify-between text-[11px] font-black uppercase tracking-widest text-muted-foreground/70"
             >
               <span>Free to join</span>
               <span class="flex items-center gap-1.5">
@@ -276,7 +276,7 @@ onMounted(() => {
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
         <!-- BFF Card -->
         <div
-          class="group flex flex-col p-8 rounded-[3rem] bg-secondary/30 border border-primary/5 hover:bg-secondary/50 transition-colors duration-500"
+          class="group flex flex-col p-8 rounded-[3rem] bg-secondary/50 border border-primary/10 hover:bg-secondary/70 transition-colors duration-500"
         >
           <div
             class="aspect-[4/3] rounded-[2.5rem] overflow-hidden mb-8 border-4 border-background shadow-xl"
@@ -319,7 +319,7 @@ onMounted(() => {
 
         <!-- Coffee Date Card -->
         <div
-          class="group flex flex-col p-8 rounded-[3rem] bg-secondary/30 border border-primary/5 hover:bg-secondary/50 transition-colors duration-500"
+          class="group flex flex-col p-8 rounded-[3rem] bg-secondary/50 border border-primary/10 hover:bg-secondary/70 transition-colors duration-500"
         >
           <div
             class="aspect-[4/3] rounded-[2.5rem] overflow-hidden mb-8 border-4 border-background shadow-xl"
@@ -374,7 +374,7 @@ onMounted(() => {
       "
     >
       <div
-        class="relative overflow-hidden rounded-[3.5rem] bg-secondary/30 p-12 md:p-20 text-center border border-primary/5"
+        class="relative overflow-hidden rounded-[3.5rem] bg-secondary/50 p-12 md:p-20 text-center border border-primary/10"
       >
         <div class="absolute inset-0 bg-accent/5 blur-3xl rounded-full" />
 
@@ -429,7 +429,7 @@ onMounted(() => {
 
     <!-- ── FOOTER ───────────────────────────────────────────── -->
     <footer class="pb-20 px-4">
-      <div class="max-w-7xl mx-auto pt-12 border-t border-primary/5">
+      <div class="max-w-7xl mx-auto pt-12 border-t border-primary/10">
         <div
           class="flex flex-col md:flex-row justify-between items-center gap-6"
         >

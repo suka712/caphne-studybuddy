@@ -73,7 +73,7 @@ const goalLabel = (id: string) =>
     <div v-else-if="profile" class="h-full flex flex-col">
       <!-- Header -->
       <div
-        class="shrink-0 px-6 pt-6 pb-4 border-b border-primary/5 flex items-center justify-between"
+        class="shrink-0 px-6 pt-6 pb-4 border-b border-primary/10 flex items-center justify-between"
       >
         <h1 class="text-xl font-black tracking-tight text-primary">Profile</h1>
         <Button
@@ -92,10 +92,10 @@ const goalLabel = (id: string) =>
       <div class="flex-1 min-h-0 overflow-y-auto px-6 py-6 space-y-6">
         <!-- Identity -->
         <div
-          class="flex items-center gap-4 p-4 rounded-3xl bg-secondary/20 border border-primary/5"
+          class="flex items-center gap-4 p-4 rounded-3xl bg-secondary/50 border border-primary/10"
         >
           <div
-            class="size-16 rounded-2xl bg-secondary/40 flex items-center justify-center overflow-hidden shadow-md shrink-0"
+            class="size-16 rounded-2xl bg-secondary/60 flex items-center justify-center overflow-hidden shadow-sm shrink-0"
           >
             <img
               v-if="profile.photoUrl"
@@ -179,7 +179,7 @@ const goalLabel = (id: string) =>
               v-for="stat in stats"
               :key="stat.label"
               :to="stat.to"
-              class="flex flex-col items-center gap-1 p-4 rounded-2xl border text-center transition-all active:scale-95 bg-secondary/20 border-primary/5 hover:bg-secondary/40 hover:border-accent/20 hover:shadow-sm"
+              class="flex flex-col items-center gap-1 p-4 rounded-2xl border text-center transition-all active:scale-95 bg-secondary/50 border-primary/10 hover:bg-secondary/70 hover:border-accent/30 hover:shadow-md hover:shadow-primary/10"
             >
               <Icon
                 :name="stat.icon"

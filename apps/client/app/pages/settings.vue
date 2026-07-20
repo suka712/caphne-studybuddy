@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { toast } from "vue-sonner";
+import { cn } from "~/lib/utils";
 
 definePageMeta({
   middleware: ["require-auth", "require-profile"],
@@ -73,144 +74,151 @@ const handleLogout = async () => {
   await logout();
   navigateTo("/");
 };
+
+const labelClass =
+  "text-[11px] font-black uppercase tracking-widest text-muted-foreground/70";
+const fieldClass =
+  "rounded-2xl border-primary/10 bg-secondary/20 font-bold text-sm focus-visible:ring-2 focus-visible:ring-accent/40";
 </script>
 
 <template>
-  <div v-if="isCheckingProfile" class="flex items-center justify-center h-full">
-    <Icon name="svg-spinners:ring-resize" size="40" class="text-primary" />
-  </div>
+  <div class="h-full">
+    <div v-if="isCheckingProfile" class="flex items-center justify-center h-full">
+      <Icon name="svg-spinners:ring-resize" size="40" class="text-accent" />
+    </div>
 
-  <div v-else-if="profile">
-    <CardContent class="flex flex-col h-full p-0">
+    <div v-else-if="profile" class="h-full flex flex-col">
       <!-- Header -->
-      <div class="flex items-center gap-3 p-4 border-b border-border">
+      <div class="shrink-0 flex items-center gap-3 p-6 border-b border-primary/5">
         <div
-          class="size-15 rounded-full bg-muted flex items-center justify-center overflow-hidden border-2 border-accent shrink-0"
+          class="size-14 rounded-2xl bg-secondary/40 flex items-center justify-center overflow-hidden shrink-0"
         >
           <img
             v-if="profile?.photoUrl"
             :src="profile?.photoUrl"
             class="w-full h-full object-cover"
           />
-          <Icon v-else name="material-symbols:person-heart-rounded" size="32" />
+          <Icon v-else name="lucide:user" size="26" class="text-muted-foreground/50" />
         </div>
         <div class="overflow-hidden">
-          <h1 class="text-lg font-bold">{{ profile.displayName }}</h1>
-          <p class="text-muted-foreground text-sm overflow-hidden">
+          <h1 class="font-black tracking-tight text-primary truncate">
+            {{ profile.displayName }}
+          </h1>
+          <p class="text-muted-foreground text-sm font-bold truncate">
             {{ authUser?.email }}
           </p>
         </div>
       </div>
 
       <!-- Editable Fields -->
-      <div class="flex-1 min-h-0 overflow-y-auto p-4 space-y-4">
+      <div class="flex-1 min-h-0 overflow-y-auto p-6 space-y-5">
         <!-- Display Name -->
-        <div>
-          <label class="text-sm text-muted-foreground/80">Display Name</label>
+        <div class="space-y-1.5">
+          <label :class="labelClass">Display Name</label>
           <div
             v-if="editingField !== 'displayName'"
-            class="flex items-center justify-between"
+            class="flex items-center justify-between gap-3"
           >
-            <p class="text-base overflow-hidden">{{ profile.displayName }}</p>
+            <p class="font-bold text-primary truncate">{{ profile.displayName }}</p>
             <Button
-              variant="outline"
-              class="size-7 p-0"
+              variant="ghost"
+              size="icon"
+              class="size-8 rounded-xl shrink-0"
               @click="startEditing('displayName')"
               title="Edit name"
             >
-              <Icon name="mdi:pencil" size="18" />
+              <Icon name="lucide:pencil" size="15" />
             </Button>
           </div>
-          <div v-else class="flex gap-1">
+          <div v-else class="flex gap-2">
             <Input
               v-model="editingValue"
               type="text"
               placeholder="Enter new name"
-              class="flex-1 h-7 border-input rounded-md bg-background"
+              :class="cn(fieldClass, 'flex-1 h-10')"
               @keyup.enter="saveField"
               @keyup.escape="cancelEditing"
             />
             <Button
-              variant="default"
-              size="sm"
+              size="icon"
+              class="size-10 rounded-xl shrink-0"
               @click="saveField"
-              class="size-7 p-0"
               title="Save"
             >
-              <Icon name="mdi:check" size="16" />
+              <Icon name="lucide:check" size="16" />
             </Button>
             <Button
               variant="outline"
-              size="sm"
+              size="icon"
+              class="size-10 rounded-xl border-primary/10 shrink-0"
               @click="cancelEditing"
-              class="size-7 p-0"
               title="Cancel"
             >
-              <Icon name="mdi:close" size="16" />
+              <Icon name="lucide:x" size="16" />
             </Button>
           </div>
         </div>
 
         <!-- Photo URL -->
-        <div>
-          <label class="text-sm text-muted-foreground/80">Photo URL</label>
+        <div class="space-y-1.5">
+          <label :class="labelClass">Photo URL</label>
           <div
             v-if="editingField !== 'photoUrl'"
-            class="flex items-center justify-between"
+            class="flex items-center justify-between gap-3"
           >
-            <p class="text-base overflow-hidden truncate">
+            <p class="font-bold text-primary truncate">
               {{ profile.photoUrl || "Not set" }}
             </p>
             <Button
-              variant="outline"
-              class="size-7 p-0 shrink-0"
+              variant="ghost"
+              size="icon"
+              class="size-8 rounded-xl shrink-0"
               @click="startEditing('photoUrl')"
               title="Edit photo URL"
             >
-              <Icon name="mdi:pencil" size="18" />
+              <Icon name="lucide:pencil" size="15" />
             </Button>
           </div>
-          <div v-else class="space-y-1">
+          <div v-else class="space-y-2">
             <Textarea
               v-model="editingValue"
               placeholder="https://example.com/photo.jpg"
-              class="min-h-16 text-sm bg-background"
+              :class="cn(fieldClass, 'min-h-16 resize-none')"
               @keyup.escape="cancelEditing"
             />
-            <div class="flex gap-1 justify-end">
+            <div class="flex gap-2 justify-end">
               <Button
-                variant="default"
-                size="sm"
+                size="icon"
+                class="size-10 rounded-xl"
                 @click="saveField"
-                class="size-7 p-0"
                 title="Save"
               >
-                <Icon name="mdi:check" size="16" />
+                <Icon name="lucide:check" size="16" />
               </Button>
               <Button
                 variant="outline"
-                size="sm"
+                size="icon"
+                class="size-10 rounded-xl border-primary/10"
                 @click="cancelEditing"
-                class="size-7 p-0"
                 title="Cancel"
               >
-                <Icon name="mdi:close" size="16" />
+                <Icon name="lucide:x" size="16" />
               </Button>
             </div>
           </div>
         </div>
 
         <!-- Bio -->
-        <div>
+        <div class="space-y-1.5">
           <div class="flex justify-between items-center">
-            <label class="text-sm text-muted-foreground/80">Bio</label>
+            <label :class="labelClass">Bio</label>
             <span
               v-if="editingField === 'bio'"
               :class="[
-                'text-xs',
+                'text-xs font-bold',
                 editingValue.length > bioMaxLength
                   ? 'text-destructive'
-                  : 'text-muted-foreground',
+                  : 'text-muted-foreground/70',
               ]"
             >
               {{ editingValue.length }}/{{ bioMaxLength }}
@@ -218,81 +226,81 @@ const handleLogout = async () => {
           </div>
           <div
             v-if="editingField !== 'bio'"
-            class="flex items-center justify-between"
+            class="flex items-center justify-between gap-3"
           >
-            <p class="text-base overflow-hidden">
+            <p class="font-bold text-primary truncate">
               {{ profile.bio || "Not set" }}
             </p>
             <Button
-              variant="outline"
-              class="size-7 p-0 shrink-0"
+              variant="ghost"
+              size="icon"
+              class="size-8 rounded-xl shrink-0"
               @click="startEditing('bio')"
               title="Edit bio"
             >
-              <Icon name="mdi:pencil" size="18" />
+              <Icon name="lucide:pencil" size="15" />
             </Button>
           </div>
-          <div v-else class="space-y-1">
+          <div v-else class="space-y-2">
             <Textarea
               v-model="editingValue"
               placeholder="Tell others about yourself..."
               :rows="3"
               :maxlength="bioMaxLength"
-              class="resize-none text-sm bg-background"
+              :class="cn(fieldClass, 'resize-none')"
               @keyup.escape="cancelEditing"
             />
-            <div class="flex gap-1 justify-end">
+            <div class="flex gap-2 justify-end">
               <Button
-                variant="default"
-                size="sm"
+                size="icon"
+                class="size-10 rounded-xl"
                 @click="saveField"
-                class="size-7 p-0"
                 title="Save"
               >
-                <Icon name="mdi:check" size="16" />
+                <Icon name="lucide:check" size="16" />
               </Button>
               <Button
                 variant="outline"
-                size="sm"
+                size="icon"
+                class="size-10 rounded-xl border-primary/10"
                 @click="cancelEditing"
-                class="size-7 p-0"
                 title="Cancel"
               >
-                <Icon name="mdi:close" size="16" />
+                <Icon name="lucide:x" size="16" />
               </Button>
             </div>
           </div>
         </div>
 
         <!-- Public Profile Toggle -->
-        <div class="flex items-center justify-between pt-4 border-t">
-          <div>
-            <label class="text-sm text-muted-foreground/80"
-              >Show profile publicly</label
-            >
-          </div>
+        <div class="flex items-center justify-between pt-5 border-t border-primary/10">
+          <label class="text-sm font-bold text-primary">Show profile publicly</label>
           <Switch :checked="profile.isPublic" @update:checked="togglePublic" />
         </div>
       </div>
 
       <!-- Footer -->
-      <div class="p-4 border-t border-border">
+      <div class="shrink-0 p-6 border-t border-primary/5">
         <div class="flex gap-2">
           <NuxtLink class="flex flex-1" to="/matches">
-            <Button variant="outline" class="hover:text-foreground w-full">
-              <Icon name="material-symbols:heart-smile" size="16" />
-              <span class="text-sm">Matches</span>
+            <Button
+              variant="outline"
+              class="w-full h-11 rounded-2xl font-black gap-2 border-primary/10"
+            >
+              <Icon name="lucide:heart-handshake" size="16" />
+              Matches
             </Button>
           </NuxtLink>
           <Button
             variant="outline"
-            class="hover:text-foreground flex"
+            class="h-11 rounded-2xl border-primary/10 gap-2 font-black text-muted-foreground hover:text-destructive hover:border-destructive/20 hover:bg-destructive/5"
             @click="handleLogout"
           >
-            <Icon name="streamline:emergency-exit-solid" size="16" />
+            <Icon name="lucide:log-out" size="16" />
+            Log out
           </Button>
         </div>
       </div>
-    </CardContent>
+    </div>
   </div>
 </template>

@@ -80,14 +80,14 @@ onMounted(async () => {
   isLoading.value = false;
 });
 
-const tagClass = "bg-accent/10 border-accent/20 text-primary font-bold";
+const tagClass = "bg-accent/15 border-accent/30 text-primary font-bold";
 </script>
 
 <template>
   <div class="h-full flex flex-col">
     <!-- Header -->
     <div
-      class="shrink-0 px-6 pt-6 pb-4 border-b border-primary/5 flex items-center justify-between"
+      class="shrink-0 px-6 pt-6 pb-4 border-b border-primary/10 flex items-center justify-between"
     >
       <h1 class="text-xl font-black tracking-tight text-primary">
         Matches
@@ -103,8 +103,8 @@ const tagClass = "bg-accent/10 border-accent/20 text-primary font-bold";
         v-else-if="noMoreCandidates"
         class="flex flex-col items-center text-center gap-3"
       >
-        <div class="size-14 rounded-2xl bg-secondary/40 flex items-center justify-center">
-          <Icon name="lucide:check-check" size="24" class="text-muted-foreground/50" />
+        <div class="size-14 rounded-2xl bg-secondary/60 flex items-center justify-center">
+          <Icon name="lucide:check-check" size="24" class="text-muted-foreground/60" />
         </div>
         <p class="text-sm font-bold text-muted-foreground max-w-[200px]">
           You've reached the end of today's matches.
@@ -139,11 +139,11 @@ const tagClass = "bg-accent/10 border-accent/20 text-primary font-bold";
                 v-if="currentCandidate.photoUrl"
                 :src="currentCandidate.photoUrl"
                 alt="Profile"
-                class="size-14 rounded-2xl object-cover shadow-md shrink-0"
+                class="size-14 rounded-2xl object-cover shadow-sm shrink-0"
               />
               <div
                 v-else
-                class="size-14 rounded-2xl bg-secondary/40 flex items-center justify-center shrink-0"
+                class="size-14 rounded-2xl bg-secondary/60 flex items-center justify-center shrink-0 shadow-sm"
               >
                 <Icon
                   name="lucide:user"

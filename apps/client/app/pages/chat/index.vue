@@ -74,7 +74,7 @@ onMounted(async () => {
     <div v-else class="h-full flex flex-col min-h-0">
       <!-- Header -->
       <div
-        class="shrink-0 px-6 pt-6 pb-4 border-b border-primary/5 flex items-center justify-between"
+        class="shrink-0 px-6 pt-6 pb-4 border-b border-primary/10 flex items-center justify-between"
       >
         <h1 class="text-xl font-black tracking-tight text-primary flex items-center gap-2">
           Chats
@@ -93,8 +93,8 @@ onMounted(async () => {
             v-if="matches.length === 0"
             class="flex flex-col items-center text-center gap-3 py-16"
           >
-            <div class="size-14 rounded-2xl bg-secondary/40 flex items-center justify-center">
-              <Icon name="lucide:message-circle" size="24" class="text-muted-foreground/50" />
+            <div class="size-14 rounded-2xl bg-secondary/60 flex items-center justify-center">
+              <Icon name="lucide:message-circle" size="24" class="text-muted-foreground/60" />
             </div>
             <p class="text-sm font-bold text-muted-foreground max-w-[200px]">
               No chats yet.
@@ -110,11 +110,11 @@ onMounted(async () => {
             v-for="match in matches"
             :key="match.matchId"
             :to="`/chat/${match.matchId}`"
-            class="flex items-center gap-4 rounded-3xl bg-secondary/20 hover:bg-secondary/40 transition-all cursor-pointer p-3 border border-transparent hover:border-accent/20 group"
+            class="flex items-center gap-4 rounded-3xl bg-secondary/50 hover:bg-secondary/70 hover:shadow-md hover:shadow-primary/10 transition-all cursor-pointer p-3 border border-primary/10 hover:border-accent/30 group"
           >
             <div class="relative shrink-0">
               <div
-                class="size-12 rounded-2xl bg-secondary/40 flex items-center justify-center overflow-hidden shadow-md"
+                class="size-12 rounded-2xl bg-secondary/60 flex items-center justify-center overflow-hidden shadow-sm"
               >
                 <img
                   v-if="match.photoUrl"

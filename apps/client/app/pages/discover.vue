@@ -205,25 +205,25 @@ onMounted(async () => {
 });
 
 const fieldClass =
-  "h-11 w-full rounded-2xl border-primary/10 bg-secondary/20 px-3.5 font-bold text-sm";
+  "h-11 w-full rounded-2xl border-primary/10 bg-secondary/50 px-3.5 font-bold text-sm";
 
 function pillClass(active: boolean) {
   return cn(
     "border transition-all duration-200",
     active
       ? "bg-accent/15 border-accent/40 text-primary shadow-sm"
-      : "bg-secondary/20 border-transparent text-muted-foreground hover:bg-secondary/40",
+      : "bg-secondary/50 border-primary/10 text-muted-foreground hover:bg-secondary/70",
   );
 }
 
-const tagClass = "bg-accent/10 border-accent/20 text-primary font-bold";
+const tagClass = "bg-accent/15 border-accent/30 text-primary font-bold";
 </script>
 
 <template>
   <div class="h-full">
     <div class="h-full flex flex-col">
       <div
-        class="shrink-0 px-6 pt-6 pb-4 border-b border-primary/5 flex items-center justify-between relative z-20"
+        class="shrink-0 px-6 pt-6 pb-4 border-b border-primary/10 flex items-center justify-between relative z-20"
       >
         <h1 class="text-xl font-black tracking-tight text-primary">
           Discover
@@ -294,7 +294,7 @@ const tagClass = "bg-accent/10 border-accent/20 text-primary font-bold";
                         :key="category.id"
                       >
                         <div
-                          class="text-[11px] font-black uppercase tracking-widest text-muted-foreground/50 pt-1 pb-1.5"
+                          class="text-[11px] font-black uppercase tracking-widest text-muted-foreground/70 pt-1 pb-1.5"
                         >
                           {{ category.label }}
                         </div>
@@ -361,8 +361,8 @@ const tagClass = "bg-accent/10 border-accent/20 text-primary font-bold";
               key="empty"
               class="col-span-2 flex flex-col items-center justify-center gap-3 py-24 text-center"
             >
-              <div class="size-14 rounded-2xl bg-secondary/40 flex items-center justify-center">
-                <Icon name="lucide:users" size="24" class="text-muted-foreground/50" />
+              <div class="size-14 rounded-2xl bg-secondary/60 flex items-center justify-center">
+                <Icon name="lucide:users" size="24" class="text-muted-foreground/60" />
               </div>
               <p class="text-sm font-bold text-muted-foreground max-w-[200px]">
                 {{
@@ -389,9 +389,9 @@ const tagClass = "bg-accent/10 border-accent/20 text-primary font-bold";
             <Dialog>
               <DialogTrigger as-child>
                 <div
-                  class="group p-2.5 rounded-2xl bg-secondary/20 hover:bg-secondary/40 hover:border-accent/20 hover:shadow-sm transition-all duration-300 cursor-pointer border border-transparent"
+                  class="group px-3 py-4 rounded-xl bg-secondary/50 hover:bg-secondary/70 hover:border-accent/30 hover:shadow-md hover:shadow-primary/10 transition-all duration-300 cursor-pointer border border-primary/10"
                 >
-                  <div class="relative w-full aspect-square rounded-xl overflow-hidden bg-secondary/40">
+                  <div class="relative w-full aspect-square rounded-2xl overflow-hidden bg-secondary/60 shadow-sm">
                     <img
                       v-if="discoverProfile.photoUrl"
                       :src="discoverProfile.photoUrl"
@@ -402,12 +402,12 @@ const tagClass = "bg-accent/10 border-accent/20 text-primary font-bold";
                       <Icon
                         name="lucide:user"
                         size="32"
-                        class="text-muted-foreground/40"
+                        class="text-muted-foreground/50"
                       />
                     </div>
                   </div>
 
-                  <div class="font-black text-sm truncate pt-2 px-0.5 text-primary">
+                  <div class="font-black text-sm truncate pt-2 px-0.5 text-primary group-hover:text-accent transition-colors">
                     {{ discoverProfile.displayName }}
                   </div>
                   <div class="text-xs font-bold text-muted-foreground truncate px-0.5">
@@ -426,11 +426,11 @@ const tagClass = "bg-accent/10 border-accent/20 text-primary font-bold";
                       v-if="discoverProfile.photoUrl"
                       :src="discoverProfile.photoUrl"
                       alt="Profile"
-                      class="size-16 rounded-2xl object-cover shadow-md shrink-0"
+                      class="size-16 rounded-2xl object-cover shadow-sm shrink-0"
                     />
                     <div
                       v-else
-                      class="size-16 rounded-2xl bg-secondary/40 flex items-center justify-center shrink-0"
+                      class="size-16 rounded-2xl bg-secondary/60 flex items-center justify-center shrink-0 shadow-sm"
                     >
                       <Icon
                         name="lucide:user"
@@ -517,10 +517,10 @@ const tagClass = "bg-accent/10 border-accent/20 text-primary font-bold";
                   @click="startChat(discoverProfile.userId)"
                 >
                   <template v-if="startingChatWith === discoverProfile.userId">
-                    <Icon name="svg-spinners:ring-resize" size="16" />
+                    <Icon name="svg-spinners:ring-resize" size="16" class="text-accent" />
                   </template>
                   <template v-else>
-                    <Icon name="lucide:message-circle" size="16" />
+                    <Icon name="lucide:message-circle" size="16" class="text-accent" />
                     Chat
                   </template>
                 </Button>

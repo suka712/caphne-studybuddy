@@ -148,7 +148,7 @@ onUnmounted(() => {
       class="h-full flex flex-col min-h-0 overflow-hidden"
     >
       <!-- Header -->
-      <div class="shrink-0 px-6 py-4 border-b border-primary/5 flex items-center gap-3">
+      <div class="shrink-0 px-6 py-4 border-b border-primary/10 flex items-center gap-3">
         <NuxtLink to="/chat">
           <Button
             variant="ghost"
@@ -190,7 +190,7 @@ onUnmounted(() => {
             v-if="hasMore"
             variant="ghost"
             size="sm"
-            class="w-full text-[10px] font-black uppercase tracking-widest text-muted-foreground/50 hover:text-primary transition-colors"
+            class="w-full text-[10px] font-black uppercase tracking-widest text-muted-foreground/70 hover:text-primary transition-colors"
             :disabled="isLoadingMore"
             @click="loadMore"
           >
@@ -201,8 +201,8 @@ onUnmounted(() => {
             v-if="messages.length === 0 && !hasMore"
             class="flex flex-col items-center text-center gap-3 py-16"
           >
-            <div class="size-14 rounded-2xl bg-secondary/40 flex items-center justify-center">
-              <Icon name="lucide:hand" size="24" class="text-muted-foreground/50" />
+            <div class="size-14 rounded-2xl bg-secondary/60 flex items-center justify-center">
+              <Icon name="lucide:hand" size="24" class="text-muted-foreground/60" />
             </div>
             <p class="text-sm font-bold text-muted-foreground max-w-[200px]">
               No messages yet. Say hi!
@@ -212,7 +212,7 @@ onUnmounted(() => {
                 v-for="line in icebreakers"
                 :key="line"
                 type="button"
-                class="rounded-2xl border border-transparent bg-secondary/30 hover:bg-accent/10 hover:border-accent/20 text-primary font-bold text-xs px-4 py-2.5 transition-colors text-left"
+                class="rounded-2xl border border-primary/10 bg-secondary/50 hover:bg-accent/15 hover:border-accent/30 text-primary font-bold text-xs px-4 py-2.5 transition-colors text-left"
                 @click="useIcebreaker(line)"
               >
                 {{ line }}
@@ -250,12 +250,12 @@ onUnmounted(() => {
       </ScrollArea>
 
       <!-- Input -->
-      <div class="p-4 bg-white border-t border-primary/5">
+      <div class="p-4 bg-white border-t border-primary/10">
         <form class="flex gap-2" @submit.prevent="handleSend">
           <Input
             v-model="newMessage"
             placeholder="Type a message..."
-            class="flex-1 h-12 rounded-2xl bg-background/40 border-primary/5 font-bold text-sm focus:ring-accent/20"
+            class="flex-1 h-12 rounded-2xl bg-secondary/50 border-primary/10 font-bold text-sm focus:ring-accent/40"
             :disabled="!isConnected"
           />
           <Button

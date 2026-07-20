@@ -13,13 +13,13 @@ export function cn(...inputs: ClassValue[]) {
 export const fieldLabelClass =
   "text-[11px] font-black uppercase tracking-widest text-muted-foreground/70";
 export const fieldBoxClass =
-  "rounded-2xl border-primary/10 bg-secondary/20 font-bold text-sm";
+  "rounded-2xl border-primary/10 bg-secondary/50 font-bold text-sm";
 
 // Shared chip/pill styling for selectable tags (goals, vibes, interests) -
 // selected chips must look identical in view and edit mode, wherever they render.
-export const chipSelectedClass = "bg-accent/10 border-accent/20 text-primary font-bold";
+export const chipSelectedClass = "bg-accent/15 border-accent/30 text-primary font-bold";
 export const chipUnselectedClass =
-  "bg-secondary/20 border-transparent text-muted-foreground hover:bg-secondary/40";
+  "bg-secondary/50 border-primary/10 text-muted-foreground hover:bg-secondary/70";
 export const chipViewClass = cn(chipSelectedClass, "px-3 py-1.5 text-sm rounded-full");
 
 export function chipClass(active: boolean) {

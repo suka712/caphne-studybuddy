@@ -41,6 +41,7 @@ const createProfileSchema = Type.Object({
   bio: Type.Optional(Type.String()),
   photoUrl: Type.Optional(Type.Union([Type.String(), Type.Null()])),
   isPublic: Type.Boolean(),
+  notificationsEnabled: Type.Optional(Type.Boolean()),
   goals: Type.Array(Type.String({ minLength: 1 }), { minItems: 1 }),
   vibes: Type.Array(Type.String({ minLength: 1 }), { minItems: 1 }),
   interests: Type.Array(Type.String({ minLength: 1 }), { minItems: 1 }),

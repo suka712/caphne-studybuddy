@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { majorOptions, yearOptions } from "~/data/startOptions";
+import { majorOptions, yearOptions } from "~/data/profileOptions";
 
 definePageMeta({
   middleware: ["require-auth", "require-profile"],

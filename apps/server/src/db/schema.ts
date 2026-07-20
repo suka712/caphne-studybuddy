@@ -40,6 +40,7 @@ export const profiles = pgTable("profiles", {
   bio: text("bio").notNull().default(""),
   photoUrl: text("photo_url"),
   isPublic: boolean("is_public").notNull().default(false),
+  notificationsEnabled: boolean("notifications_enabled").notNull().default(true),
   goals: text("goals").array().notNull(), // ['study-buddy', 'project-teammate', ...]
   vibes: text("vibes").array().notNull(), // ['introvert', 'night-owl', ...]
   interests: text("interests").array().notNull(), // ['Programming', 'Web Dev', ...]

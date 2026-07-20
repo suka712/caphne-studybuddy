@@ -13,6 +13,7 @@ let listenerAttached = false;
 
 export const useChatNotifications = () => {
   const { getSocket } = useSocket();
+  const { profile } = useProfile();
   const route = useRoute();
 
   const initUnreadCounts = (
@@ -54,11 +55,14 @@ export const useChatNotifications = () => {
     if (!socket) return;
 
     socket.on(SocketEvents.USER_HAS_NEW_MESSAGE, (messageData: MessageData) => {
-      if (route.path !== `/chat/${messageData.matchId}`) {
+      const notificationsEnabled = profile.value?.notificationsEnabled !== false;
+
+      if (notificationsEnabled && route.path !== `/chat/${messageData.matchId}`) {
         showToast(messageData);
       }
 
       if (
+        notificationsEnabled &&
         "Notification" in window &&
         Notification.permission === "granted" &&
         document.hidden

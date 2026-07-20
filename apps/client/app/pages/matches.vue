@@ -2,7 +2,7 @@
 import { toast } from "vue-sonner";
 import { Badge } from "~/components/ui/badge";
 import Button from "~/components/ui/button/Button.vue";
-import { yearOptions, majorOptions, goalOptions } from "~/data/startOptions";
+import { yearOptions, majorOptions, goalOptions } from "~/data/profileOptions";
 
 definePageMeta({
   middleware: ["require-auth", "require-profile"],

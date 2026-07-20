@@ -30,7 +30,7 @@ import {
   yearOptions,
   interestCategories,
   goalOptions,
-} from "~/data/startOptions";
+} from "~/data/profileOptions";
 import { toast } from "vue-sonner";
 
 definePageMeta({

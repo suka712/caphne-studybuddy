@@ -42,7 +42,7 @@ import {
   majorOptions,
   vibeOptions,
   yearOptions,
-} from "~/data/startOptions";
+} from "~/data/profileOptions";
 import { toast } from "vue-sonner";
 
 definePageMeta({ layout: "internal", middleware: "require-auth" });
@@ -153,6 +153,7 @@ const submitProfile = async () => {
       bio: bio.value.trim() || "",
       photoUrl: photoUrl.value.trim() || authUser.value?.oauthPhotoUrl || null,
       isPublic: showPublicProfile.value,
+      notificationsEnabled: true,
       goals: selectedGoals.value,
       vibes: selectedVibes.value,
       interests: selectedInterests.value,

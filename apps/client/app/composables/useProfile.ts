@@ -8,6 +8,7 @@ interface Profile {
   bio: string;
   photoUrl: string | null;
   isPublic: boolean;
+  notificationsEnabled: boolean;
   goals: string[];
   vibes: string[];
   interests: string[];

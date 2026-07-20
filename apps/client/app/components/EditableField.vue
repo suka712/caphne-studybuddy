@@ -1,0 +1,86 @@
+<script setup lang="ts">
+import { cn, fieldBoxClass, fieldLabelClass } from "~/lib/utils";
+
+withDefaults(
+  defineProps<{
+    label: string;
+    editing: boolean;
+    // Edit mode: does the widget need a taller/padded box (textarea, chip
+    // picker) instead of a fixed single-line row (text input)?
+    multiline?: boolean;
+    // View mode: does the value render as wrapping badges, or stay
+    // truncated to one line? Independent of `multiline` - a field can have
+    // a multi-line edit widget (Bio's textarea) while still showing a
+    // single truncated line at rest.
+    chips?: boolean;
+  }>(),
+  { multiline: false, chips: false },
+);
+
+defineEmits<{
+  (e: "start-edit"): void;
+  (e: "save"): void;
+  (e: "cancel"): void;
+}>();
+
+const iconButtonClass =
+  "shrink-0 size-7 rounded-lg flex items-center justify-center transition-colors";
+const editIconClass = cn(
+  iconButtonClass,
+  "text-muted-foreground hover:bg-secondary/60 hover:text-primary",
+);
+const saveIconClass = cn(iconButtonClass, "text-accent hover:bg-accent/15");
+const cancelIconClass = cn(
+  iconButtonClass,
+  "text-muted-foreground hover:bg-secondary/60",
+);
+</script>
+
+<template>
+  <div class="space-y-1.5">
+    <!-- Label row: Edit/Save/Cancel live here, not inline with the value,
+    so their position never depends on how tall or wide the value content
+    is - the label is always a single fixed line, nothing to drift against. -->
+    <div class="flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <label :class="fieldLabelClass">{{ label }}</label>
+        <slot name="label-suffix" />
+      </div>
+      <div class="flex items-center gap-1">
+        <template v-if="editing">
+          <button type="button" :class="cancelIconClass" title="Cancel" @click="$emit('cancel')">
+            <Icon name="lucide:x" size="17" class="[stroke-width:2.75]" />
+          </button>
+          <button type="button" :class="saveIconClass" title="Save" @click="$emit('save')">
+            <Icon name="lucide:check" size="17" class="[stroke-width:2.75]" />
+          </button>
+        </template>
+        <button
+          v-else
+          type="button"
+          :class="editIconClass"
+          title="Edit"
+          @click="$emit('start-edit')"
+        >
+          <Icon name="lucide:pencil" size="16" class="[stroke-width:2.75]" />
+        </button>
+      </div>
+    </div>
+
+    <!-- Value / widget -->
+    <div
+      v-if="!editing"
+      :class="cn(fieldBoxClass, chips ? 'min-h-12 px-4 py-2.5' : 'h-12 px-4 flex items-center')"
+    >
+      <div :class="chips ? 'flex flex-wrap gap-2' : 'truncate'">
+        <slot name="view" />
+      </div>
+    </div>
+    <div
+      v-else
+      :class="cn(fieldBoxClass, multiline ? 'min-h-12 px-4 py-2.5' : 'h-12 px-4 flex items-center')"
+    >
+      <slot name="edit" />
+    </div>
+  </div>
+</template>

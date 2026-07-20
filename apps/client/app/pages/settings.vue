@@ -1,27 +1,6 @@
 <script setup lang="ts">
 import { toast } from "vue-sonner";
-import { cn } from "~/lib/utils";
-import type { DateValue } from "reka-ui";
-import {
-  DateFormatter,
-  getLocalTimeZone,
-  today,
-  parseDate,
-} from "@internationalized/date";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { chipClass, chipViewClass, cn, fieldLabelClass } from "~/lib/utils";
 import {
   Accordion,
   AccordionContent,
@@ -42,255 +21,103 @@ definePageMeta({
 });
 
 const { authUser, logout } = useAuth();
-const { isCheckingProfile, profile, updateProfile } =
-  useProfile();
+const { isCheckingProfile, profile } = useProfile();
+const { saveProfileField } = useProfileFieldSave();
 
-type EditableField =
-  | "displayName"
-  | "photoUrl"
-  | "bio"
-  | "gender"
-  | "birthday"
-  | "year"
-  | "major"
-  | "goals"
-  | "vibes"
-  | "interests";
+// ---- Interests: the one field that stays bespoke - category grouping +
+// freeform custom tags don't fit the generic options-list chips component. ----
+const allCategoryOptions = interestCategories.flatMap((c) => c.options);
 
-const editingField = ref<EditableField | null>(null);
-// text / single-select fields (name, photo, bio, gender, year, major)
-const editingValue = ref("");
-// multi-select fields (goals, vibes, interests)
-const editingArrayValue = ref<string[]>([]);
-// birthday
-const editingDate = ref<DateValue>();
-// interests custom tags
+const editingInterests = ref(false);
+const draftInterests = ref<string[]>([]);
 const customTag = ref("");
 const customTags = ref<string[]>([]);
 
-const bioMaxLength = 200;
-
-// Birthday calendar helpers (ported from start.vue)
-const defaultPlaceholder = today(getLocalTimeZone());
-const df = new DateFormatter("en-GB", {
-  day: "2-digit",
-  month: "2-digit",
-  year: "numeric",
-});
-
-const genderOptions = [
-  { value: "male", label: "Male", icon: "streamline-pixel:user-gender-male" },
-  {
-    value: "female",
-    label: "Female",
-    icon: "streamline-pixel:user-gender-female",
-  },
-  {
-    value: "other",
-    label: "Other",
-    icon: "streamline-pixel:interface-essential-question-help-square",
-  },
-];
-
-const allCategoryOptions = interestCategories.flatMap((c) => c.options);
-
-// Read-only display helpers (stored value -> human label)
-const genderLabel = (value: string) =>
-  value ? value.charAt(0).toUpperCase() + value.slice(1) : "Not set";
-const yearLabel = (value: string) =>
-  yearOptions.find((y) => y.value === value)?.label ?? value ?? "Not set";
-const majorLabel = (value: string) => {
-  for (const group of majorOptions) {
-    const item = group.items.find((i) => i.value === value);
-    if (item) return item.label;
-  }
-  return value || "Not set";
-};
-const goalLabel = (id: string) =>
-  goalOptions.find((g) => g.id === id)?.label ?? id;
-const birthdayLabel = (value: string | null) => {
-  if (!value) return "Not set";
-  try {
-    return df.format(parseDate(value).toDate(getLocalTimeZone()));
-  } catch {
-    return value;
-  }
-};
-
-const selectedTagClass = "bg-accent/10 border-accent/20 text-primary font-bold";
-const unselectedTagClass =
-  "bg-secondary/20 border-transparent text-muted-foreground hover:bg-secondary/40";
-
-function pillClass(active: boolean) {
-  return cn(
-    "border transition-all duration-200",
-    active ? selectedTagClass : unselectedTagClass,
+const startEditingInterests = () => {
+  draftInterests.value = [...(profile.value?.interests ?? [])];
+  customTags.value = draftInterests.value.filter(
+    (i) => !allCategoryOptions.includes(i),
   );
-}
-
-const startEditing = (field: EditableField) => {
-  editingField.value = field;
-  editingValue.value = "";
-  editingArrayValue.value = [];
-  editingDate.value = undefined;
   customTag.value = "";
-  customTags.value = [];
-
-  if (field === "goals" || field === "vibes" || field === "interests") {
-    editingArrayValue.value = [...(profile.value?.[field] ?? [])];
-    if (field === "interests") {
-      customTags.value = editingArrayValue.value.filter(
-        (i) => !allCategoryOptions.includes(i),
-      );
-    }
-  } else if (field === "birthday") {
-    editingDate.value = profile.value?.birthday
-      ? parseDate(profile.value.birthday)
-      : undefined;
-  } else {
-    editingValue.value = profile.value?.[field] ?? "";
-  }
+  editingInterests.value = true;
 };
 
-const cancelEditing = () => {
-  editingField.value = null;
-  editingValue.value = "";
-  editingArrayValue.value = [];
-  editingDate.value = undefined;
-  customTag.value = "";
+const cancelEditingInterests = () => {
+  editingInterests.value = false;
+  draftInterests.value = [];
   customTags.value = [];
+  customTag.value = "";
 };
 
-const toggleArrayValue = (value: string) => {
-  if (editingArrayValue.value.includes(value)) {
-    editingArrayValue.value = editingArrayValue.value.filter(
-      (v) => v !== value,
-    );
-  } else {
-    editingArrayValue.value = [...editingArrayValue.value, value];
-  }
+const toggleInterest = (value: string) => {
+  draftInterests.value = draftInterests.value.includes(value)
+    ? draftInterests.value.filter((v) => v !== value)
+    : [...draftInterests.value, value];
 };
 
 const addCustomTag = () => {
   const tag = customTag.value.trim();
-  if (tag && !editingArrayValue.value.includes(tag)) {
+  if (tag && !draftInterests.value.includes(tag)) {
     customTags.value = [...customTags.value, tag];
-    editingArrayValue.value = [...editingArrayValue.value, tag];
+    draftInterests.value = [...draftInterests.value, tag];
     customTag.value = "";
   }
 };
 
 const removeCustomTag = (tag: string) => {
   customTags.value = customTags.value.filter((t) => t !== tag);
-  editingArrayValue.value = editingArrayValue.value.filter((i) => i !== tag);
+  draftInterests.value = draftInterests.value.filter((i) => i !== tag);
 };
 
-const saveField = async () => {
-  const field = editingField.value;
-  if (!field) return;
-
-  let updates: Record<string, any>;
-
-  if (field === "displayName") {
-    const value = editingValue.value.trim();
-    if (!value || value.length < 2) {
-      toast.error("Name must be at least 2 characters");
-      return;
-    }
-    updates = { displayName: value };
-  } else if (field === "photoUrl") {
-    const value = editingValue.value.trim();
-    if (value) {
-      const isValid = await validatePhotoUrl(value);
-      if (!isValid) {
-        toast.error("Could not load image from this URL");
-        return;
-      }
-    }
-    updates = { photoUrl: value || null };
-  } else if (field === "bio") {
-    const value = editingValue.value.trim();
-    if (value.length > bioMaxLength) {
-      toast.error(`Bio must be ${bioMaxLength} characters or less`);
-      return;
-    }
-    updates = { bio: value };
-  } else if (field === "gender" || field === "year" || field === "major") {
-    const value = editingValue.value;
-    if (!value) {
-      toast.error("Please make a selection");
-      return;
-    }
-    updates = { [field]: value };
-  } else if (field === "birthday") {
-    if (!editingDate.value) {
-      toast.error("Please select a date");
-      return;
-    }
-    const d = editingDate.value;
-    updates = {
-      birthday: `${d.year}-${String(d.month).padStart(2, "0")}-${String(d.day).padStart(2, "0")}`,
-    };
-  } else {
-    if (editingArrayValue.value.length === 0) {
-      toast.error("Please select at least one option");
-      return;
-    }
-    updates = { [field]: [...editingArrayValue.value] };
+const saveInterests = async () => {
+  if (draftInterests.value.length === 0) {
+    toast.error("Select at least one interest");
+    return;
   }
-
-  try {
-    await updateProfile(updates);
-    cancelEditing();
-    toast.success("Updated");
-  } catch {
-    toast.error("Failed to update");
-  }
+  const ok = await saveProfileField({ interests: [...draftInterests.value] });
+  if (ok) cancelEditingInterests();
 };
+
+// ---- Option shapes for the extracted field components ----
+const goalChipOptions = goalOptions.map((g) => ({ value: g.id, label: g.label }));
+const vibeChipOptions = vibeOptions.map((v) => ({ value: v, label: v }));
+const genderSelectGroups = [
+  {
+    group: null,
+    items: [
+      { value: "male", label: "Male" },
+      { value: "female", label: "Female" },
+      { value: "other", label: "Other" },
+    ],
+  },
+];
+const yearSelectGroups = [{ group: null, items: yearOptions }];
+// majorOptions already matches the { group, items } shape FieldSelect expects.
 
 const togglePublic = async (checked: boolean) => {
-  try {
-    await updateProfile({ isPublic: checked });
-    toast.success(checked ? "Profile is now public" : "Profile is now private");
-  } catch {
-    toast.error("Failed to update visibility");
-  }
+  await saveProfileField(
+    { isPublic: checked },
+    {
+      successMessage: checked ? "Profile is now public" : "Profile is now private",
+      errorMessage: "Failed to update visibility",
+    },
+  );
 };
 
 const toggleNotifications = async (checked: boolean) => {
-  try {
-    await updateProfile({ notificationsEnabled: checked });
-    toast.success(checked ? "Notifications enabled" : "Notifications muted");
-  } catch {
-    toast.error("Failed to update notification preference");
-  }
+  await saveProfileField(
+    { notificationsEnabled: checked },
+    {
+      successMessage: checked ? "Notifications enabled" : "Notifications muted",
+      errorMessage: "Failed to update notification preference",
+    },
+  );
 };
 
 const handleLogout = async () => {
   await logout();
   navigateTo("/");
 };
-
-const labelClass =
-  "text-[11px] font-black uppercase tracking-widest text-muted-foreground/70";
-const fieldClass =
-  "rounded-2xl border-primary/10 bg-secondary/20 font-bold text-sm focus-visible:ring-2 focus-visible:ring-accent/40";
-const fieldBoxClass = cn(
-  fieldClass,
-  "w-full flex items-center justify-between gap-3 text-left cursor-pointer hover:bg-secondary/30 hover:border-accent/25 transition-colors",
-);
-// Same size/shape as the edit-mode chips too, not just the same color -
-// px-3 py-1.5 text-sm rounded-full matches the Badge classes used below.
-const tagViewClass = cn(selectedTagClass, "px-3 py-1.5 text-sm rounded-full");
-// Small confirm/cancel icon buttons that live inside the field itself,
-// never as a separate row below it.
-const confirmIconClass =
-  "shrink-0 size-7 rounded-lg flex items-center justify-center transition-colors";
-const saveIconClass = cn(confirmIconClass, "text-accent hover:bg-accent/15");
-const cancelIconClass = cn(
-  confirmIconClass,
-  "text-muted-foreground hover:bg-secondary/60",
-);
 </script>
 
 <template>
@@ -324,261 +151,77 @@ const cancelIconClass = cn(
 
       <!-- Editable Fields -->
       <div class="flex-1 min-h-0 overflow-y-auto p-6 space-y-5">
-        <!-- Display Name -->
-        <div class="space-y-1.5">
-          <label :class="labelClass">Display Name</label>
-          <button
-            v-if="editingField !== 'displayName'"
-            type="button"
-            :class="cn(fieldBoxClass, 'h-12 px-4')"
-            @click="startEditing('displayName')"
-          >
-            <span class="truncate">{{ profile.displayName }}</span>
-            <Icon name="lucide:pencil" size="15" class="text-muted-foreground/70 [stroke-width:2.5] shrink-0" />
-          </button>
-          <div v-else :class="cn(fieldClass, 'h-12 px-4 flex items-center gap-1.5')">
-            <input
-              v-model="editingValue"
-              type="text"
-              placeholder="Enter new name"
-              autofocus
-              class="flex-1 min-w-0 bg-transparent outline-none placeholder:text-muted-foreground/50 placeholder:font-medium"
-              @keyup.enter="saveField"
-              @keyup.escape="cancelEditing"
-            />
-            <button type="button" :class="cancelIconClass" title="Cancel" @click="cancelEditing">
-              <Icon name="lucide:x" size="16" class="[stroke-width:2.5]" />
-            </button>
-            <button type="button" :class="saveIconClass" title="Save" @click="saveField">
-              <Icon name="lucide:check" size="16" class="[stroke-width:2.5]" />
-            </button>
-          </div>
-        </div>
+        <EditableTextField
+          label="Display Name"
+          field-key="displayName"
+          :value="profile.displayName"
+          placeholder="Enter your name"
+          :validate="(v) => (!v || v.length < 2) ? 'Name must be at least 2 characters' : null"
+        />
 
-        <!-- Photo URL -->
-        <div class="space-y-1.5">
-          <label :class="labelClass">Photo URL</label>
-          <button
-            v-if="editingField !== 'photoUrl'"
-            type="button"
-            :class="cn(fieldBoxClass, 'h-12 px-4')"
-            @click="startEditing('photoUrl')"
-          >
-            <span
-              :class="
-                cn(
-                  'truncate',
-                  !profile.photoUrl && 'text-muted-foreground/60 italic font-medium',
-                )
-              "
-            >
-              {{ profile.photoUrl || "Add a photo link" }}
-            </span>
-            <Icon name="lucide:pencil" size="15" class="text-muted-foreground/70 [stroke-width:2.5] shrink-0" />
-          </button>
-          <div v-else :class="cn(fieldClass, 'p-3 space-y-2')">
-            <textarea
-              v-model="editingValue"
-              placeholder="https://example.com/photo.jpg"
-              rows="2"
-              autofocus
-              class="w-full bg-transparent outline-none resize-none placeholder:text-muted-foreground/50 placeholder:font-medium"
-              @keyup.escape="cancelEditing"
-            />
-            <div class="flex justify-end gap-1">
-              <button type="button" :class="cancelIconClass" title="Cancel" @click="cancelEditing">
-                <Icon name="lucide:x" size="16" class="[stroke-width:2.5]" />
-              </button>
-              <button type="button" :class="saveIconClass" title="Save" @click="saveField">
-                <Icon name="lucide:check" size="16" class="[stroke-width:2.5]" />
-              </button>
-            </div>
-          </div>
-        </div>
+        <EditableTextField
+          label="Photo URL"
+          field-key="photoUrl"
+          :value="profile.photoUrl"
+          placeholder="https://example.com/photo.jpg"
+          empty-text="Add a photo link"
+          allow-empty
+          :validate="async (v) => (v && !(await validatePhotoUrl(v))) ? 'Could not load image from this URL' : null"
+        />
 
-        <!-- Bio -->
-        <div class="space-y-1.5">
-          <div class="flex justify-between items-center">
-            <label :class="labelClass">Bio</label>
-            <span
-              v-if="editingField === 'bio'"
-              :class="[
-                'text-xs font-bold',
-                editingValue.length > bioMaxLength
-                  ? 'text-destructive'
-                  : 'text-muted-foreground/70',
-              ]"
-            >
-              {{ editingValue.length }}/{{ bioMaxLength }}
-            </span>
-          </div>
-          <button
-            v-if="editingField !== 'bio'"
-            type="button"
-            :class="cn(fieldBoxClass, 'h-12 px-4')"
-            @click="startEditing('bio')"
-          >
-            <span
-              :class="
-                cn(
-                  'truncate',
-                  !profile.bio && 'text-muted-foreground/60 italic font-medium',
-                )
-              "
-            >
-              {{ profile.bio || "Add a short bio" }}
-            </span>
-            <Icon name="lucide:pencil" size="15" class="text-muted-foreground/70 [stroke-width:2.5] shrink-0" />
-          </button>
-          <div v-else :class="cn(fieldClass, 'p-3 space-y-2')">
-            <textarea
-              v-model="editingValue"
-              placeholder="Tell others about yourself..."
-              rows="3"
-              :maxlength="bioMaxLength"
-              autofocus
-              class="w-full bg-transparent outline-none resize-none placeholder:text-muted-foreground/50 placeholder:font-medium"
-              @keyup.escape="cancelEditing"
-            />
-            <div class="flex justify-end gap-1">
-              <button type="button" :class="cancelIconClass" title="Cancel" @click="cancelEditing">
-                <Icon name="lucide:x" size="16" class="[stroke-width:2.5]" />
-              </button>
-              <button type="button" :class="saveIconClass" title="Save" @click="saveField">
-                <Icon name="lucide:check" size="16" class="[stroke-width:2.5]" />
-              </button>
-            </div>
-          </div>
-        </div>
+        <EditableTextField
+          label="Bio"
+          field-key="bio"
+          :value="profile.bio"
+          placeholder="Tell others about yourself..."
+          empty-text="Add a short bio"
+          multiline
+          :max-length="200"
+        />
 
-        <!-- Goals -->
-        <div class="space-y-1.5">
-          <label :class="labelClass">Goals</label>
-          <button
-            v-if="editingField !== 'goals'"
-            type="button"
-            :class="cn(fieldBoxClass, 'min-h-12 px-4 py-2.5 items-start')"
-            @click="startEditing('goals')"
-          >
-            <div class="flex flex-wrap gap-1.5 flex-1">
-              <template v-if="profile.goals.length > 0">
-                <Badge v-for="goal in profile.goals" :key="goal" :class="tagViewClass">
-                  {{ goalLabel(goal) }}
-                </Badge>
-              </template>
-              <span v-else class="text-muted-foreground/60 italic font-medium text-sm">
-                Add your goals
-              </span>
-            </div>
-            <div class="flex items-center py-1.5 shrink-0">
-              <Icon name="lucide:pencil" size="15" class="text-muted-foreground/70 [stroke-width:2.5]" />
-            </div>
-          </button>
-          <div v-else :class="cn(fieldClass, 'p-3 flex items-start justify-between gap-3')">
-            <div class="flex flex-wrap gap-2 flex-1">
-              <Badge
-                v-for="goal in goalOptions"
-                :key="goal.id"
-                variant="outline"
-                class="cursor-pointer px-3 py-1.5 text-sm font-bold rounded-full transition-all duration-200 hover:scale-105"
-                :class="pillClass(editingArrayValue.includes(goal.id))"
-                @click="toggleArrayValue(goal.id)"
-              >
-                {{ goal.label }}
-              </Badge>
-            </div>
-            <div class="flex items-center gap-1 py-1.5 shrink-0">
-              <button type="button" :class="cancelIconClass" title="Cancel" @click="cancelEditing">
-                <Icon name="lucide:x" size="16" class="[stroke-width:2.5]" />
-              </button>
-              <button type="button" :class="saveIconClass" title="Save" @click="saveField">
-                <Icon name="lucide:check" size="16" class="[stroke-width:2.5]" />
-              </button>
-            </div>
-          </div>
-        </div>
+        <EditableChipsField
+          label="Goals"
+          field-key="goals"
+          :value="profile.goals"
+          :options="goalChipOptions"
+          empty-text="Add your goals"
+        />
 
-        <!-- Vibes -->
-        <div class="space-y-1.5">
-          <label :class="labelClass">Vibes</label>
-          <button
-            v-if="editingField !== 'vibes'"
-            type="button"
-            :class="cn(fieldBoxClass, 'min-h-12 px-4 py-2.5 items-start')"
-            @click="startEditing('vibes')"
-          >
-            <div class="flex flex-wrap gap-1.5 flex-1">
-              <template v-if="profile.vibes.length > 0">
-                <Badge v-for="vibe in profile.vibes" :key="vibe" :class="tagViewClass">
-                  {{ vibe }}
-                </Badge>
-              </template>
-              <span v-else class="text-muted-foreground/60 italic font-medium text-sm">
-                Add your vibe
-              </span>
-            </div>
-            <div class="flex items-center py-1.5 shrink-0">
-              <Icon name="lucide:pencil" size="15" class="text-muted-foreground/70 [stroke-width:2.5]" />
-            </div>
-          </button>
-          <div v-else :class="cn(fieldClass, 'p-3 flex items-start justify-between gap-3')">
-            <div class="flex flex-wrap gap-2 flex-1">
-              <Badge
-                v-for="vibe in vibeOptions"
-                :key="vibe"
-                variant="outline"
-                class="cursor-pointer px-3 py-1.5 text-sm font-bold rounded-full transition-all duration-200 hover:scale-105"
-                :class="pillClass(editingArrayValue.includes(vibe))"
-                @click="toggleArrayValue(vibe)"
-              >
-                {{ vibe }}
-              </Badge>
-            </div>
-            <div class="flex items-center gap-1 py-1.5 shrink-0">
-              <button type="button" :class="cancelIconClass" title="Cancel" @click="cancelEditing">
-                <Icon name="lucide:x" size="16" class="[stroke-width:2.5]" />
-              </button>
-              <button type="button" :class="saveIconClass" title="Save" @click="saveField">
-                <Icon name="lucide:check" size="16" class="[stroke-width:2.5]" />
-              </button>
-            </div>
-          </div>
-        </div>
+        <EditableChipsField
+          label="Vibes"
+          field-key="vibes"
+          :value="profile.vibes"
+          :options="vibeChipOptions"
+          empty-text="Add your vibe"
+        />
 
         <!-- Interests -->
-        <div class="space-y-1.5">
-          <label :class="labelClass">Interests</label>
-          <button
-            v-if="editingField !== 'interests'"
-            type="button"
-            :class="cn(fieldBoxClass, 'min-h-12 px-4 py-2.5 items-start')"
-            @click="startEditing('interests')"
-          >
-            <div class="flex flex-wrap gap-1.5 flex-1">
-              <template v-if="profile.interests.length > 0">
-                <Badge
-                  v-for="interest in profile.interests"
-                  :key="interest"
-                  :class="tagViewClass"
-                >
-                  {{ interest }}
-                </Badge>
-              </template>
-              <span v-else class="text-muted-foreground/60 italic font-medium text-sm">
-                Add your interests
-              </span>
-            </div>
-            <div class="flex items-center py-1.5 shrink-0">
-              <Icon name="lucide:pencil" size="15" class="text-muted-foreground/70 [stroke-width:2.5]" />
-            </div>
-          </button>
-          <div v-else :class="cn(fieldClass, 'p-3 flex items-start justify-between gap-3')">
-            <div class="flex-1 min-w-0 space-y-3">
-              <Accordion
-                type="multiple"
-                class="w-full"
-                :default-value="['academic']"
+        <EditableField
+          label="Interests"
+          :editing="editingInterests"
+          multiline
+          chips
+          @start-edit="startEditingInterests"
+          @save="saveInterests"
+          @cancel="cancelEditingInterests"
+        >
+          <template #view>
+            <template v-if="profile.interests.length > 0">
+              <Badge
+                v-for="interest in profile.interests"
+                :key="interest"
+                :class="chipViewClass"
               >
+                {{ interest }}
+              </Badge>
+            </template>
+            <span v-else class="text-muted-foreground/60 italic font-medium text-sm">
+              Add your interests
+            </span>
+          </template>
+          <template #edit>
+            <div class="space-y-3">
+              <Accordion type="multiple" class="w-full" :default-value="['academic']">
                 <AccordionItem
                   v-for="category in interestCategories"
                   :key="category.id"
@@ -591,14 +234,14 @@ const cancelIconClass = cn(
                       <span>{{ category.label }}</span>
                       <Badge
                         v-if="
-                          editingArrayValue.filter((i) =>
+                          draftInterests.filter((i) =>
                             category.options.includes(i),
                           ).length > 0
                         "
                         class="ml-1 text-xs bg-accent/15 text-primary border-none"
                       >
                         {{
-                          editingArrayValue.filter((i) =>
+                          draftInterests.filter((i) =>
                             category.options.includes(i),
                           ).length
                         }}
@@ -612,8 +255,8 @@ const cancelIconClass = cn(
                         :key="option"
                         variant="outline"
                         class="cursor-pointer px-3 py-1.5 text-sm font-bold rounded-full transition-all duration-200 hover:scale-105"
-                        :class="pillClass(editingArrayValue.includes(option))"
-                        @click="toggleArrayValue(option)"
+                        :class="chipClass(draftInterests.includes(option))"
+                        @click="toggleInterest(option)"
                       >
                         {{ option }}
                       </Badge>
@@ -624,7 +267,7 @@ const cancelIconClass = cn(
 
               <!-- Custom Tags -->
               <div class="pt-3 border-t border-primary/10">
-                <label :class="labelClass">Add your own tags</label>
+                <label :class="fieldLabelClass">Add your own tags</label>
                 <div class="flex gap-2 mt-2.5 mb-3">
                   <input
                     v-model="customTag"
@@ -644,7 +287,7 @@ const cancelIconClass = cn(
                   <Badge
                     v-for="tag in customTags"
                     :key="tag"
-                    :class="cn(tagViewClass, 'flex items-center gap-1.5')"
+                    :class="cn(chipViewClass, 'flex items-center gap-1.5')"
                   >
                     {{ tag }}
                     <Icon
@@ -657,17 +300,8 @@ const cancelIconClass = cn(
                 </div>
               </div>
             </div>
-
-            <div class="flex items-center gap-1 py-1.5 shrink-0">
-              <button type="button" :class="cancelIconClass" title="Cancel" @click="cancelEditing">
-                <Icon name="lucide:x" size="16" class="[stroke-width:2.5]" />
-              </button>
-              <button type="button" :class="saveIconClass" title="Save" @click="saveField">
-                <Icon name="lucide:check" size="16" class="[stroke-width:2.5]" />
-              </button>
-            </div>
-          </div>
-        </div>
+          </template>
+        </EditableField>
 
         <!-- More details: fields that almost never change once set -->
         <Accordion type="single" collapsible class="pt-1">
@@ -679,178 +313,31 @@ const cancelIconClass = cn(
             </AccordionTrigger>
             <AccordionContent>
               <div class="space-y-5 pt-3">
-                <!-- Gender -->
-                <div class="space-y-1.5">
-                  <label :class="labelClass">Gender</label>
-                  <button
-                    v-if="editingField !== 'gender'"
-                    type="button"
-                    :class="cn(fieldBoxClass, 'h-12 px-4')"
-                    @click="startEditing('gender')"
-                  >
-                    <span class="truncate">{{ genderLabel(profile.gender) }}</span>
-                    <Icon name="lucide:pencil" size="15" class="text-muted-foreground/70 [stroke-width:2.5] shrink-0" />
-                  </button>
-                  <div v-else :class="cn(fieldClass, 'p-3 space-y-2.5')">
-                    <div class="flex gap-2">
-                      <button
-                        v-for="g in genderOptions"
-                        :key="g.value"
-                        type="button"
-                        class="flex-1 h-16 flex flex-col items-center justify-center gap-1 rounded-xl cursor-pointer"
-                        :class="pillClass(editingValue === g.value)"
-                        @click="editingValue = g.value"
-                      >
-                        <Icon :name="g.icon" size="20" />
-                        <span class="text-xs font-bold">{{ g.label }}</span>
-                      </button>
-                    </div>
-                    <div class="flex justify-end gap-1">
-                      <button type="button" :class="cancelIconClass" title="Cancel" @click="cancelEditing">
-                        <Icon name="lucide:x" size="16" class="[stroke-width:2.5]" />
-                      </button>
-                      <button type="button" :class="saveIconClass" title="Save" @click="saveField">
-                        <Icon name="lucide:check" size="16" class="[stroke-width:2.5]" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                <FieldSelect
+                  label="Gender"
+                  field-key="gender"
+                  :value="profile.gender"
+                  placeholder="Select your gender"
+                  :groups="genderSelectGroups"
+                />
 
-                <!-- Birthday -->
-                <div class="space-y-1.5">
-                  <label :class="labelClass">Birthday</label>
-                  <button
-                    v-if="editingField !== 'birthday'"
-                    type="button"
-                    :class="cn(fieldBoxClass, 'h-12 px-4')"
-                    @click="startEditing('birthday')"
-                  >
-                    <span class="truncate">{{ birthdayLabel(profile.birthday) }}</span>
-                    <Icon name="lucide:pencil" size="15" class="text-muted-foreground/70 [stroke-width:2.5] shrink-0" />
-                  </button>
-                  <div v-else class="flex items-center gap-1.5">
-                    <div class="flex-1 min-w-0">
-                      <Popover>
-                        <PopoverTrigger as-child>
-                          <Button
-                            variant="ghost"
-                            :class="
-                              cn(
-                                fieldClass,
-                                'h-12 w-full px-4 justify-start gap-2',
-                                !editingDate && 'text-muted-foreground font-medium',
-                              )
-                            "
-                          >
-                            <Icon name="lucide:calendar" size="16" class="text-accent" />
-                            {{
-                              editingDate
-                                ? df.format(editingDate.toDate(getLocalTimeZone()))
-                                : "Select your birthday"
-                            }}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent class="w-auto p-0 rounded-2xl">
-                          <Calendar
-                            v-model="editingDate"
-                            :initial-focus="true"
-                            :default-placeholder="defaultPlaceholder"
-                            layout="month-and-year"
-                          />
-                        </PopoverContent>
-                      </Popover>
-                    </div>
-                    <button type="button" :class="cancelIconClass" title="Cancel" @click="cancelEditing">
-                      <Icon name="lucide:x" size="16" class="[stroke-width:2.5]" />
-                    </button>
-                    <button type="button" :class="saveIconClass" title="Save" @click="saveField">
-                      <Icon name="lucide:check" size="16" class="[stroke-width:2.5]" />
-                    </button>
-                  </div>
-                </div>
+                <FieldDatePicker label="Birthday" field-key="birthday" :value="profile.birthday" />
 
-                <!-- Year -->
-                <div class="space-y-1.5">
-                  <label :class="labelClass">Year</label>
-                  <button
-                    v-if="editingField !== 'year'"
-                    type="button"
-                    :class="cn(fieldBoxClass, 'h-12 px-4')"
-                    @click="startEditing('year')"
-                  >
-                    <span class="truncate">{{ yearLabel(profile.year) }}</span>
-                    <Icon name="lucide:pencil" size="15" class="text-muted-foreground/70 [stroke-width:2.5] shrink-0" />
-                  </button>
-                  <div v-else class="flex items-center gap-1.5">
-                    <div class="flex-1 min-w-0">
-                      <Select v-model="editingValue">
-                        <SelectTrigger
-                          :class="cn(fieldClass, 'h-12 w-full px-4 justify-between')"
-                        >
-                          <SelectValue placeholder="Select your year" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem
-                            v-for="year in yearOptions"
-                            :key="year.value"
-                            :value="year.value"
-                          >
-                            {{ year.label }}
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <button type="button" :class="cancelIconClass" title="Cancel" @click="cancelEditing">
-                      <Icon name="lucide:x" size="16" class="[stroke-width:2.5]" />
-                    </button>
-                    <button type="button" :class="saveIconClass" title="Save" @click="saveField">
-                      <Icon name="lucide:check" size="16" class="[stroke-width:2.5]" />
-                    </button>
-                  </div>
-                </div>
+                <FieldSelect
+                  label="Year"
+                  field-key="year"
+                  :value="profile.year"
+                  placeholder="Select your year"
+                  :groups="yearSelectGroups"
+                />
 
-                <!-- Major -->
-                <div class="space-y-1.5">
-                  <label :class="labelClass">Major</label>
-                  <button
-                    v-if="editingField !== 'major'"
-                    type="button"
-                    :class="cn(fieldBoxClass, 'h-12 px-4')"
-                    @click="startEditing('major')"
-                  >
-                    <span class="truncate">{{ majorLabel(profile.major) }}</span>
-                    <Icon name="lucide:pencil" size="15" class="text-muted-foreground/70 [stroke-width:2.5] shrink-0" />
-                  </button>
-                  <div v-else class="flex items-center gap-1.5">
-                    <div class="flex-1 min-w-0">
-                      <Select v-model="editingValue">
-                        <SelectTrigger
-                          :class="cn(fieldClass, 'h-12 w-full px-4 justify-between')"
-                        >
-                          <SelectValue placeholder="Select your major" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup v-for="group in majorOptions" :key="group.group">
-                            <SelectLabel>{{ group.group }}</SelectLabel>
-                            <SelectItem
-                              v-for="item in group.items"
-                              :key="item.value"
-                              :value="item.value"
-                            >
-                              {{ item.label }}
-                            </SelectItem>
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <button type="button" :class="cancelIconClass" title="Cancel" @click="cancelEditing">
-                      <Icon name="lucide:x" size="16" class="[stroke-width:2.5]" />
-                    </button>
-                    <button type="button" :class="saveIconClass" title="Save" @click="saveField">
-                      <Icon name="lucide:check" size="16" class="[stroke-width:2.5]" />
-                    </button>
-                  </div>
-                </div>
+                <FieldSelect
+                  label="Major"
+                  field-key="major"
+                  :value="profile.major"
+                  placeholder="Select your major"
+                  :groups="majorOptions"
+                />
               </div>
             </AccordionContent>
           </AccordionItem>

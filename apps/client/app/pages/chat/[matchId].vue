@@ -99,7 +99,7 @@ onMounted(async () => {
     );
     if (!thisMatch) {
       toast.error("Match not found");
-      navigateTo("/matches");
+      navigateTo("/chat");
       return;
     }
     matchDisplayName.value = thisMatch.displayName;
@@ -116,7 +116,7 @@ onMounted(async () => {
   } catch (e) {
     console.error("Failed to initialize chat:", e);
     toast.error("Failed to load chat");
-    navigateTo("/matches");
+    navigateTo("/chat");
   } finally {
     isLoading.value = false;
   }
@@ -138,8 +138,8 @@ onUnmounted(() => {
       class="h-full flex flex-col min-h-0 overflow-hidden"
     >
       <!-- Header -->
-      <div class="p-4 border-b border-primary/5 flex items-center gap-2">
-        <NuxtLink to="/matches">
+      <div class="shrink-0 px-6 py-4 border-b border-primary/5 flex items-center gap-3">
+        <NuxtLink to="/chat">
           <Button
             variant="ghost"
             size="icon"
@@ -148,7 +148,7 @@ onUnmounted(() => {
             <Icon name="lucide:arrow-left" size="20" />
           </Button>
         </NuxtLink>
-        <div class="min-w-0">
+            <div class="min-w-0">
           <p class="text-base font-black text-primary truncate">
             {{ matchDisplayName }}
           </p>
@@ -187,12 +187,17 @@ onUnmounted(() => {
             {{ isLoadingMore ? "..." : "Load older messages" }}
           </Button>
 
-          <p
+          <div
             v-if="messages.length === 0 && !hasMore"
-            class="text-muted-foreground text-sm text-center py-12 font-bold italic"
+            class="flex flex-col items-center text-center gap-3 py-16"
           >
-            No messages yet. Say hi!
-          </p>
+            <div class="size-14 rounded-2xl bg-secondary/40 flex items-center justify-center">
+              <Icon name="lucide:hand" size="24" class="text-muted-foreground/50" />
+            </div>
+            <p class="text-sm font-bold text-muted-foreground max-w-[200px]">
+              No messages yet. Say hi!
+            </p>
+          </div>
 
           <div
             v-for="msg in messages"
@@ -208,8 +213,8 @@ onUnmounted(() => {
               :class="[
                 'px-5 py-2 text-sm font-bold shadow-sm whitespace-pre-wrap break-all',
                 msg.senderId === currentUserId
-                  ? 'bg-primary text-primary-foreground rounded-2xl rounded-tr-none'
-                  : 'bg-secondary text-primary rounded-2xl rounded-tl-none',
+                  ? 'bg-primary text-primary-foreground rounded-2xl rounded-tr-sm'
+                  : 'bg-secondary text-primary rounded-2xl rounded-tl-sm',
               ]"
             >
               {{ msg.content }}
@@ -224,18 +229,18 @@ onUnmounted(() => {
       </ScrollArea>
 
       <!-- Input -->
-      <div class="p-4 bg-background/50 border-t border-primary/5">
+      <div class="p-4 bg-white border-t border-primary/5">
         <form class="flex gap-2" @submit.prevent="handleSend">
           <Input
             v-model="newMessage"
             placeholder="Type a message..."
-            class="flex-1 h-12 rounded-xl bg-background border-primary/5 font-bold text-sm focus:ring-accent/20"
+            class="flex-1 h-12 rounded-2xl bg-background/40 border-primary/5 font-bold text-sm focus:ring-accent/20"
             :disabled="!isConnected"
           />
           <Button
             type="submit"
             size="icon"
-            class="size-12 rounded-xl shadow-lg shadow-primary/10 active:scale-95 transition-transform"
+            class="size-12 rounded-2xl shadow-lg shadow-primary/10 active:scale-95 transition-transform"
             :disabled="!canSend"
           >
             <Icon name="mingcute:send-fill" size="20" class="text-accent" />

@@ -21,10 +21,6 @@ type SwipeCandidate = {
   interests: string[];
 };
 
-type SwipeResponse =
-  | { decision: "pass" }
-  | { decision: "like"; matched: true };
-
 const {
   public: { apiBase },
 } = useRuntimeConfig();
@@ -63,21 +59,14 @@ const handleSwipe = async (decision: "like" | "pass") => {
   const targetUserId = currentCandidate.value.userId;
   isSwiping.value = true;
   lastDecision.value = decision;
-  // Drop immediately so the card animates out right on tap, instead of
-  // waiting on the network round trip before showing any feedback. No new
-  // fetch needed — the rest of today's batch is already in hand.
   remainingCandidates.value = remainingCandidates.value.slice(1);
 
   try {
-    const result = await $fetch<SwipeResponse>(`${apiBase}/swipes`, {
+    await $fetch(`${apiBase}/swipes`, {
       method: "POST",
       credentials: "include",
       body: { targetUserId, decision },
     });
-
-    if (result.decision === "like" && result.matched) {
-      toast.success("It's a match!");
-    }
   } catch (e) {
     console.error("Failed to record swipe:", e);
     toast.error("Failed to record swipe");
@@ -90,43 +79,50 @@ onMounted(async () => {
   await fetchBatch();
   isLoading.value = false;
 });
+
+const tagClass = "bg-accent/10 border-accent/20 text-primary font-bold";
 </script>
 
 <template>
   <div class="h-full flex flex-col">
     <!-- Header -->
     <div
-      class="p-5 pb-4 pl-6 border-b border-primary/5 flex items-center justify-between"
+      class="shrink-0 px-6 pt-6 pb-4 border-b border-primary/5 flex items-center justify-between"
     >
-      <h1 class="text-xl font-black text-primary flex items-center gap-2">
+      <h1 class="text-xl font-black tracking-tight text-primary">
         Matches
       </h1>
     </div>
 
-    <div class="flex-1 min-h-0 flex flex-col items-center justify-center p-5">
+    <div class="flex-1 min-h-0 flex flex-col items-center justify-center p-6">
       <div v-if="isLoading" class="flex items-center justify-center">
         <Icon name="svg-spinners:ring-resize" size="40" class="text-accent" />
       </div>
 
       <div
         v-else-if="noMoreCandidates"
-        class="flex-col text-center space-y-2"
+        class="flex flex-col items-center text-center gap-3"
       >
-        <div class="text-muted-foreground">
-          You've reached the end of today's matches.
+        <div class="size-14 rounded-2xl bg-secondary/40 flex items-center justify-center">
+          <Icon name="lucide:check-check" size="24" class="text-muted-foreground/50" />
         </div>
-        <Button as-child variant="secondary">
+        <p class="text-sm font-bold text-muted-foreground max-w-[200px]">
+          You've reached the end of today's matches.
+        </p>
+        <Button as-child variant="secondary" class="rounded-2xl h-10 px-5 font-black">
           <router-link to="/chat">Go to chat</router-link>
         </Button>
       </div>
 
       <div v-else class="relative w-full max-w-xs min-h-[26rem]">
-        <!-- Deck stack: static cards peeking out behind the current one -->
         <div
-          class="absolute left-1/2 -translate-x-1/2 -top-8 w-[82%] h-full bg-amber-50 border border-b-0 border-primary/10 rounded-md z-0"
+          class="absolute left-1/2 -translate-x-1/2 -top-13 w-[70%] h-full bg-amber-100 border border-b-0 border-primary/10 rounded-xl z-0"
         />
         <div
-          class="absolute left-1/2 -translate-x-1/2 -top-4 w-[90%] h-full bg-amber-100 border border-b-0 border-primary/10 rounded-md z-[5]"
+          class="absolute left-1/2 -translate-x-1/2 -top-9 w-[82%] h-full bg-blue-100 border border-b-0 border-primary/10 rounded-xl z-0"
+        />
+        <div
+          class="absolute left-1/2 -translate-x-1/2 -top-5 w-[90%] h-full bg-orange-100 border border-b-0 border-primary/10 rounded-xl z-[5]"
         />
 
         <Transition
@@ -136,30 +132,30 @@ onMounted(async () => {
           <div
             v-if="currentCandidate"
             :key="currentCandidate.userId"
-            class="relative z-10 w-full overflow-hidden bg-secondary border border-primary/5 rounded-xl p-5 space-y-4"
+            class="relative z-10 w-full overflow-hidden bg-secondary border border-primary/15 shadow-xl shadow-primary/10 rounded-xl p-5 space-y-4"
           >
             <div class="flex items-center gap-3">
               <img
                 v-if="currentCandidate.photoUrl"
                 :src="currentCandidate.photoUrl"
                 alt="Profile"
-                class="size-14 rounded-sm object-cover shadow-md shrink-0"
+                class="size-14 rounded-2xl object-cover shadow-md shrink-0"
               />
               <div
                 v-else
-                class="size-14 rounded-xl bg-secondary/30 flex items-center justify-center shrink-0"
+                class="size-14 rounded-2xl bg-secondary/40 flex items-center justify-center shrink-0"
               >
                 <Icon
-                  name="mdi:account"
-                  size="28"
-                  class="text-muted-foreground"
+                  name="lucide:user"
+                  size="26"
+                  class="text-muted-foreground/50"
                 />
               </div>
               <div class="min-w-0">
-                <p class="font-black text-primary truncate">
+                <p class="font-black tracking-tight text-primary truncate">
                   {{ currentCandidate.displayName }}
                 </p>
-                <p class="text-sm text-muted-foreground truncate">
+                <p class="text-sm font-bold text-muted-foreground truncate">
                   {{ majorLabel(currentCandidate.major) }} ·
                   {{ yearLabel(currentCandidate.year) }}
                 </p>
@@ -168,20 +164,20 @@ onMounted(async () => {
 
             <p
               v-if="currentCandidate.bio"
-              class="text-sm text-muted-foreground"
+              class="text-sm text-muted-foreground font-medium leading-relaxed"
             >
               {{ currentCandidate.bio }}
             </p>
 
             <div v-if="currentCandidate.goals.length > 0" class="space-y-1.5">
-              <div class="text-[11px] font-bold text-muted-foreground/70">
+              <div class="text-[11px] font-black uppercase tracking-widest text-muted-foreground/70">
                 Looking for
               </div>
               <div class="flex flex-wrap gap-1.5">
                 <Badge
                   v-for="goal in currentCandidate.goals"
                   :key="goal"
-                  variant="outline"
+                  :class="tagClass"
                 >
                   {{ goalLabel(goal) }}
                 </Badge>
@@ -189,14 +185,14 @@ onMounted(async () => {
             </div>
 
             <div v-if="currentCandidate.vibes.length > 0" class="space-y-1.5">
-              <div class="text-[11px] font-bold text-muted-foreground/70">
+              <div class="text-[11px] font-black uppercase tracking-widest text-muted-foreground/70">
                 Vibes
               </div>
               <div class="flex flex-wrap gap-1.5">
                 <Badge
                   v-for="vibe in currentCandidate.vibes"
                   :key="vibe"
-                  variant="outline"
+                  :class="tagClass"
                 >
                   {{ vibe }}
                 </Badge>
@@ -207,14 +203,14 @@ onMounted(async () => {
               v-if="currentCandidate.interests.length > 0"
               class="space-y-1.5"
             >
-              <div class="text-[11px] font-bold text-muted-foreground/70">
+              <div class="text-[11px] font-black uppercase tracking-widest text-muted-foreground/70">
                 Interests
               </div>
               <div class="flex flex-wrap gap-1.5">
                 <Badge
                   v-for="interest in currentCandidate.interests"
                   :key="interest"
-                  variant="outline"
+                  :class="tagClass"
                 >
                   {{ interest }}
                 </Badge>
@@ -224,7 +220,7 @@ onMounted(async () => {
             <div class="flex gap-3 pt-2">
               <Button
                 variant="outline"
-                class="group flex-1 rounded-xl h-11"
+                class="group flex-1 rounded-2xl h-12 font-black border-primary/10 active:scale-95 transition-transform"
                 :disabled="isSwiping"
                 @click="handleSwipe('pass')"
               >
@@ -236,7 +232,7 @@ onMounted(async () => {
                 Pass
               </Button>
               <Button
-                class="flex-1 rounded-xl h-11 bg-accent text-accent-foreground hover:bg-amber-500"
+                class="flex-1 rounded-2xl h-12 font-black bg-accent text-accent-foreground hover:bg-accent/80 shadow-lg shadow-primary/10 active:scale-95 transition-transform"
                 :disabled="isSwiping"
                 @mouseenter="isLikeHovered = true"
                 @mouseleave="isLikeHovered = false"

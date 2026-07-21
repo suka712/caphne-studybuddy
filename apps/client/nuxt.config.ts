@@ -2,7 +2,15 @@ import tailwindcss from "@tailwindcss/vite";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  ssr: false,
+  routeRules: {
+    "/": { ssr: true },
+    "/chat/**": { ssr: false },
+    "/discover": { ssr: false },
+    "/matches": { ssr: false },
+    "/profile": { ssr: false },
+    "/settings": { ssr: false },
+    "/start": { ssr: false },
+  },
   app: {
     pageTransition: { name: "page", mode: "out-in" },
     head: {

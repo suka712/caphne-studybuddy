@@ -4,7 +4,7 @@ definePageMeta({ layout: "default" });
 const {
   public: { apiBase },
 } = useRuntimeConfig();
-const { loginWithGoogle, loginWithGitHub, isAuthenticated, fetchUser } =
+const { loginWithGoogle, loginWithGitHub, isAuthenticated, isCheckingAuth, fetchUser } =
   useAuth();
 
 const email = ref("");
@@ -153,51 +153,71 @@ onMounted(() => {
               major and goals.
             </p>
 
-            <div v-if="!isAuthenticated" class="space-y-3">
-              <Button
-                size="lg"
-                class="w-full h-14 rounded-2xl font-black gap-2 shadow-xl shadow-primary/10 hover:scale-[1.02] transition-transform active:scale-95"
-                @click="loginWithGoogle"
-              >
-                <Icon
-                  name="ri:sparkling-2-fill"
-                  size="16"
-                  class="text-accent"
-                />
-                Find your match
-              </Button>
-              <div class="grid grid-cols-2 gap-2">
+            <ClientOnly>
+              <div v-if="isCheckingAuth" class="space-y-3 animate-pulse">
+                <div class="h-14 w-full rounded-2xl bg-primary/10" />
+                <div class="grid grid-cols-2 gap-2">
+                  <div class="h-12 w-full rounded-xl bg-primary/10" />
+                  <div class="h-12 w-full rounded-xl bg-primary/10" />
+                </div>
+              </div>
+
+              <div v-else-if="!isAuthenticated" class="space-y-3">
                 <Button
-                  variant="outline"
-                  class="h-12 rounded-xl text-xs font-black gap-2 border-primary/10 hover:bg-primary/5"
+                  size="lg"
+                  class="w-full h-14 rounded-2xl font-black gap-2 shadow-xl shadow-primary/10 hover:scale-[1.02] transition-transform active:scale-95"
                   @click="loginWithGoogle"
                 >
-                  <Icon name="ci:google" size="14" /> Google
+                  <Icon
+                    name="ri:sparkling-2-fill"
+                    size="16"
+                    class="text-accent"
+                  />
+                  Find your match
                 </Button>
-                <Button
-                  variant="outline"
-                  class="h-12 rounded-xl text-xs font-black gap-2 border-primary/10 hover:bg-primary/5"
-                  @click="loginWithGitHub"
-                >
-                  <Icon name="ci:github" size="14" /> GitHub
-                </Button>
+                <div class="grid grid-cols-2 gap-2">
+                  <Button
+                    variant="outline"
+                    class="h-12 rounded-xl text-xs font-black gap-2 border-primary/10 hover:bg-primary/5"
+                    @click="loginWithGoogle"
+                  >
+                    <Icon name="ci:google" size="14" /> Google
+                  </Button>
+                  <Button
+                    variant="outline"
+                    class="h-12 rounded-xl text-xs font-black gap-2 border-primary/10 hover:bg-primary/5"
+                    @click="loginWithGitHub"
+                  >
+                    <Icon name="ci:github" size="14" /> GitHub
+                  </Button>
+                </div>
               </div>
-            </div>
 
-            <div v-else class="space-y-4">
-              <div class="p-4 bg-accent/15 rounded-2xl border border-accent/30">
-                <p class="text-sm font-black text-primary">Welcome back!</p>
-                <p class="text-xs font-bold text-muted-foreground">
-                  You have new matches waiting.
-                </p>
+              <div v-else class="space-y-4">
+                <div class="p-4 bg-accent/15 rounded-2xl border border-accent/30">
+                  <p class="text-sm font-black text-primary">Welcome back!</p>
+                  <p class="text-xs font-bold text-muted-foreground">
+                    You have new matches waiting.
+                  </p>
+                </div>
+                <NuxtLink to="/profile">
+                  <Button
+                    class="w-full h-14 rounded-2xl font-black hover:scale-[1.02] transition-transform"
+                    >Go to Profile</Button
+                  >
+                </NuxtLink>
               </div>
-              <NuxtLink to="/profile">
-                <Button
-                  class="w-full h-14 rounded-2xl font-black hover:scale-[1.02] transition-transform"
-                  >Go to Profile</Button
-                >
-              </NuxtLink>
-            </div>
+
+              <template #fallback>
+                <div class="space-y-3 animate-pulse">
+                  <div class="h-14 w-full rounded-2xl bg-primary/10" />
+                  <div class="grid grid-cols-2 gap-2">
+                    <div class="h-12 w-full rounded-xl bg-primary/10" />
+                    <div class="h-12 w-full rounded-xl bg-primary/10" />
+                  </div>
+                </div>
+              </template>
+            </ClientOnly>
 
             <div
               class="mt-8 pt-6 border-t border-dashed border-primary/10 flex items-center justify-between text-[11px] font-black uppercase tracking-widest text-muted-foreground/70"

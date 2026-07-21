@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { majorOptions, yearOptions, goalOptions } from "~/data/profileOptions";
 import { fieldLabelClass, chipViewClass } from "~/lib/utils";
+import { Switch } from "@/components/ui/switch";
 
 definePageMeta({
   middleware: ["require-auth", "require-profile"],

@@ -139,8 +139,29 @@ onUnmounted(() => {
 
 <template>
   <div class="h-full">
-    <div v-if="isLoading" class="flex items-center justify-center h-full">
-      <Icon name="svg-spinners:ring-resize" size="40" class="text-accent" />
+    <div v-if="isLoading" class="h-full flex flex-col min-h-0 overflow-hidden">
+      <div class="shrink-0 px-6 py-4 border-b border-primary/10 flex items-center gap-3">
+        <Skeleton class="size-10 rounded-xl shrink-0" />
+        <div class="space-y-1.5 flex-1 min-w-0">
+          <Skeleton class="h-5 w-32 rounded-md" />
+          <Skeleton class="h-3 w-16 rounded-md" />
+        </div>
+      </div>
+      <div class="flex-1 p-4 space-y-4">
+        <div class="flex items-start mr-auto max-w-[70%]">
+          <Skeleton class="h-10 w-44 rounded-2xl rounded-tl-sm" />
+        </div>
+        <div class="flex items-end ml-auto max-w-[70%]">
+          <Skeleton class="h-14 w-56 rounded-2xl rounded-tr-sm" />
+        </div>
+        <div class="flex items-start mr-auto max-w-[70%]">
+          <Skeleton class="h-12 w-36 rounded-2xl rounded-tl-sm" />
+        </div>
+      </div>
+      <div class="p-4 border-t border-primary/10 flex gap-2">
+        <Skeleton class="h-12 flex-1 rounded-2xl" />
+        <Skeleton class="size-12 rounded-2xl shrink-0" />
+      </div>
     </div>
 
     <div

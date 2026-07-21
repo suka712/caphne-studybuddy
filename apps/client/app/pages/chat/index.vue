@@ -67,8 +67,24 @@ onMounted(async () => {
 
 <template>
   <div class="h-full">
-    <div v-if="isLoading" class="flex items-center justify-center h-full">
-      <Icon name="svg-spinners:ring-resize" size="40" class="text-accent" />
+    <div v-if="isLoading" class="h-full flex flex-col min-h-0">
+      <div class="shrink-0 px-6 pt-6 pb-4 border-b border-primary/10 flex items-center justify-between">
+        <Skeleton class="h-7 w-20 rounded-lg" />
+      </div>
+      <div class="p-4 space-y-3 flex-1 overflow-y-auto">
+        <div
+          v-for="i in 5"
+          :key="i"
+          class="flex items-center gap-4 rounded-3xl p-3 border border-primary/10 bg-secondary/30"
+        >
+          <Skeleton class="size-12 rounded-2xl shrink-0" />
+          <div class="space-y-2 flex-1 min-w-0">
+            <Skeleton class="h-4 w-32 rounded-md" />
+            <Skeleton class="h-3 w-20 rounded-md" />
+          </div>
+          <Skeleton class="size-4 rounded-full shrink-0" />
+        </div>
+      </div>
     </div>
 
     <div v-else class="h-full flex flex-col min-h-0">

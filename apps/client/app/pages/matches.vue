@@ -95,8 +95,35 @@ const tagClass = "bg-accent/15 border-accent/30 text-primary font-bold";
     </div>
 
     <div class="flex-1 min-h-0 flex flex-col items-center justify-center p-6">
-      <div v-if="isLoading" class="flex items-center justify-center">
-        <Icon name="svg-spinners:ring-resize" size="40" class="text-accent" />
+      <div v-if="isLoading" class="w-full max-w-xs min-h-[26rem]">
+        <div class="relative z-10 w-full overflow-hidden bg-card border border-primary/15 shadow-md rounded-xl p-5 space-y-4">
+          <div class="flex items-center gap-3">
+            <Skeleton class="size-14 rounded-2xl shrink-0" />
+            <div class="space-y-2 min-w-0 flex-1">
+              <Skeleton class="h-5 w-32 rounded-md" />
+              <Skeleton class="h-4 w-24 rounded-md" />
+            </div>
+          </div>
+          <Skeleton class="h-10 w-full rounded-lg" />
+          <div class="space-y-2">
+            <Skeleton class="h-3 w-20 rounded-md" />
+            <div class="flex gap-1.5">
+              <Skeleton class="h-6 w-16 rounded-full" />
+              <Skeleton class="h-6 w-20 rounded-full" />
+            </div>
+          </div>
+          <div class="space-y-2">
+            <Skeleton class="h-3 w-16 rounded-md" />
+            <div class="flex gap-1.5">
+              <Skeleton class="h-6 w-14 rounded-full" />
+              <Skeleton class="h-6 w-18 rounded-full" />
+            </div>
+          </div>
+          <div class="flex gap-3 pt-2">
+            <Skeleton class="h-12 flex-1 rounded-2xl" />
+            <Skeleton class="h-12 flex-1 rounded-2xl" />
+          </div>
+        </div>
       </div>
 
       <div

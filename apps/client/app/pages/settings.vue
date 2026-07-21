@@ -121,8 +121,29 @@ const handleLogout = async () => {
 
 <template>
   <div class="h-full">
-    <div v-if="isCheckingProfile" class="flex items-center justify-center h-full">
-      <Icon name="svg-spinners:ring-resize" size="40" class="text-accent" />
+    <div v-if="isCheckingProfile" class="h-full flex flex-col">
+      <div class="shrink-0 flex items-center gap-3 p-6 border-b border-primary/10">
+        <Skeleton class="size-14 rounded-2xl shrink-0" />
+        <div class="space-y-2 overflow-hidden flex-1">
+          <Skeleton class="h-5 w-36 rounded-md" />
+          <Skeleton class="h-4 w-48 rounded-md" />
+        </div>
+      </div>
+      <div class="flex-1 min-h-0 overflow-y-auto p-6 space-y-5">
+        <div v-for="i in 3" :key="i" class="space-y-2">
+          <Skeleton class="h-3 w-24 rounded-md" />
+          <Skeleton class="h-12 w-full rounded-2xl" />
+        </div>
+        <div class="border-t border-primary/30" />
+        <div v-for="i in 2" :key="'chip-' + i" class="space-y-2">
+          <Skeleton class="h-3 w-20 rounded-md" />
+          <div class="flex gap-2">
+            <Skeleton class="h-8 w-20 rounded-full" />
+            <Skeleton class="h-8 w-24 rounded-full" />
+            <Skeleton class="h-8 w-16 rounded-full" />
+          </div>
+        </div>
+      </div>
     </div>
 
     <div v-else-if="profile" class="h-full flex flex-col">

@@ -75,11 +75,44 @@ const togglePublic = async (checked: boolean) => {
 
 <template>
   <div class="h-full">
-    <div
-      v-if="isCheckingProfile"
-      class="flex items-center justify-center h-full"
-    >
-      <Icon name="svg-spinners:ring-resize" size="40" class="text-accent" />
+    <div v-if="isCheckingProfile" class="h-full flex flex-col">
+      <div class="shrink-0 px-6 pt-6 pb-4 border-b border-primary/10 flex items-center justify-between">
+        <Skeleton class="h-7 w-24 rounded-lg" />
+        <Skeleton class="h-10 w-20 rounded-2xl" />
+      </div>
+      <div class="flex-1 min-h-0 overflow-y-auto px-6 py-6 space-y-6">
+        <div class="p-4 rounded-xl bg-secondary/50 border border-primary/10 space-y-4">
+          <div class="flex items-center gap-4">
+            <Skeleton class="size-16 rounded-2xl shrink-0" />
+            <div class="space-y-2 flex-1 min-w-0">
+              <Skeleton class="h-6 w-40 rounded-lg" />
+              <Skeleton class="h-4 w-28 rounded-md" />
+            </div>
+          </div>
+          <Skeleton class="h-12 w-full rounded-lg" />
+          <div class="border-t border-primary/10 pt-3.5 space-y-2">
+            <Skeleton class="h-3 w-20 rounded-md" />
+            <div class="flex gap-2">
+              <Skeleton class="h-7 w-20 rounded-full" />
+              <Skeleton class="h-7 w-24 rounded-full" />
+              <Skeleton class="h-7 w-16 rounded-full" />
+            </div>
+          </div>
+        </div>
+        <div class="p-4 rounded-xl bg-secondary/50 border border-primary/10 flex items-center justify-between gap-4">
+          <div class="space-y-2 flex-1">
+            <Skeleton class="h-4 w-32 rounded-md" />
+            <Skeleton class="h-3 w-48 rounded-md" />
+          </div>
+          <Skeleton class="h-6 w-10 rounded-full shrink-0" />
+        </div>
+        <div class="space-y-2">
+          <Skeleton class="h-3 w-16 rounded-md" />
+          <div class="grid grid-cols-3 gap-3">
+            <Skeleton v-for="i in 3" :key="i" class="aspect-square rounded-xl" />
+          </div>
+        </div>
+      </div>
     </div>
 
     <div v-else-if="profile" class="h-full flex flex-col">

@@ -337,14 +337,11 @@ const tagClass = "bg-accent/15 border-accent/30 text-primary font-bold";
 
       <div class="relative flex-1 min-h-0">
         <!-- Skeleton -->
-        <div v-if="isLoadingInitialProfiles">
-          <div v-for="n in 6" :key="n" class="grid grid-cols-2 p-6 gap-4">
-            <Skeleton class="w-full aspect-square rounded-2xl" />
-            <Skeleton class="w-full aspect-square rounded-2xl" />
-            <Skeleton class="h-4 w-3/4 mt-2 rounded-full" />
-            <Skeleton class="h-4 w-3/4 mt-1 rounded-full" />
-            <Skeleton class="h-3 w-1/2 mt-2 rounded-full" />
-            <Skeleton class="h-3 w-1/2 mt-1 rounded-full" />
+        <div v-if="isLoadingInitialProfiles" class="grid grid-cols-2 gap-4 p-6">
+          <div v-for="n in 6" :key="n" class="rounded-2xl border border-primary/10 bg-card p-4 space-y-3">
+            <Skeleton class="w-full aspect-square rounded-xl" />
+            <Skeleton class="h-4 w-3/4 rounded-md" />
+            <Skeleton class="h-3 w-1/2 rounded-md" />
           </div>
         </div>
 

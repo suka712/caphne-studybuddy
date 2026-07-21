@@ -134,7 +134,7 @@ const togglePublic = async (checked: boolean) => {
 
           <p
             v-if="profile.bio"
-            class="text-sm text-muted-foreground font-medium leading-relaxed"
+            class="text-sm text-muted-foreground font-medium leading-relaxed wrap-break-word"
           >
             {{ profile.bio }}
           </p>

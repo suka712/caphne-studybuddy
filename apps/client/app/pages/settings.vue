@@ -151,7 +151,7 @@ const handleLogout = async () => {
 
       <!-- Editable Fields -->
       <div class="flex-1 min-h-0 overflow-y-auto p-6 space-y-5">
-        <EditableTextField
+        <EditableText
           label="Display Name"
           field-key="displayName"
           :value="profile.displayName"
@@ -159,7 +159,7 @@ const handleLogout = async () => {
           :validate="(v) => (!v || v.length < 2) ? 'Name must be at least 2 characters' : null"
         />
 
-        <EditableTextField
+        <EditableText
           label="Photo URL"
           field-key="photoUrl"
           :value="profile.photoUrl"
@@ -169,14 +169,7 @@ const handleLogout = async () => {
           :validate="async (v) => (v && !(await validatePhotoUrl(v))) ? 'Could not load image from this URL' : null"
         />
 
-        <EditableTextField
-          label="Bio"
-          field-key="bio"
-          :value="profile.bio"
-          empty-text="Add a short bio"
-          multiline
-          :max-length="200"
-        />
+        <EditableBio label="Bio" :value="profile.bio" :max-length="200" />
 
         <div class="border-t border-primary/30"/>
 

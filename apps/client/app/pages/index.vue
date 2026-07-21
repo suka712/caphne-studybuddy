@@ -1,5 +1,8 @@
 <script setup lang="ts">
-definePageMeta({ layout: "default" });
+definePageMeta({
+  layout: "default",
+  ssr: false
+});
 
 const {
   public: { apiBase },

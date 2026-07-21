@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { toast } from "vue-sonner";
-import { chipClass, chipViewClass, cn, fieldLabelClass } from "~/lib/utils";
 import {
   Accordion,
   AccordionContent,
@@ -182,7 +181,7 @@ const handleLogout = async () => {
         <div class="pt-3 border-t border-primary/30"/>
 
         <!-- Goals -->
-        <EditableChipsField
+        <EditableChips
           label="Goals"
           field-key="goals"
           :value="profile.goals"
@@ -190,120 +189,163 @@ const handleLogout = async () => {
           empty-text="Add your goals"
         />
         <!-- Vibes -->
-        <EditableChipsField
+        <EditableChips
           label="Vibes"
           field-key="vibes"
           :value="profile.vibes"
           :options="vibeChipOptions"
           empty-text="Add your vibe"
         />
-        <!-- Interests -->
-        <EditableField
-          label="Interests"
-          :editing="editingInterests"
-          multiline
-          chips
-          @start-edit="startEditingInterests"
-          @save="saveInterests"
-          @cancel="cancelEditingInterests"
-        >
-          <template #view>
-            <template v-if="profile.interests.length > 0">
-              <Badge
-                v-for="interest in profile.interests"
-                :key="interest"
-                :class="chipViewClass"
+        <!-- Interests (bespoke: category accordion + free-form tags) -->
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-between gap-2">
+            <label
+              class="text-[11px] font-black uppercase tracking-widest text-muted-foreground/70"
+            >
+              Interests
+            </label>
+            <div class="flex items-center gap-1">
+              <template v-if="editingInterests">
+                <button
+                  type="button"
+                  title="Cancel"
+                  class="size-7 rounded-lg flex items-center justify-center text-muted-foreground transition-colors hover:bg-secondary/60"
+                  @click="cancelEditingInterests"
+                >
+                  <Icon name="lucide:x" size="17" class="[stroke-width:2.75]" />
+                </button>
+                <button
+                  type="button"
+                  title="Save"
+                  class="size-7 rounded-lg flex items-center justify-center text-accent transition-colors hover:bg-accent/15"
+                  @click="saveInterests"
+                >
+                  <Icon name="lucide:check" size="17" class="[stroke-width:2.75]" />
+                </button>
+              </template>
+              <button
+                v-else
+                type="button"
+                title="Edit"
+                class="size-7 rounded-lg flex items-center justify-center text-muted-foreground transition-colors hover:bg-secondary/60 hover:text-primary"
+                @click="startEditingInterests"
               >
-                {{ interest }}
-              </Badge>
-            </template>
-            <span v-else class="text-muted-foreground/60 italic font-medium text-sm">
+                <Icon name="lucide:pencil" size="16" class="[stroke-width:2.75]" />
+              </button>
+            </div>
+          </div>
+
+          <!-- Shown -->
+          <div
+            v-if="!editingInterests"
+            class="min-h-12 flex flex-wrap gap-2 rounded-xl border border-primary/10 bg-secondary/50 px-3 py-2.5"
+          >
+            <Badge
+              v-for="interest in profile.interests"
+              :key="interest"
+              class="px-3 py-1.5 text-sm font-bold rounded-full bg-accent/15 border-accent/30 text-primary"
+            >
+              {{ interest }}
+            </Badge>
+            <span
+              v-if="profile.interests.length === 0"
+              class="text-sm font-medium italic text-muted-foreground/60"
+            >
               Add your interests
             </span>
-          </template>
-          <template #edit>
-            <div class="space-y-3">
-              <Accordion type="multiple" class="w-full" :default-value="['academic']">
-                <AccordionItem
-                  v-for="category in interestCategories"
-                  :key="category.id"
-                  :value="category.id"
-                  class="border-primary/10"
-                >
-                  <AccordionTrigger class="hover:no-underline font-bold">
-                    <div class="flex items-center gap-2">
-                      <Icon :name="category.icon" size="16" class="text-accent" />
-                      <span>{{ category.label }}</span>
-                      <Badge
-                        v-if="
-                          draftInterests.filter((i) =>
-                            category.options.includes(i),
-                          ).length > 0
-                        "
-                        class="ml-1 text-xs bg-accent/15 text-primary border-none"
-                      >
-                        {{
-                          draftInterests.filter((i) =>
-                            category.options.includes(i),
-                          ).length
-                        }}
-                      </Badge>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <div class="flex flex-wrap gap-2 pt-2 pb-1">
-                      <Badge
-                        v-for="option in category.options"
-                        :key="option"
-                        variant="outline"
-                        class="cursor-pointer px-3 py-1.5 text-sm font-bold rounded-full transition-all duration-200 hover:scale-105"
-                        :class="chipClass(draftInterests.includes(option))"
-                        @click="toggleInterest(option)"
-                      >
-                        {{ option }}
-                      </Badge>
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
+          </div>
 
-              <!-- Custom Tags -->
-              <div class="pt-3 border-t border-primary/10">
-                <label :class="fieldLabelClass">Add your own tags</label>
-                <div class="flex gap-2 mt-2.5 mb-3">
-                  <input
-                    v-model="customTag"
-                    placeholder="Type a tag..."
-                    class="flex-1 min-w-0 h-10 px-3 rounded-xl bg-background border border-primary/10 outline-none font-bold text-sm placeholder:text-muted-foreground/50 placeholder:font-medium focus-visible:ring-2 focus-visible:ring-accent/40"
-                    @keyup.enter="addCustomTag"
+          <!-- Editing -->
+          <div
+            v-else
+            class="rounded-xl border border-primary/10 bg-secondary/50 px-3 py-2.5 space-y-3"
+          >
+            <Accordion type="multiple" class="w-full" :default-value="['academic']">
+              <AccordionItem
+                v-for="category in interestCategories"
+                :key="category.id"
+                :value="category.id"
+                class="border-primary/10"
+              >
+                <AccordionTrigger class="hover:no-underline font-bold">
+                  <div class="flex items-center gap-2">
+                    <Icon :name="category.icon" size="16" class="text-accent" />
+                    <span>{{ category.label }}</span>
+                    <Badge
+                      v-if="
+                        draftInterests.filter((i) => category.options.includes(i))
+                          .length > 0
+                      "
+                      class="ml-1 text-xs bg-accent/15 text-primary border-none"
+                    >
+                      {{
+                        draftInterests.filter((i) => category.options.includes(i))
+                          .length
+                      }}
+                    </Badge>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <div class="flex flex-wrap gap-2 pt-2 pb-1">
+                    <Badge
+                      v-for="option in category.options"
+                      :key="option"
+                      variant="outline"
+                      class="cursor-pointer px-3 py-1.5 text-sm font-bold rounded-full transition-all duration-200 hover:scale-105"
+                      :class="
+                        draftInterests.includes(option)
+                          ? 'bg-accent/15 border-accent/30 text-primary'
+                          : 'bg-secondary/50 border-primary/10 text-muted-foreground hover:bg-secondary/70'
+                      "
+                      @click="toggleInterest(option)"
+                    >
+                      {{ option }}
+                    </Badge>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+
+            <!-- Free-form tags -->
+            <div class="pt-3 border-t border-primary/10">
+              <label
+                class="text-[11px] font-black uppercase tracking-widest text-muted-foreground/70"
+              >
+                Add your own tags
+              </label>
+              <div class="flex gap-2 mt-2.5 mb-3">
+                <input
+                  v-model="customTag"
+                  placeholder="Type a tag..."
+                  class="flex-1 min-w-0 h-10 px-3 rounded-xl bg-background border border-primary/10 outline-none font-bold text-sm placeholder:text-muted-foreground/50 placeholder:font-medium focus-visible:ring-2 focus-visible:ring-accent/40"
+                  @keyup.enter="addCustomTag"
+                />
+                <button
+                  type="button"
+                  class="h-10 w-10 rounded-xl border border-primary/10 bg-background flex items-center justify-center shrink-0 hover:bg-secondary/40 transition-colors"
+                  @click="addCustomTag"
+                >
+                  <Icon name="lucide:plus" size="16" />
+                </button>
+              </div>
+              <div v-if="customTags.length > 0" class="flex flex-wrap gap-2">
+                <Badge
+                  v-for="tag in customTags"
+                  :key="tag"
+                  class="px-3 py-1.5 text-sm font-bold rounded-full bg-accent/15 border-accent/30 text-primary flex items-center gap-1.5"
+                >
+                  {{ tag }}
+                  <Icon
+                    name="lucide:x"
+                    size="12"
+                    class="cursor-pointer hover:text-destructive"
+                    @click="removeCustomTag(tag)"
                   />
-                  <button
-                    type="button"
-                    class="h-10 w-10 rounded-xl border border-primary/10 bg-background flex items-center justify-center shrink-0 hover:bg-secondary/40 transition-colors"
-                    @click="addCustomTag"
-                  >
-                    <Icon name="lucide:plus" size="16" />
-                  </button>
-                </div>
-                <div v-if="customTags.length > 0" class="flex flex-wrap gap-2">
-                  <Badge
-                    v-for="tag in customTags"
-                    :key="tag"
-                    :class="cn(chipViewClass, 'flex items-center gap-1.5')"
-                  >
-                    {{ tag }}
-                    <Icon
-                      name="lucide:x"
-                      size="12"
-                      class="cursor-pointer hover:text-destructive"
-                      @click="removeCustomTag(tag)"
-                    />
-                  </Badge>
-                </div>
+                </Badge>
               </div>
             </div>
-          </template>
-        </EditableField>
+          </div>
+        </div>
 
         <div class="border-t border-primary/30"/>
 

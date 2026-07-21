@@ -11,14 +11,6 @@ export const fieldLabelClass =
 export const fieldBoxClass =
   "rounded-xl border-primary/10 bg-secondary/50 font-bold text-sm";
 
-export const chipSelectedClass = "bg-accent/15 border-accent/30 text-primary font-bold";
-export const chipUnselectedClass =
-  "bg-secondary/50 border-primary/10 text-muted-foreground hover:bg-secondary/70";
-export const chipViewClass = cn(chipSelectedClass, "px-3 py-1.5 text-sm rounded-full");
-
-export function chipClass(active: boolean) {
-  return cn(
-    "border transition-all duration-200",
-    active ? chipSelectedClass : chipUnselectedClass,
-  );
-}
+// Read-only chip pill (used on /profile).
+export const chipViewClass =
+  "bg-accent/15 border-accent/30 text-primary font-bold px-3 py-1.5 text-sm rounded-full";

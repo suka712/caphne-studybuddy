@@ -31,7 +31,7 @@ const [matchCount, publicProfileCount, chatCount] = await Promise.all([
 
 const stats = computed(() => [
   {
-    label: "Profiles",
+    label: "Discoveries",
     value: publicProfileCount.publicProfiles,
     to: "/discover",
     icon: "lucide:compass",

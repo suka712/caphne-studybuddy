@@ -453,7 +453,7 @@ const tagClass = "bg-accent/15 border-accent/30 text-primary font-bold";
 
                 <p
                   v-if="discoverProfile.bio"
-                  class="text-sm text-muted-foreground font-medium leading-relaxed"
+                  class="min-w-0 text-sm text-muted-foreground font-medium leading-relaxed wrap-break-word"
                 >
                   {{ discoverProfile.bio }}
                 </p>

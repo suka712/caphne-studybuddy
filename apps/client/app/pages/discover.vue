@@ -62,10 +62,7 @@ type DiscoverProfilesResponse = {
   nextCursor: NextCursor;
 };
 
-const isLoadingInitialProfiles = ref(true);
 const isLoadingMoreProfiles = ref(false);
-const discoverProfiles = ref<DiscoverProfile[]>([]);
-const nextCursor = ref<NextCursor | null>(null);
 
 const filterIsOpen = ref(false);
 const filterMajor = ref<string | undefined>(undefined);
@@ -113,6 +110,20 @@ const {
   public: { apiBase },
 } = useRuntimeConfig();
 
+const { data, pending: isLoadingInitialProfiles, refresh: refreshInitialProfiles } =
+  await useAsyncData(
+    "discover-profiles",
+    () =>
+      $fetch<DiscoverProfilesResponse>(`${apiBase}/discover`, {
+        credentials: "include",
+        query: activeFilterQuery(),
+      }),
+    { lazy: true, deep: true },
+  );
+
+const discoverProfiles = computed(() => data.value?.profiles ?? []);
+const nextCursor = computed(() => data.value?.nextCursor ?? null);
+
 const startingChatWith = ref<number | null>(null);
 
 const startChat = async (targetUserId: number) => {
@@ -132,17 +143,6 @@ const startChat = async (targetUserId: number) => {
   }
 };
 
-const fetchInitialProfiles = async () => {
-  const data = await $fetch<DiscoverProfilesResponse>(`${apiBase}/discover`, {
-    credentials: "include",
-    query: activeFilterQuery(),
-  });
-
-  discoverProfiles.value = data.profiles;
-  nextCursor.value = data.nextCursor;
-  isLoadingInitialProfiles.value = false;
-};
-
 const fetchMoreProfiles = async () => {
   if (isLoadingMoreProfiles.value) return;
   if (discoverProfiles.value.length > 0 && !nextCursor.value) return;
@@ -159,7 +159,7 @@ const fetchMoreProfiles = async () => {
       : {}),
   };
 
-  const [data] = await Promise.all([
+  const [moreData] = await Promise.all([
     $fetch<DiscoverProfilesResponse>(`${apiBase}/discover`, {
       credentials: "include",
       query,
@@ -167,17 +167,16 @@ const fetchMoreProfiles = async () => {
     delay(LOADING_DELAY_MS),
   ]);
 
-  discoverProfiles.value = [...discoverProfiles.value, ...data.profiles];
-  nextCursor.value = data.nextCursor;
+  if (data.value) {
+    data.value.profiles = [...data.value.profiles, ...moreData.profiles];
+    data.value.nextCursor = moreData.nextCursor;
+  }
   isLoadingMoreProfiles.value = false;
 };
 
 const applyFilters = async () => {
   filterIsOpen.value = false;
-  isLoadingInitialProfiles.value = true;
-  discoverProfiles.value = [];
-  nextCursor.value = null;
-  await fetchInitialProfiles();
+  await refreshInitialProfiles();
 };
 
 const clearFilters = () => {
@@ -195,14 +194,19 @@ const onScroll = (e: Event) => {
 
 const scrollAreaRef = ref<InstanceType<typeof ScrollArea> | null>(null);
 
-onMounted(async () => {
-  await fetchInitialProfiles();
-
-  const viewport = scrollAreaRef.value?.$el?.querySelector(
-    '[data-slot="scroll-area-viewport"]',
-  );
-  viewport?.addEventListener("scroll", onScroll);
-});
+watch(
+  isLoadingInitialProfiles,
+  (loading) => {
+    if (loading) return;
+    nextTick(() => {
+      const viewport = scrollAreaRef.value?.$el?.querySelector(
+        '[data-slot="scroll-area-viewport"]',
+      );
+      viewport?.addEventListener("scroll", onScroll);
+    });
+  },
+  { immediate: true },
+);
 
 const fieldClass =
   "h-11 w-full rounded-2xl border-primary/10 bg-secondary/50 px-3.5 font-bold text-sm";

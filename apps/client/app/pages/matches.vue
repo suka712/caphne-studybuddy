@@ -25,8 +25,16 @@ const {
   public: { apiBase },
 } = useRuntimeConfig();
 
-const remainingCandidates = ref<SwipeCandidate[]>([]);
-const isLoading = ref(true);
+const { data, pending: isLoading } = await useAsyncData(
+  "matches-candidates",
+  () =>
+    $fetch<{ profiles: SwipeCandidate[] }>(`${apiBase}/swipes`, {
+      credentials: "include",
+    }),
+  { lazy: true, deep: true },
+);
+
+const remainingCandidates = computed(() => data.value?.profiles ?? []);
 const isSwiping = ref(false);
 const lastDecision = ref<"like" | "pass">("pass");
 const isLikeHovered = ref(false);
@@ -44,22 +52,15 @@ const majorLabel = (value: string) =>
 const goalLabel = (id: string) =>
   goalOptions.find((g) => g.id === id)?.label ?? id;
 
-const fetchBatch = async () => {
-  const data = await $fetch<{ profiles: SwipeCandidate[] }>(
-    `${apiBase}/swipes`,
-    { credentials: "include" },
-  );
-
-  remainingCandidates.value = data.profiles;
-};
-
 const handleSwipe = async (decision: "like" | "pass") => {
   if (!currentCandidate.value || isSwiping.value) return;
 
   const targetUserId = currentCandidate.value.userId;
   isSwiping.value = true;
   lastDecision.value = decision;
-  remainingCandidates.value = remainingCandidates.value.slice(1);
+  if (data.value) {
+    data.value.profiles = data.value.profiles.slice(1);
+  }
 
   try {
     await $fetch(`${apiBase}/swipes`, {
@@ -74,11 +75,6 @@ const handleSwipe = async (decision: "like" | "pass") => {
     isSwiping.value = false;
   }
 };
-
-onMounted(async () => {
-  await fetchBatch();
-  isLoading.value = false;
-});
 
 const tagClass = "bg-accent/15 border-accent/30 text-primary font-bold";
 </script>

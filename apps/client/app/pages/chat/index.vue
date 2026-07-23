@@ -28,40 +28,50 @@ interface MatchCard {
   lastActiveAt: string | null;
 }
 
-const matches = ref<MatchCard[]>([]);
-const isLoading = ref(true);
-
-const fetchMatches = async () => {
-  try {
-    const data = await $fetch<{ matches: MatchCard[] }>(`${apiBase}/matches`, {
+const { data, pending: isLoading } = await useAsyncData(
+  "chat-matches",
+  () =>
+    $fetch<{ matches: MatchCard[] }>(`${apiBase}/matches`, {
       credentials: "include",
-    });
-    matches.value = data.matches;
-  } catch (e) {
-    console.error("Failed to fetch matches:", e);
-    toast.error("Failed to load matches");
-  }
-};
+    }).catch((e) => {
+      console.error("Failed to fetch matches:", e);
+      toast.error("Failed to load matches");
+      return { matches: [] as MatchCard[] };
+    }),
+  { lazy: true, deep: true },
+);
 
-onMounted(async () => {
-  await fetchMatches();
-  initUnreadCounts(matches.value);
-  isLoading.value = false;
+const matches = computed(() => data.value?.matches ?? []);
 
-  const socket = getSocket();
-  if (socket) {
-    socket.on(
-      SocketEvents.USER_HAS_NEW_MESSAGE,
-      (data: { matchId: number }) => {
-        const idx = matches.value.findIndex((m) => m.matchId === data.matchId);
-        if (idx > 0) {
-          const [match] = matches.value.splice(idx, 1);
-          matches.value.unshift(match!);
-        }
-      },
-    );
-  }
-});
+let listenersReady = false;
+
+watch(
+  isLoading,
+  (loading) => {
+    if (loading || listenersReady) return;
+    listenersReady = true;
+
+    initUnreadCounts(matches.value);
+
+    const socket = getSocket();
+    if (socket) {
+      socket.on(
+        SocketEvents.USER_HAS_NEW_MESSAGE,
+        (payload: { matchId: number }) => {
+          if (!data.value) return;
+          const idx = data.value.matches.findIndex(
+            (m) => m.matchId === payload.matchId,
+          );
+          if (idx > 0) {
+            const [match] = data.value.matches.splice(idx, 1);
+            data.value.matches.unshift(match!);
+          }
+        },
+      );
+    }
+  },
+  { immediate: true },
+);
 
 </script>
 

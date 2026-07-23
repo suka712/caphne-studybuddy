@@ -20,7 +20,6 @@ const currentUserId = computed(() => authUser.value?.id);
 const messages = ref<ChatMessage[]>([]);
 const matchDisplayName = ref("");
 const newMessage = ref("");
-const isLoading = ref(true);
 const isLoadingMore = ref(false);
 const hasMore = ref(true);
 const scrollAreaRef = ref<InstanceType<typeof ScrollArea> | null>(null);
@@ -99,38 +98,60 @@ const useIcebreaker = (text: string) => {
   newMessage.value = text;
 };
 
-onMounted(async () => {
-  try {
+const { data, status, error } = await useAsyncData(
+  `chat-${matchId}`,
+  async () => {
     const matchesData = await $fetch<{ matches: any[] }>(`${apiBase}/matches`, {
       credentials: "include",
     });
     const thisMatch = matchesData.matches.find(
       (m: any) => m.matchId === matchId,
     );
-    if (!thisMatch) {
-      toast.error("Match not found");
+    if (!thisMatch) return null;
+
+    const initialMessages = await fetchMessages();
+    return { thisMatch, initialMessages };
+  },
+  { lazy: true },
+);
+
+const isLoading = computed(
+  () => status.value === "idle" || status.value === "pending",
+);
+
+let listenersReady = false;
+
+watch(
+  status,
+  (s) => {
+    if (s !== "success" && s !== "error") return;
+
+    const result = data.value;
+    if (!result) {
+      if (error.value) {
+        console.error("Failed to initialize chat:", error.value);
+        toast.error("Failed to load chat");
+      } else {
+        toast.error("Match not found");
+      }
       navigateTo("/chat");
       return;
     }
-    matchDisplayName.value = thisMatch.displayName;
-    isMatchOnline.value = thisMatch.isOnline;
-    matchLastActiveAt.value = thisMatch.lastActiveAt;
 
-    const initialMessages = await fetchMessages();
-    messages.value = initialMessages;
-    if (initialMessages.length < PAGE_SIZE) hasMore.value = false;
-    isLoading.value = false;
+    matchDisplayName.value = result.thisMatch.displayName;
+    isMatchOnline.value = result.thisMatch.isOnline;
+    matchLastActiveAt.value = result.thisMatch.lastActiveAt;
+    messages.value = result.initialMessages;
+    if (result.initialMessages.length < PAGE_SIZE) hasMore.value = false;
     scrollToBottom();
 
-    setupListeners();
-  } catch (e) {
-    console.error("Failed to initialize chat:", e);
-    toast.error("Failed to load chat");
-    navigateTo("/chat");
-  } finally {
-    isLoading.value = false;
-  }
-});
+    if (!listenersReady) {
+      listenersReady = true;
+      setupListeners();
+    }
+  },
+  { immediate: true },
+);
 
 onUnmounted(() => {
   cleanup();

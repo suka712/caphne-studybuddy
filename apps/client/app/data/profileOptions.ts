@@ -45,21 +45,42 @@ export const yearOptions = [
 ];
 
 export const goalOptions = [
-  { id: "study-buddy", label: "Find study buddy" },
+  { id: "study-buddy", label: "Study buddy" },
   { id: "project-teammate", label: "Project teammate" },
-  { id: "learn-new", label: "Learn something new" },
-  { id: "sports-buddy", label: "Sports/gym buddy" },
-  { id: "meet-people", label: "Meet new people" },
-  { id: "share-skills", label: "Share skills/mentor" },
+  { id: "accountability-partner", label: "Accountability partner" },
+  { id: "fitness-buddy", label: "Fitness buddy" },
+  { id: "campus-friends", label: "Campus friends" },
+  { id: "skill-exchange", label: "Skill exchange" },
+  { id: "language-exchange", label: "Language exchange" },
 ];
 
 export const vibeOptions = [
-  "Introvert",
-  "Extrovert",
-  "Night owl",
+  // Schedule
   "Early bird",
+  "Night owl",
+  // Energy
   "Chill",
-  "Grinder",
+  "Grind",
+  // Deadline behavior
+  "Planner",
+  "Last-minute",
+  // Study style
+  "Silent focus",
+  "Talk it out",
+  // Interaction style
+  "Competitive",
+  "Supportive",
+  // Session format
+  "Marathon sessions",
+  "Pomodoro sprints",
+  // Logistics
+  "In-person",
+  "Online",
+  // Environment
+  "Coffee shop",
+  "At home",
+  "Library",
+  "Dorm",
 ];
 
 export const interestCategories = [
@@ -71,8 +92,10 @@ export const interestCategories = [
       "Study groups",
       "Exam prep",
       "Research",
-      "Thesis/Capstone",
+      "Thesis",
+      "Capstone project",
       "Tutoring",
+      "Language learning",
     ],
   },
   {
@@ -85,7 +108,7 @@ export const interestCategories = [
       "Mobile Dev",
       "Game Dev",
       "Data/AI",
-      "Design/UI",
+      "UI/UX design",
       "Security/CTF",
       "DevOps",
     ],
@@ -98,7 +121,7 @@ export const interestCategories = [
       "Startups",
       "Marketing",
       "Case competitions",
-      "Networking",
+      "E-commerce",
       "Finance",
     ],
   },
@@ -125,8 +148,9 @@ export const interestCategories = [
       "Gym",
       "Gaming",
       "Anime",
-      "Coffee/hangouts",
-      "Reading",
+      "K-pop",
+      "Café hangouts",
+      "Street food",
       "Travel",
     ],
   },
@@ -139,7 +163,7 @@ export const interestCategories = [
       "Interview prep",
       "Resume review",
       "Portfolio",
-      "LinkedIn",
+      "Career fairs",
     ],
   },
 ];

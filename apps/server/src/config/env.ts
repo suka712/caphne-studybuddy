@@ -18,4 +18,5 @@ export const env = {
   githubClientId: requireEnv("GITHUB_CLIENT_ID"),
   githubClientSecret: requireEnv("GITHUB_CLIENT_SECRET"),
   nodeEnv: requireEnv("NODE_ENV"),
+  redisUrl: requireEnv("REDIS_URL"),
 } as const;

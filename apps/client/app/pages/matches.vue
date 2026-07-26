@@ -91,7 +91,7 @@ const tagClass = "bg-accent/15 border-accent/30 text-primary font-bold";
     </div>
 
     <div class="flex-1 min-h-0 flex flex-col items-center justify-center p-6">
-      <div v-if="isLoading" class="w-full max-w-xs min-h-[26rem]">
+      <div v-if="isLoading" class="w-full max-w-xs h-[26rem]">
         <div class="relative z-10 w-full overflow-hidden bg-card border border-primary/15 shadow-md rounded-xl p-5 space-y-4">
           <div class="flex items-center gap-3">
             <Skeleton class="size-14 rounded-2xl shrink-0" />
@@ -137,7 +137,7 @@ const tagClass = "bg-accent/15 border-accent/30 text-primary font-bold";
         </Button>
       </div>
 
-      <div v-else class="relative w-full max-w-xs min-h-[26rem]">
+      <div v-else class="relative w-full max-w-xs h-[26rem]">
         <div
           class="absolute left-1/2 -translate-x-1/2 -top-13 w-[70%] h-full bg-amber-100 border border-b-0 border-primary/10 rounded-xl z-0"
         />
@@ -155,9 +155,9 @@ const tagClass = "bg-accent/15 border-accent/30 text-primary font-bold";
           <div
             v-if="currentCandidate"
             :key="currentCandidate.userId"
-            class="relative z-10 w-full overflow-hidden bg-cafe-cream border border-primary/15 shadow-md shadow-primary/10 rounded-xl p-5 space-y-4"
+            class="relative z-10 w-full h-full overflow-hidden bg-cafe-cream border border-primary/15 shadow-md shadow-primary/10 rounded-xl p-5 flex flex-col gap-4"
           >
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-3 shrink-0">
               <img
                 v-if="currentCandidate.photoUrl"
                 :src="currentCandidate.photoUrl"
@@ -185,62 +185,64 @@ const tagClass = "bg-accent/15 border-accent/30 text-primary font-bold";
               </div>
             </div>
 
-            <p
-              v-if="currentCandidate.bio"
-              class="text-sm text-muted-foreground font-medium leading-relaxed"
-            >
-              {{ currentCandidate.bio }}
-            </p>
+            <div class="flex-1 min-h-0 overflow-y-auto space-y-4 pr-1 -mr-1">
+              <p
+                v-if="currentCandidate.bio"
+                class="text-sm text-muted-foreground font-medium leading-relaxed"
+              >
+                {{ currentCandidate.bio }}
+              </p>
 
-            <div v-if="currentCandidate.goals.length > 0" class="space-y-1.5">
-              <div class="text-[11px] font-black uppercase tracking-widest text-muted-foreground/70">
-                Looking for
+              <div v-if="currentCandidate.goals.length > 0" class="space-y-1.5">
+                <div class="text-[11px] font-black uppercase tracking-widest text-muted-foreground/70">
+                  Looking for
+                </div>
+                <div class="flex flex-wrap gap-1.5">
+                  <Badge
+                    v-for="goal in currentCandidate.goals"
+                    :key="goal"
+                    :class="tagClass"
+                  >
+                    {{ goalLabel(goal) }}
+                  </Badge>
+                </div>
               </div>
-              <div class="flex flex-wrap gap-1.5">
-                <Badge
-                  v-for="goal in currentCandidate.goals"
-                  :key="goal"
-                  :class="tagClass"
-                >
-                  {{ goalLabel(goal) }}
-                </Badge>
+
+              <div v-if="currentCandidate.vibes.length > 0" class="space-y-1.5">
+                <div class="text-[11px] font-black uppercase tracking-widest text-muted-foreground/70">
+                  Vibes
+                </div>
+                <div class="flex flex-wrap gap-1.5">
+                  <Badge
+                    v-for="vibe in currentCandidate.vibes"
+                    :key="vibe"
+                    :class="tagClass"
+                  >
+                    {{ vibe }}
+                  </Badge>
+                </div>
+              </div>
+
+              <div
+                v-if="currentCandidate.interests.length > 0"
+                class="space-y-1.5"
+              >
+                <div class="text-[11px] font-black uppercase tracking-widest text-muted-foreground/70">
+                  Interests
+                </div>
+                <div class="flex flex-wrap gap-1.5">
+                  <Badge
+                    v-for="interest in currentCandidate.interests"
+                    :key="interest"
+                    :class="tagClass"
+                  >
+                    {{ interest }}
+                  </Badge>
+                </div>
               </div>
             </div>
 
-            <div v-if="currentCandidate.vibes.length > 0" class="space-y-1.5">
-              <div class="text-[11px] font-black uppercase tracking-widest text-muted-foreground/70">
-                Vibes
-              </div>
-              <div class="flex flex-wrap gap-1.5">
-                <Badge
-                  v-for="vibe in currentCandidate.vibes"
-                  :key="vibe"
-                  :class="tagClass"
-                >
-                  {{ vibe }}
-                </Badge>
-              </div>
-            </div>
-
-            <div
-              v-if="currentCandidate.interests.length > 0"
-              class="space-y-1.5"
-            >
-              <div class="text-[11px] font-black uppercase tracking-widest text-muted-foreground/70">
-                Interests
-              </div>
-              <div class="flex flex-wrap gap-1.5">
-                <Badge
-                  v-for="interest in currentCandidate.interests"
-                  :key="interest"
-                  :class="tagClass"
-                >
-                  {{ interest }}
-                </Badge>
-              </div>
-            </div>
-
-            <div class="flex gap-3 pt-2">
+            <div class="flex gap-3 pt-2 shrink-0">
               <Button
                 variant="outline"
                 class="group flex-1 rounded-2xl h-12 font-black border-primary/10 active:scale-95 transition-transform"

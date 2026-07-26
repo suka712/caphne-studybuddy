@@ -8,8 +8,20 @@ import {
 } from "../../db/schema.js";
 import { and, eq, inArray, notInArray, or, sql } from "drizzle-orm";
 import { matchConfig } from "../../config/matchConfig.js";
+import { redis } from "../../db/redis.js";
 
 const todayDateString = () => new Date().toISOString().slice(0, 10);
+
+const batchCacheKey = (userId: number) =>
+  `swipe-batch:${userId}:${todayDateString()}`;
+
+// TTL until midnight, so the cache expires exactly when a new batch is due.
+const secondsUntilMidnight = () => {
+  const now = new Date();
+  const midnight = new Date(now);
+  midnight.setHours(24, 0, 0, 0);
+  return Math.ceil((midnight.getTime() - now.getTime()) / 1000);
+};
 
 const generateTodaysBatch = async (userId: number) => {
   const existingMatches = await db
@@ -64,6 +76,11 @@ const generateTodaysBatch = async (userId: number) => {
 };
 
 export const getOrCreateTodaysBatch = async (userId: number) => {
+  const cacheKey = batchCacheKey(userId);
+
+  const cached = await redis.get(cacheKey);
+  if (cached) return JSON.parse(cached) as typeof dailyBatches.$inferSelect;
+
   const [existing] = await db
     .select()
     .from(dailyBatches)
@@ -74,9 +91,13 @@ export const getOrCreateTodaysBatch = async (userId: number) => {
       ),
     );
 
-  if (existing) return existing;
+  const batch = existing ?? (await generateTodaysBatch(userId));
 
-  return generateTodaysBatch(userId);
+  await redis.set(cacheKey, JSON.stringify(batch), {
+    EX: secondsUntilMidnight(),
+  });
+
+  return batch;
 };
 
 export const isInTodaysBatch = async (userId: number, targetUserId: number) => {

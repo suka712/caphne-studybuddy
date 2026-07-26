@@ -182,6 +182,19 @@ resource "aws_instance" "this" {
   associate_public_ip_address = false
   ipv6_address_count          = 1
 
+  # DR only: ignore_changes on user_data below means this never touches the
+  # live instance. It only runs if this resource is ever replaced from
+  # scratch, so a fresh box still boots with a working local Redis.
+  user_data = <<-EOF
+    #!/bin/bash
+    set -eux
+    apt-get update -qq
+    apt-get install -y redis-server
+    sed -i "s/^bind .*/bind 127.0.0.1 -::1/" /etc/redis/redis.conf
+    sed -i "s/^supervised .*/supervised systemd/" /etc/redis/redis.conf
+    systemctl enable --now redis-server
+  EOF
+
   metadata_options {
     http_endpoint               = "enabled"
     http_tokens                 = "required"
@@ -212,6 +225,7 @@ locals {
     "GOOGLE_CLIENT_ID",
     "NODE_ENV",
     "PORT",
+    "REDIS_URL",
     "SERVER_URL",
   ]
 

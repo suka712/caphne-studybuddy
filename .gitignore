@@ -3,6 +3,7 @@ node_modules
 .pnp
 .pnp.js
 package-lock.json
+**/node-compile-cache/
 
 # Local env files
 .env

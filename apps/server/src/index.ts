@@ -13,8 +13,17 @@ import { chatRouter } from "./features/chat/chat.routes.js";
 import { setupSocketIO } from "./features/chat/socket.js";
 import { discoverRouter } from "./features/discover/discover.routes.js";
 import { swipesRouter } from "./features/swipes/swipes.routes.js";
+import {
+  globalLimiter,
+  authLimiter,
+  emailCollectionLimiter,
+  swipeLimiter,
+} from "./middleware/rateLimit.js";
 
 const app = express();
+
+// Behind CloudFront (1 hop): use the client IP it appends to X-Forwarded-For.
+app.set("trust proxy", 1);
 
 app.use(
   cors({
@@ -27,12 +36,13 @@ app.use(cookieParser());
 app.use(passport.initialize());
 
 app.use("/health", healthRouter);
-app.use("/auth", authRouter);
-app.use("/email-collection", emailRouter);
+app.use(globalLimiter);
+app.use("/auth", authLimiter, authRouter);
+app.use("/email-collection", emailCollectionLimiter, emailRouter);
 app.use("/profile", profileRouter);
 app.use("/matches", matchesRouter);
 app.use("/discover", discoverRouter);
-app.use("/swipes", swipesRouter);
+app.use("/swipes", swipeLimiter, swipesRouter);
 app.use("/chat", chatRouter);
 
 const server = createServer(app);

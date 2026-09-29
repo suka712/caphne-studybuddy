@@ -11,6 +11,7 @@ import { env } from "../../config/env.js";
 import { db } from "../../db/db.js";
 import { users } from "../../db/schema.js";
 import { eq } from "drizzle-orm";
+import { createSocketLimiter } from "../../middleware/rateLimit.js";
 import { SocketEvents } from "@caphne/shared/socket-events";
 
 let ioInstance: SocketIOServer | null = null;
@@ -62,6 +63,9 @@ export function setupSocketIO(httpServer: HttpServer) {
 
     socket.join(`user:${userId}`);
 
+    // 20 messages / 10s per socket
+    const allowMessage = createSocketLimiter(20, 10_000);
+
     const sockets = onlineUsers.get(userId) ?? new Set();
     sockets.add(socket.id);
     onlineUsers.set(userId, sockets);
@@ -106,6 +110,13 @@ export function setupSocketIO(httpServer: HttpServer) {
     socket.on(
       SocketEvents.USER_SENDS_MESSAGE,
       async (data: { matchId: number; content: string }) => {
+        if (!allowMessage()) {
+          socket.emit(SocketEvents.ERROR, {
+            message: "You are sending messages too fast",
+          });
+          return;
+        }
+
         const { matchId, content } = data;
 
         if (typeof matchId !== "number" || typeof content !== "string") {

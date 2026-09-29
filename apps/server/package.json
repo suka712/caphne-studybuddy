@@ -20,6 +20,7 @@
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.45.1",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.7.0",
     "jsonwebtoken": "^9.0.3",
     "passport": "^0.7.0",
     "passport-github2": "^0.1.12",

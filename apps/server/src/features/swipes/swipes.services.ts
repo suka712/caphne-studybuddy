@@ -6,9 +6,10 @@ import {
   dailyBatches,
   SwipeDecision,
 } from "../../db/schema.js";
-import { and, eq, inArray, notInArray, or, sql } from "drizzle-orm";
+import { and, eq, inArray, notInArray, or } from "drizzle-orm";
 import { matchConfig } from "../../config/matchConfig.js";
 import { redis } from "../../db/redis.js";
+import { rankCandidates } from "./matchScore.js";
 
 const todayDateString = () => new Date().toISOString().slice(0, 10);
 
@@ -42,12 +43,27 @@ const generateTodaysBatch = async (userId: number) => {
     userId,
   ];
 
-  const candidates = await db
-    .select({ userId: profiles.userId })
+  const [me] = await db
+    .select()
     .from(profiles)
-    .where(notInArray(profiles.userId, excludedProfiles),)
-    .orderBy(sql`RANDOM()`)
-    .limit(matchConfig.swipesPerDay);
+    .where(eq(profiles.userId, userId));
+
+  // The pool is small (hundreds), so rank in memory rather than in SQL.
+  const pool = await db
+    .select({
+      userId: profiles.userId,
+      major: profiles.major,
+      year: profiles.year,
+      goals: profiles.goals,
+      vibes: profiles.vibes,
+      interests: profiles.interests,
+    })
+    .from(profiles)
+    .where(notInArray(profiles.userId, excludedProfiles));
+
+  const candidates = me
+    ? rankCandidates(me, pool, matchConfig.swipesPerDay)
+    : pool.sort(() => Math.random() - 0.5).slice(0, matchConfig.swipesPerDay);
 
   const [batch] = await db
     .insert(dailyBatches)
